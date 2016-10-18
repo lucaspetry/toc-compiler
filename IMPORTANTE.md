@@ -1,6 +1,7 @@
-simpliciTy
-        Organization
-     quiCkness
+## Pilares da Linguagem
+- simpliciTy
+- Organization
+- quiCkness
      
 ## Coisas importantes para não ter no compilador final:
 - Conflitos SR e RR
