@@ -1,0 +1,10 @@
+toc
+*~
+include/Parser.h
+include/*~
+src/*~
+test/*~
+test/tocTest
+test/black-box/*.o
+test/gtest/*.o
+tmp/*
