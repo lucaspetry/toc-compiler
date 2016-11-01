@@ -14,7 +14,11 @@ class TreeNode;
 namespace Data {
     enum Type {
         UNKNOWN = -1,
-        VOID = 0
+        BOO = 1,
+        FLT = 2,
+        INT = 3,
+        STR = 4,
+        VOID = 5
     };
 }
 
@@ -23,6 +27,9 @@ class TreeNode {
 
     public:
         enum ClassType {
+            CODE_BLOCK,
+            COMMENT,
+            FUNCTION,
             UNKNOWN
         };
 
@@ -31,7 +38,7 @@ class TreeNode {
         Data::Type dataType() const;
         void setType(Data::Type type);
         virtual TreeNode::ClassType classType() const = 0;
-        virtual std::string printInOrder() = 0;
+        virtual std::string printInOrder() const = 0;
 
     protected:
         Data::Type type;
