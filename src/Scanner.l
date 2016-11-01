@@ -9,6 +9,7 @@ void yyerror(const char* s, ...);
 %}
 
 %option noyywrap nodefault yylineno
+%option noyyunput
 
 id ([a-z|A-Z][a-z|A-Z|_|0-9]*)
 dec ([0-9]+)
