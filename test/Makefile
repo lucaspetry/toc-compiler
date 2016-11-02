@@ -4,6 +4,7 @@ CPPFLAGS = -DGTEST_HAS_PTHREAD=0
 CXXFLAGS = -g
 UNIT_EXECUTABLE = tocTest
 BLACK_BOX_SCRIPT = run-black-box.sh
+COMPILER = ../toc
 
 GTEST_DIR = gtest
 SRC_DIR = unit
@@ -20,7 +21,7 @@ OBJS += $(TEST_SRCS:.cpp=.o)
 
 gtest: ./$(GTEST_DIR)/gtest-all.o
 
-black-box: $(BLACK_BOX_SCRIPT)
+black-box: FORCE
 	@bash ./$(BLACK_BOX_SCRIPT)
 
 unit:	gtest $(OBJS)
@@ -36,3 +37,5 @@ clean:
 
 veryclean: clean
 	rm -rf ./$(GTEST_DIR)/*.o
+    
+FORCE:

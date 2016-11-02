@@ -34,18 +34,30 @@ scanner: $(SRC_DIR)/Scanner.l parser
 
 parser: $(SRC_DIR)/Parser.y
 	@echo "${GREEN}Generating bottom-up parser...${WHITE}"
-	${BISON} --defines=$(PARSER_HEADER) --output=$(PARSER_CPP) $(SRC_DIR)/Parser.y
+	${BISON} --defines=$(PARSER_HEADER) --output=$(PARSER_CPP) $(SRC_DIR)/Parser.y -v
 	@echo "${GREEN}Generating bottom-up parser... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
 all: clean $(EXECUTABLE) test
     
-test: clean
+test: FORCE
 	@echo "${GREEN}Executing tests...${WHITE}"
 	@cd test && $(MAKE) black-box && $(MAKE) unit
 	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
+    
+test-black-box: FORCE
+	@echo "${GREEN}Executing tests...${WHITE}"
+	@cd test && $(MAKE) black-box
+	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
+	@echo ''
 
+test-unit: FORCE
+	@echo "${GREEN}Executing tests...${WHITE}"
+	@cd test && $(MAKE) unit
+	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
+	@echo ''
+    
 clean:
 	@echo "${GREEN}Cleaning project...${WHITE}"
 	-@rm -Rf tmp
@@ -67,3 +79,5 @@ tmp:
 	@mkdir tmp
 	@echo "${GREEN}Creating tmp directory... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
+
+FORCE:

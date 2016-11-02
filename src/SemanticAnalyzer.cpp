@@ -1,5 +1,5 @@
 #include "SemanticAnalyzer.h"
-#include <iostream>
+
 SemanticAnalyzer::SemanticAnalyzer() {
 }
 
@@ -30,13 +30,10 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
 
 }
 
-
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   return NULL;
 
 }
-
-
 
 // TreeNode* SemanticAnalyzer::declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue) {
 //   return NULL;

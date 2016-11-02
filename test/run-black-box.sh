@@ -55,8 +55,8 @@ do
         echo -e "$HEAD_RUN Expected output file: $OUTPUT_FILE"
         
         # Runs the test and stores the output
-        OUTPUT="$(./$EXECUTABLE < $i 2>/dev/null)"
-        OUTPUT_ERRORS="$(./$EXECUTABLE < $i 2>&1 1>/dev/null)"
+        OUTPUT="$(../$EXECUTABLE < $i 2>/dev/null)"
+        OUTPUT_ERRORS="$(../$EXECUTABLE < $i 2>&1 1>/dev/null)"
         EXPECTED_OUTPUT="$(cat $OUTPUT_FILE)"
         TESTS_RUN=$((TESTS_RUN+1))
         

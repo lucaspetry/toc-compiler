@@ -6,5 +6,6 @@ src/*~
 test/*~
 test/tocTest
 test/black-box/*.o
+test/unit/*.o
 test/gtest/*.o
 tmp/*
