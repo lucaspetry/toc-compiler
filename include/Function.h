@@ -12,7 +12,8 @@ class Function : public TreeNode {
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-
+        void generateCode() const;
+        
     private:
       std::string id;
       CodeBlock* params;

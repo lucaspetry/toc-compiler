@@ -78,13 +78,13 @@ std::vector<std::string> SymbolTable::getUninitializedFunctions() {
     std::map<std::string, Symbol>::iterator iter;
     std::vector<std::string> functions;
     std::string prefix = Symbol::SYMBOL_PREFIX(Symbol::FUNCTION);
-    
+
     for(iter = entryList.begin(); iter != entryList.end(); iter++) {
         if(iter->first.compare(0, prefix.size(), prefix) == 0
            && !entryList[iter->first].initialized)
             functions.push_back(iter->first.substr(prefix.size(), iter->first.size()));
     }
-    
+
     return functions;
 }
 
@@ -101,6 +101,6 @@ void SymbolTable::setSymbolData(const std::string id, Symbol::IdentifierType typ
         delete entryList[Symbol::SYMBOL_PREFIX(type) + id].data;
         entryList[Symbol::SYMBOL_PREFIX(type) + id].data = 0;
     }
-    
-    entryList[Symbol::SYMBOL_PREFIX(type) + id].data = data;    
+
+    entryList[Symbol::SYMBOL_PREFIX(type) + id].data = data;
 }

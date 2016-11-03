@@ -21,3 +21,7 @@ int CodeBlock::numberOfLines() const {
 void CodeBlock::insertLine(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
 }
+
+void CodeBlock::generateCode() const{
+  //TODO;
+}

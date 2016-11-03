@@ -18,6 +18,12 @@ void SyntaxTree::print() {
     }
 }
 
+void SyntaxTree::generateCode() {
+    for (TreeNode* line: lines) {
+        line->generateCode();
+    }
+}
+
 void SyntaxTree::insertLine(TreeNode* line) {
     this->lines.insert(lines.begin(), line);
 }

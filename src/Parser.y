@@ -20,7 +20,7 @@
     class SyntaxTree;
 }
 
-/* 
+/*
  * yylval == %union
  * Diferentes meios de armazenar os dados.
  */
@@ -47,7 +47,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global main_scope line declaration
+%type <node> global main_scope line declaration multiple_declaration expression
 %type <integer> indent sp type
 
 /*
@@ -56,7 +56,7 @@
  * (left, right, nonassoc)
  */
 
-/* 
+/*
  * Símbolo inicial da gramática.
  */
 %start program
@@ -65,7 +65,7 @@
 
 // Programa
 program:
-    global { SYNTAX_TREE = new SyntaxTree(); $$ = SYNTAX_TREE; if($1 != NULL) $$->insertLine($1); }
+    global {SYNTAX_TREE = new SyntaxTree(); $$ = SYNTAX_TREE; if($1 != NULL) $$->insertLine($1); }
     | global T_NL program { $$ = $3; if($1 != NULL) $3->insertLine($1); }
     | error T_NL { yyerrok; $$ = NULL; }
     ;
@@ -76,35 +76,51 @@ global:
     | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", NULL, NULL); }
     ;
 
-main_scope:
-    indent line { $$ = $2; }
-    | indent line T_NL main_scope { $$ = $4; }
+main_scope: {$$ = NULL;}
+    | indent line  { $$ = $2; }
+    | indent line T_NL main_scope {std::cout << "indent 2" << std::endl; $$ = $4; }
     ;
-    
+
 line:
-    declaration
-    | T_COMMENT
+    declaration {$$ = NULL;}
+    | T_COMMENT { $$ = NULL;}
     ;
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { $$ = NULL; }
-    | type sp T_ID sp T_ASSIGN sp expression { $$ = NULL; }
+    type sp T_ID { TOC_ANALYZER.analyzeVariable($3); $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); }
+    | type sp T_ID multiple_declaration { TOC_ANALYZER.analyzeVariable($3); SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
+                                                  $$ = NULL;}
+    | T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
+                                                  $$ = NULL;}
+    | type sp T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
+                                              TOC_ANALYZER.analyzeVariable($3);
+                                              SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
+                                                $$ = NULL; }
+    ;
+
+//Multiplas declarações
+multiple_declaration:
+    T_COMMA sp T_ID  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); $$ = NULL;}
+    | T_COMMA sp T_ID multiple_declaration  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); $$ = NULL;}
     ;
 
 // Expressão
 expression:
-    T_TRUE | T_FALSE
-    | T_NUM | T_DEC
+    T_TRUE {$$ = NULL;}
+    | T_FALSE {$$ = NULL;}
+    | T_NUM {$$ = NULL;}
+    | T_DEC {$$ = NULL;}
+    | T_ID {SEMANTIC_ANALYZER.useVariable($1); $$ = NULL;}
     ;
 
 // Tipos de dados
 type:
-    T_BOO
-    | T_FLT
-    | T_INT
-    | T_STR
-    | T_VOID
+    T_BOO { $$ = Data::BOO;}
+    | T_FLT {$$ = Data::FLT;}
+    | T_INT{ $$ = Data::INT;}
+    | T_STR{ $$ = Data::STR;}
+    | T_VOID {$$ = Data::VOID;}
     ;
 
 // Espaços
@@ -115,8 +131,8 @@ sp:
 
 // Indentação
 indent:
-    { $$ = 0; }
+    T_SP T_SP{ $$ = 0; }
     | T_SP T_SP indent { $$ = $3 + 1; }
     ;
-    
+
 %%

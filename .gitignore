@@ -9,3 +9,4 @@ test/black-box/*.o
 test/unit/*.o
 test/gtest/*.o
 tmp/*
+comandos

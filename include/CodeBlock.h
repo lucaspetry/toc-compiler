@@ -13,7 +13,8 @@ class CodeBlock : public TreeNode {
         std::string printInOrder() const;
         int numberOfLines() const;
         void insertLine(TreeNode* line);
-
+        void generateCode() const;
+        
     private:
         std::vector<TreeNode*> lines;
 

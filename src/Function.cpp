@@ -16,3 +16,7 @@ TreeNode::ClassType Function::classType() const {
 std::string Function::printInOrder() const {
     return ""; // TODO
 }
+
+void Function::generateCode() const {
+  //TODO;
+}

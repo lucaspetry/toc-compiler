@@ -10,16 +10,17 @@
  * Árvore sintática abstrata.
  */
 class SyntaxTree {
-    
-    public:        
+
+    public:
         SyntaxTree();
         virtual ~SyntaxTree();
         void print();
         void insertLine(TreeNode* line);
-    
+        void generateCode();
+
     private:
         std::vector<TreeNode*> lines;
-    
+
 };
 
 #endif

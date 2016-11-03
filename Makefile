@@ -28,7 +28,7 @@ $(EXECUTABLE): tmp parser scanner $(SRC_FILES) $(PARSER_CPP) $(SCANNER_CPP)
 
 scanner: $(SRC_DIR)/Scanner.l parser
 	@echo "${GREEN}Generating lexical analyzer...${WHITE}"
-	${FLEX} -o $(SCANNER_CPP) $(SRC_DIR)/Scanner.l 
+	${FLEX} -o $(SCANNER_CPP) $(SRC_DIR)/Scanner.l
 	@echo "${GREEN}Generating lexical analyzer... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
@@ -39,13 +39,13 @@ parser: $(SRC_DIR)/Parser.y
 	@echo ''
 
 all: clean $(EXECUTABLE) test
-    
+
 test: FORCE
 	@echo "${GREEN}Executing tests...${WHITE}"
 	@cd test && $(MAKE) black-box && $(MAKE) unit
 	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
-    
+
 test-black-box: FORCE
 	@echo "${GREEN}Executing tests...${WHITE}"
 	@cd test && $(MAKE) black-box
@@ -57,7 +57,7 @@ test-unit: FORCE
 	@cd test && $(MAKE) unit
 	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
-    
+
 clean:
 	@echo "${GREEN}Cleaning project...${WHITE}"
 	-@rm -Rf tmp

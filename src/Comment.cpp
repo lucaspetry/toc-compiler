@@ -14,3 +14,7 @@ TreeNode::ClassType Comment::classType() const {
 std::string Comment::printInOrder() const {
     return this->comment;
 }
+
+void Comment::generateCode() const {
+  //TODO;
+}
