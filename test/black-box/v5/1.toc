@@ -1,0 +1,4 @@
+# Exemplo de criacao de arrays em TOC
+void toc()
+  str saladas_de_frutas[5]
+  flt sucos[5], vitaminas[10]
