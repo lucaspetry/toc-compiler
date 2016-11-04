@@ -1,12 +1,7 @@
 FLEX = flex
 BISON = bison
 CC = clang++
-<<<<<<< HEAD
-CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall 
-INCLUDE =
-=======
 CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall
->>>>>>> e2357f0884aa70f29807f1212221c73bda19fd7d
 EXECUTABLE = toc
 
 # Directories and Files
