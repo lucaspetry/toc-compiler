@@ -1,9 +1,12 @@
 FLEX = flex
 BISON = bison
-LLVM=`llvm-config --cxxflags --ldflags --system-libs --libs core native mcjit`
 CC = clang++
+<<<<<<< HEAD
 CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall 
 INCLUDE =
+=======
+CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall
+>>>>>>> e2357f0884aa70f29807f1212221c73bda19fd7d
 EXECUTABLE = toc
 
 # Directories and Files
@@ -24,7 +27,7 @@ WHITE=\033[0;37m
 
 $(EXECUTABLE): tmp parser scanner $(SRC_FILES) $(PARSER_CPP) $(SCANNER_CPP)
 	@echo "${GREEN}Creating executable...${WHITE}"
-	${CC} -o ${EXECUTABLE} $(SRC_FILES) $(PARSER_CPP) $(SCANNER_CPP) ${CFLAGS} -I$(HEADERS_DIR) $(INCLUDE) $(LLVM)
+	${CC} -o ${EXECUTABLE} $(SRC_FILES) $(PARSER_CPP) $(SCANNER_CPP) ${CFLAGS} -I$(HEADERS_DIR)
 	@echo "${GREEN}Creating executable... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
