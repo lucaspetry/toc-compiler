@@ -2,6 +2,7 @@
     #include "SemanticAnalyzer.h"
     #include "TocAnalyzer.h"
     #include "SyntaxTree.h"
+    #include "Array.h"
     #include "Comment.h"
     #include "Function.h"
 
@@ -34,10 +35,10 @@
 /*
  * Símbolos terminais (tokens) para a gramática.
  */
-%token <integer> T_VOID T_BOO T_FLT T_INT T_STR
+%token <integer> T_VOID T_BOO T_FLT T_INT T_STR T_NUM // coloquei T_NUM aqui afinal precisamos do valor inteir dele. T_INT deveria estar aqui ?
 %token T_TAB T_SP T_NL
 %token T_TOC
-%token T_NUM T_DEC T_TRUE T_FALSE
+%token T_DEC T_TRUE T_FALSE
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA
 
@@ -83,8 +84,8 @@ main_scope:
     ;
 
 line:
-    declaration
-    | T_COMMENT
+    declaration {$$ = NULL; }
+    | T_COMMENT {$$ = NULL;}
     ;
 
 // Declaração de variáveis
@@ -92,7 +93,9 @@ declaration:
     type sp T_ID { $$ = NULL; }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = NULL; }
     // aqui é possível declarar 1 (uma) ou n variáveis do tipo arranjo
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = NULL; }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {
+      if($7 == NULL) $$ = new Array($3, (Data::Type)$1, $5); // id, type, size
+    }
     // aqui é possível declarar e atribuir 1 (um) ou n valores ao arranjo
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {$$ = NULL; }
     ;
@@ -113,6 +116,7 @@ multiple_attribution:
 expression:
     T_TRUE | T_FALSE
     | T_NUM | T_DEC
+    |
     ;
 
 // Tipos de dados

@@ -35,16 +35,6 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
 
 }
 
-// TreeNode* SemanticAnalyzer::declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue) {
-//   return NULL;
-//
-// }
-
-// TreeNode* SemanticAnalyzer::callFunction(std::string functionId, Vector* params) {
-//   return NULL;
-//
-// }
-
 Symbol SemanticAnalyzer::getSymbol(std::string id, Symbol::IdentifierType type, bool checkParentScope) {
     if(symbolTable.existsSymbol(id, type))
         return symbolTable.getSymbol(id, type);
