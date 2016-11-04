@@ -6,6 +6,9 @@
     #include "Comment.h"
     #include "Function.h"
 
+    // to test
+    #include <iostream>
+
     SemanticAnalyzer SEMANTIC_ANALYZER;
     TocAnalyzer TOC_ANALYZER;
     SyntaxTree* SYNTAX_TREE;
@@ -84,8 +87,8 @@ main_scope:
     ;
 
 line:
-    declaration {$$ = NULL; }
-    | T_COMMENT {$$ = NULL;}
+    declaration {$$ = $1; }
+    | T_COMMENT {$$ = NULL; }
     ;
 
 // Declaração de variáveis
@@ -94,10 +97,12 @@ declaration:
     | type sp T_ID sp T_ASSIGN sp expression { $$ = NULL; }
     // aqui é possível declarar 1 (uma) ou n variáveis do tipo arranjo
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {
-      if($7 == NULL) $$ = new Array($3, (Data::Type)$1, $5); // id, type, size
+      if($7 == NULL) $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, 5); // id, type, size
     }
     // aqui é possível declarar e atribuir 1 (um) ou n valores ao arranjo
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {$$ = NULL; }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {
+      $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5);  // id, type, size
+    }
     ;
 
 //Multiplas declarações

@@ -2,6 +2,7 @@
 #define SEMANTICANALYZER_H_
 
 #include "SymbolTable.h"
+#include "Array.h"
 #include <string>
 #include <vector>
 

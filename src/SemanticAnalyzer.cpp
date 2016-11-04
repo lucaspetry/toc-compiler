@@ -17,6 +17,8 @@ void SemanticAnalyzer::returnScope() {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
+    if(size > 0)
+      return new Array(id, dataType, size); // id, type, size
     return NULL;
 }
 
