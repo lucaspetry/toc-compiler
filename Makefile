@@ -2,8 +2,8 @@ FLEX = flex
 BISON = bison
 LLVM=`llvm-config --cxxflags --ldflags --system-libs --libs core native mcjit`
 CC = clang++
-CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall -D__STDC_CONSTANT_MACROS -D__STDC_LIMIT_MACROS
-INCLUDE = -I/usr/include/llvm-3.8
+CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall 
+INCLUDE =
 EXECUTABLE = toc
 
 # Directories and Files

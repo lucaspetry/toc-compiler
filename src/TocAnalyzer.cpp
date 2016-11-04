@@ -19,6 +19,6 @@ void TocAnalyzer::analyzeAssign(int sp1, int sp2) {
 
 void TocAnalyzer::analyzeCommas(int sp){
   if (sp == 0)
-    yyerror("Warning: TOC recommends that you leave one space between commas.\n");
+    yyerror("Warning: TOC recommends that you leave one space after commas.\n");
 
 }

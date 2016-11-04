@@ -1,0 +1,4 @@
+# Funcao principal do programa
+void toc()
+  int banana = 4
+  str frutas[3] = {“cereja”, “jaca”, “limão”, “pitanga”}

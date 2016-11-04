@@ -1,0 +1,6 @@
+# Funcao principal do programa
+void toc()
+  int kiwi$$
+  caqui = 2
+  int banana
+  flt banana
