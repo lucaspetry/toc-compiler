@@ -14,5 +14,7 @@ TreeNode::ClassType Function::classType() const {
 }
 
 std::string Function::printInOrder() const {
-    return ""; // TODO
+    std::string output;
+    output += this->id;
+    return output;
 }

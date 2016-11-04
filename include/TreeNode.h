@@ -22,7 +22,6 @@ namespace Data {
     };
 }
 
-
 class TreeNode {
 
     public:
@@ -40,7 +39,7 @@ class TreeNode {
         void setType(Data::Type type);
         virtual TreeNode::ClassType classType() const = 0;
         virtual std::string printInOrder() const = 0;
-        static std::string toString(Data::Type type);
+        std::string toString(Data::Type type) const;
 
     protected:
         Data::Type type;

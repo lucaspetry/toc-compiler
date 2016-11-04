@@ -15,7 +15,7 @@ void TreeNode::setType(Data::Type type) {
     this->type = type;
 }
 
-std::string TreeNode::toString(Data::Type type) {
+std::string TreeNode::toString(Data::Type type) const {
     switch(type) {
       case Data::UNKNOWN:
         return "unknown";

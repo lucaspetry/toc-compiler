@@ -72,7 +72,7 @@ program:
     global { SYNTAX_TREE = new SyntaxTree(); $$ = SYNTAX_TREE; if($1 != NULL) $$->insertLine($1); }
     | global T_NL program { $$ = $3; if($1 != NULL) $3->insertLine($1); }
     | error T_NL { yyerrok; $$ = NULL; }
-    | {$$ = NULL;} // coloquei aqui pois não passa linha em branco, não sei se é o melhor local
+    | {$$ = NULL;}
     ;
 
 // Linha
@@ -82,7 +82,7 @@ global:
     ;
 
 main_scope:
-    | indent line { $$ = $2; }
+    | indent line { $$ = new CodeBlock(); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2); }
     | indent line T_NL main_scope { $$ = $4; }
     ;
 
