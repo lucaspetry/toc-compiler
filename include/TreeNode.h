@@ -31,8 +31,6 @@ class TreeNode {
             CODE_BLOCK,
             COMMENT,
             FUNCTION,
-            VARIABLE,
-            VARIABLE_DECLARATION,
             UNKNOWN
         };
 
