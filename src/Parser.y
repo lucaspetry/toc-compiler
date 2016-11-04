@@ -72,37 +72,31 @@ program:
     global { SYNTAX_TREE = new SyntaxTree(); $$ = SYNTAX_TREE; if($1 != NULL) $$->insertLine($1); }
     | global T_NL program { $$ = $3; if($1 != NULL) $3->insertLine($1); }
     | error T_NL { yyerrok; $$ = NULL; }
-    | {$$ = NULL;}
     ;
 
 // Linha
 global:
     T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", NULL, NULL); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", Data::VOID, NULL, $8); } // id, params, body
     ;
 
 main_scope:
-    | indent line { $$ = new CodeBlock(); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2); }
-    | indent line T_NL main_scope { $$ = $4; }
+    indent line { $$ = new CodeBlock(); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2); }
+    | indent line T_NL main_scope { $$ = $4; if($2 != NULL) ((CodeBlock*)$4)->insertLine($2); }
     ;
 
 line:
-    declaration {$$ = $1; }
-    | T_COMMENT {$$ = NULL; }
+    { $$ = NULL; }
+    | declaration {$$ = $1; }
+    | T_COMMENT {$$ = new Comment($1); }
     ;
 
 // Declaração de variáveis
 declaration:
     type sp T_ID { $$ = NULL; }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = NULL; }
-    // aqui é possível declarar 1 (uma) ou n variáveis do tipo arranjo
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {
-      if($7 == NULL) $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, 5); // id, type, size
-    }
-    // aqui é possível declarar e atribuir 1 (um) ou n valores ao arranjo
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {
-      $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5);  // id, type, size
-    }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { if($7 == NULL) $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, 5); } // id, type, size
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); } // id, type, size
     ;
 
 //Multiplas declarações

@@ -23,7 +23,6 @@ std::string Array::printInOrder() const {
     output += "[";
     output += std::to_string(size);
     output += "]";
-    std::cout << output << std::endl;
 
     return output;
 }

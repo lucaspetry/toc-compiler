@@ -8,7 +8,7 @@
 class Function : public TreeNode {
 
     public:
-        Function(std::string id, CodeBlock* params, CodeBlock* body);
+        Function(std::string id, Data::Type type, CodeBlock* params, TreeNode* body);
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
@@ -16,7 +16,8 @@ class Function : public TreeNode {
     private:
       std::string id;
       CodeBlock* params;
-      CodeBlock* body;
+      TreeNode* body;
+      Data::Type type;
 
 };
 

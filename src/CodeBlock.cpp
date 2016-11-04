@@ -11,9 +11,8 @@ TreeNode::ClassType CodeBlock::classType() const {
 }
 
 std::string CodeBlock::printInOrder() const {
-    std::string output;
+    std::string output = "";
     for(TreeNode* myTreenode: this->lines){
-      if(myTreenode != NULL)
         output += myTreenode->printInOrder();
     }
     return output;

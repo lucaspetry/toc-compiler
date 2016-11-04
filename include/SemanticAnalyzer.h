@@ -28,9 +28,6 @@ class SemanticAnalyzer {
         TreeNode* assignVariable(std::string varId, Data::Type assignedType, TreeNode* index = NULL);
         TreeNode* declareAssignVariable(std::string id, Data::Type dataType, Data::Type assignedType);
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
-
-        //TreeNode* declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue);
-        //TreeNode* callFunction(std::string functionId, Vector* params);
         bool symbolExists(std::string id, Symbol::IdentifierType type, bool checkParentScope);
 
     private:
