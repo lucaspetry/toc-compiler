@@ -17,6 +17,6 @@ std::string Function::printInOrder() const {
     return ""; // TODO
 }
 
-void Function::generateCode() const {
+void Function::generateCode(llvm::IRBuilder<>* builder) const {
   //TODO;
 }

@@ -22,6 +22,6 @@ void CodeBlock::insertLine(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
 }
 
-void CodeBlock::generateCode() const{
+void CodeBlock::generateCode(llvm::IRBuilder<>* builder) const{
   //TODO;
 }

@@ -1,17 +1,11 @@
 #ifndef CODEGENERATOR_H_
 #define CODEGENERATOR_H_
 
-#include "llvm/IR/DerivedTypes.h"   //for types
-#include "llvm/IR/IRBuilder.h"      //for Builder
-#include "llvm/IR/LLVMContext.h"    //for Context
-#include "llvm/IR/Module.h"         //for Module
-#include "llvm/IR/Verifier.h"       //for Verify function
-#include "llvm/ExecutionEngine/ExecutionEngine.h" //for JIT
-#include "llvm/ExecutionEngine/GenericValue.h"    //for GenericValue
-#include "llvm/ExecutionEngine/MCJIT.h"
-
+#include "SyntaxTree.h"
+#include "LLVM.h"
 #include<iostream>
 #include<string>
+
 
 class CodeGenerator {
 
@@ -19,7 +13,7 @@ class CodeGenerator {
         CodeGenerator();
         virtual ~CodeGenerator();
         void setProgramTitle(std::string title);
-        void generateExecutableCode() const;
+        void generateExecutableCode(SyntaxTree* const syntaxTree) const;
     
     private:
         std::string programTitle;
