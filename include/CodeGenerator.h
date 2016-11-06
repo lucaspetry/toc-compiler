@@ -10,15 +10,19 @@
 #include "llvm/ExecutionEngine/GenericValue.h"    //for GenericValue
 #include "llvm/ExecutionEngine/MCJIT.h"
 
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<string>
 
 class CodeGenerator {
 
     public:
         CodeGenerator();
         virtual ~CodeGenerator();
-        void generateExecutableCode();
+        void setProgramTitle(std::string title);
+        void generateExecutableCode() const;
+    
+    private:
+        std::string programTitle;
 
 };
 

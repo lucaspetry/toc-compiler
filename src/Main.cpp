@@ -1,4 +1,5 @@
 #include "SyntaxTree.h"
+#include "CodeGenerator.h"
 
 extern SyntaxTree* SYNTAX_TREE;
 extern int yyparse();
@@ -12,6 +13,11 @@ int main(int argc, char **argv) {
 
     // Imprime a árvore sintática
     SYNTAX_TREE->print();
+    
+    // Gera o código intermediário
+    CodeGenerator codeGen;
+    codeGen.setProgramTitle("TOC Program");
+    codeGen.generateExecutableCode();
 
     return 0;
 }
