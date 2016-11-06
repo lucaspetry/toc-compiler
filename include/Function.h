@@ -12,7 +12,7 @@ class Function : public TreeNode {
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder) const;
         
     private:
       std::string id;

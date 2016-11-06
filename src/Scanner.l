@@ -17,30 +17,37 @@ text ([\"][a-z|A-Z][a-z|A-Z|_|0-9]*[\"])
 comment ([#][a-z|A-Z|_|0-9| ]*)
 
 %%
-{comment}           {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_COMMENT;}
-[ ]                 {return T_SP;}
-\t                  {return T_TAB;}
-"boo"               {yylval.integer = Data::BOO; return T_BOO;}
-"flt"               {yylval.integer = Data::FLT; return T_FLT;}
-"int"               {yylval.integer = Data::INT; return T_INT;}
-"str"               {yylval.integer = Data::STR; return T_STR;}
-"void"              {yylval.integer = Data::VOID; return T_VOID;}
-"toc"               {return T_TOC;}
+{comment}           { yylval.string = new char[yyleng+1];
+                      strcpy(yylval.string, yytext);
+                      return T_COMMENT; }
+[ ]                 { return T_SP;}
+\t                  { return T_TAB;}
+"boo"               { yylval.integer = Data::BOO; return T_BOO; }
+"flt"               { yylval.integer = Data::FLT; return T_FLT; }
+"int"               { yylval.integer = Data::INT; return T_INT; }
+"str"               { yylval.integer = Data::STR; return T_STR; }
+"void"              { yylval.integer = Data::VOID; return T_VOID; }
+"toc"               { return T_TOC;}
 
-"true"              {return T_TRUE;}
-"false"             {return T_FALSE;}
-{text}              {yylval.string = new char[yyleng-1]; memcpy(yylval.string, &yytext[1], yyleng-2); yylval.string[yyleng-1] = '\0'; return T_TEXT;}
-{dec}               {return T_DEC;}
-{num}               {return T_NUM;}
-{id}                {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_ID;}
+"true"              { return T_TRUE; }
+"false"             { return T_FALSE; }
+{text}              { yylval.string = new char[yyleng-1];
+                      memcpy(yylval.string, &yytext[1], yyleng-2);
+                      yylval.string[yyleng-1] = '\0';
+                      return T_TEXT; }
+{dec}               { return T_DEC; }
+{num}               { return T_NUM; }
+{id}                { yylval.string = new char[yyleng+1];
+                      strcpy(yylval.string, yytext);
+                      return T_ID; }
 
-"("                 {return T_OPAR;}
-")"                 {return T_CPAR;}
-","                 {return T_COMMA;}
-"="                 {return T_ASSIGN;}
-\n                  {return T_NL;} /* New line */
+"("                 { return T_OPAR; }
+")"                 { return T_CPAR; }
+","                 { return T_COMMA; }
+"="                 { return T_ASSIGN; }
+\n                  { return T_NL; } /* New line */
 
-.                   {yyerror("lexical error: unknown symbol %s\n", yytext);} /* Every other character produces a lexical error */
+.                   { yyerror("lexical error: unknown symbol %s\n", yytext); } /* Every other character produces a lexical error */
 
 %%
 

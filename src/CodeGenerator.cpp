@@ -12,7 +12,7 @@ void CodeGenerator::setProgramTitle(std::string title) {
     this->programTitle = title;
 }
 
-void CodeGenerator::generateExecutableCode() const {
+void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     llvm::LLVMContext &context = llvm::getGlobalContext();
     llvm::Module *module;
     llvm::IRBuilder<> builder(context);
@@ -25,58 +25,20 @@ void CodeGenerator::generateExecutableCode() const {
     llvm::FunctionType* typeOfMain = llvm::FunctionType::get(intType, false);
     llvm::Function* mainFunction = llvm::Function::Create(typeOfMain, llvm::Function::ExternalLinkage, "main", module);
 
-    // Blobo básico principal
+    // Bloco básico principal
     llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(context, "main", mainFunction);
     builder.SetInsertPoint(mainBB);
-
-    /*** Constants are all unified ***/
-    /* http://llvm.org/docs/doxygen/html/classllvm_1_1ConstantInt.html
-     * static ConstantInt *	get (LLVMContext &context, const APInt &V)
-     * Return a ConstantInt with the specified value and an implied Type.
-     * APInt = Arbitrary Precision Integer */
-    llvm::ConstantInt* Ten = llvm::ConstantInt::get(context, llvm::APInt(64,10));
-    auto One = llvm::ConstantInt::get(context, llvm::APInt(64, 1));
-    auto Zero = llvm::ConstantInt::get(context, llvm::APInt(64, 0));
-
-    /* static ConstantInt *	get (IntegerType *Ty, uint64_t V, bool isSigned=false)
-     * Return a ConstantInt with the specified integer value for the specified type. */
-    llvm::Constant* NegativeOne = llvm::ConstantInt::get( intType, -1, true);
-
-    /*** A and B are variables in memory, so we can read and write from them ***/
-
-    /* http://llvm.org/docs/doxygen/html/classllvm_1_1IRBuilder.html
-     * AllocaInst * 	CreateAlloca (Type *Ty, Value *ArraySize=nullptr, const Twine &Name="") */
-    llvm::AllocaInst* A = builder.CreateAlloca(intType, NULL, "A");
-    llvm::AllocaInst* B = builder.CreateAlloca(intType, NULL, "B");
-
-    /*** lets compute
-     * 0. A = 0;
-     * 1. x = A;
-     * 2. y = 0;
-     * 3. x = y + 10 - (-1) + x;
-     * 4. x = x + 1 + 10 + 10 + 10
-     * 5. A = x;
-     * 6. return x;
-     ***/
-    builder.CreateStore(Zero, A); //0
-    llvm::Value* x = builder.CreateLoad(A, "x"); //1
-    auto y = builder.CreateAdd(Zero, Zero, "y"); //2 (one way to set to zero ;)
-    auto tmp = builder.CreateAdd(y, Ten, "tmp"); //3.1
-    tmp = builder.CreateSub(tmp, NegativeOne, "tmp"); //3.2
-    x = builder.CreateAdd(tmp, x, "x"); //3.3
-    x = builder.CreateAdd(x, One, "x"); //4
-    x = builder.CreateAdd(x, Ten, "x"); //4
-    x = builder.CreateAdd(x, Ten, "x"); //4
-    x = builder.CreateAdd(x, Ten, "x"); //4
-    builder.CreateStore(x, A); //5
-    builder.CreateRet(x); //6
     
-    //Checks if everything is okay with our function
+    // Gera o código do programa
+    syntaxTree->generateCode(&builder);
+
+    // Verifica a função principal
     llvm::verifyFunction(*mainFunction);
 
-    // Lets print the intermediary representation generated
+    // Imprime o código gerado
     module->dump();
     //mainFunction->dump();
+    
 //
 //    /*** Now lets compute it with a just in time (JIT) compiler ***/
 //    llvm::ExecutionEngine* OurExecutionEngine;

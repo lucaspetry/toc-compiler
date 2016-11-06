@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     // Gera o código intermediário
     CodeGenerator codeGen;
     codeGen.setProgramTitle("TOC Program");
-    codeGen.generateExecutableCode();
+    codeGen.generateExecutableCode(SYNTAX_TREE);
 
     return 0;
 }
