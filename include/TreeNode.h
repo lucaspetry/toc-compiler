@@ -27,6 +27,7 @@ class TreeNode {
     public:
         enum ClassType {
             ARRAY,
+            BINARY_OPERATION,
             CODE_BLOCK,
             COMMENT,
             FUNCTION,

@@ -17,12 +17,18 @@ TreeNode::ClassType Array::classType() const {
 std::string Array::printInOrder() const {
     // [in] str saladas_de_frutas[5] >>> [out] str saladas_de_frutas[5]
     std::string output = "";
-    output += this->toString(this->type);
-    output += " ";
+    if (this->type != Data::UNKNOWN){
+      output += this->toString(this->type);
+      output += " ";      
+    }
     output += this->id;
     output += "[";
     output += std::to_string(size);
     output += "]";
 
     return output;
+}
+
+void Array::setType(Data::Type type){
+  this->type = type;
 }

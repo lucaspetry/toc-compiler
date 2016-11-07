@@ -1,6 +1,4 @@
 # Exemplo de criacao de arrays em TOC
 void toc()
   str saladas_de_frutas[5]
-  flt sucos[5]
-  flt vitaminas[10]
-  int frutas[2] = {1, 2}
+  boo a[5], b[7], j[10]

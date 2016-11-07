@@ -14,6 +14,7 @@ class Array : public TreeNode {
         virtual ~Array();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        void setType(Data::Type type);
 
     private:
       std::string id;

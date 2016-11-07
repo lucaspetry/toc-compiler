@@ -3,6 +3,7 @@
     #include "TocAnalyzer.h"
     #include "SyntaxTree.h"
     #include "Array.h"
+    #include "BinaryOperation.h"
     #include "Comment.h"
     #include "Function.h"
 
@@ -77,11 +78,11 @@ program:
 // Linha
 global:
     T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", Data::VOID, NULL, $8); } // id, params, body
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", Data::VOID, NULL, $8); }
     ;
 
 main_scope:
-    indent line { $$ = new CodeBlock(); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2); }
+    indent line { $$ = new CodeBlock($1); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2); }
     | indent line T_NL main_scope { $$ = $4; if($2 != NULL) ((CodeBlock*)$4)->insertLine($2); }
     ;
 
@@ -95,20 +96,22 @@ line:
 declaration:
     type sp T_ID { $$ = NULL; }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = NULL; }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { if($7 == NULL) $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, 5); } // id, type, size
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); } // id, type, size
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5),
+                                                                                              BinaryOperation::COMMA, $7); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
     ;
 
 //Multiplas declarações
 multiple_declaration:
-    {$$ = NULL; }
-    | T_COMMA sp T_ID sp T_OBRACKET T_NUM T_CBRACKET {$$ = NULL; }
-    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = NULL; }
+    T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5); }
+    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5),
+                                                                                                  BinaryOperation::COMMA, $7); }
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
-    expression {$$ = NULL; } // podemos atribuir os 4 tipos {str, int, boo, flt}
+    expression {$$ = NULL; }
     | expression T_COMMA sp multiple_attribution {$$ = NULL; }
 
 // Expressão
@@ -135,8 +138,8 @@ sp:
 
 // Indentação
 indent:
-    { $$ = 0; }
-    | T_SP T_SP indent { $$ = $3 + 1; }
+    { int a = 1; $$ = a; }
+    | T_SP T_SP indent { $$ = ($3 + 1); }
     ;
 
 %%
