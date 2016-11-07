@@ -27,8 +27,8 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
        return NULL; //TODO
        //return new Array(id, dataType, size);
     } else
-        return NULL; //TODO
-        //return new Variable(id, dataType); //Creates variable node anyway
+        // return NULL; //TODO
+        return new Variable(id, dataType); //Creates variable node anyway
 
 }
 

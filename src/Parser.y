@@ -4,6 +4,8 @@
     #include "SyntaxTree.h"
     #include "Comment.h"
     #include "Function.h"
+    #include "Variable.h"
+    #include "VariableDeclaration.h"
 
     SemanticAnalyzer SEMANTIC_ANALYZER;
     TocAnalyzer TOC_ANALYZER;
@@ -73,22 +75,23 @@ program:
 // Linha
 global:
     T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", NULL, NULL); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", Data::VOID, NULL, $8); }
     ;
 
-main_scope: {$$ = NULL;}
-    | indent line  { $$ = $2; }
-    | indent line T_NL main_scope {std::cout << "indent 2" << std::endl; $$ = $4; }
+main_scope:
+    indent line  {$$ = new CodeBlock($1); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2);}
+    | indent line T_NL main_scope { $$ = $4; if($2 != NULL) ((CodeBlock*)$4)->insertLine($2);}
     ;
 
 line:
-    declaration {$$ = NULL;}
-    | T_COMMENT { $$ = NULL;}
+    { $$ = NULL; }
+    | declaration {$$ = $1; }
+    | T_COMMENT {$$ = new Comment($1); }
     ;
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { TOC_ANALYZER.analyzeVariable($3); $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); }
+    type sp T_ID { TOC_ANALYZER.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); $$ = new VariableDeclaration((Data::Type)$1 ,v);}
     | type sp T_ID multiple_declaration { TOC_ANALYZER.analyzeVariable($3); SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
                                                   $$ = NULL;}
     | T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
@@ -131,8 +134,8 @@ sp:
 
 // Indentação
 indent:
-    T_SP T_SP{ $$ = 0; }
-    | T_SP T_SP indent { $$ = $3 + 1; }
+    {  int a = 1; $$ = a; }
+    | T_SP T_SP indent { $$ = ($3 + 1);}
     ;
 
 %%

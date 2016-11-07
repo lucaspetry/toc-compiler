@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-//#include "llvm-utils.h"
 
 class SemanticAnalyzer;
 class SyntaxTree;
@@ -23,14 +22,17 @@ namespace Data {
     };
 }
 
-
 class TreeNode {
 
     public:
         enum ClassType {
+            ARRAY,
+            BINARY_OPERATION,
             CODE_BLOCK,
             COMMENT,
             FUNCTION,
+            VARIABLE,
+            VARIABLE_DECLARATION,
             UNKNOWN
         };
 
@@ -41,7 +43,7 @@ class TreeNode {
         virtual TreeNode::ClassType classType() const = 0;
         virtual std::string printInOrder() const = 0;
         virtual void generateCode() const = 0;
-        //llvm:Value* code;
+        std::string toString(Data::Type type) const;
 
     protected:
         Data::Type type;
