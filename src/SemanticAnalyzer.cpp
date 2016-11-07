@@ -17,9 +17,16 @@ void SemanticAnalyzer::returnScope() {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
-    if(size > 0)
-      return new Array(id, dataType, size); // id, type, size
-    return NULL;
+  if(symbolExists(id, Symbol::VARIABLE, false))
+      yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
+  else {
+      symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
+    }
+
+  if(size > 0)
+    return new Array(id, dataType, size); // id, type, size
+
+  return NULL;
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, Data::Type assignedType, TreeNode* index) {
@@ -27,12 +34,18 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, Data::Type assignedTy
 
 }
 
-TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, Data::Type assignedType) {
+TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType) {
+  if(symbolExists(id, Symbol::VARIABLE, false))
+    yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
+  else
+    symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
   return NULL;
-
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
+  if(!symbolExists(id, Symbol::VARIABLE, true))
+    yyerror("semantic error: undeclared variable %s\n", id.c_str());
+
   return NULL;
 
 }

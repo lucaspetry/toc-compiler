@@ -52,7 +52,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global main_scope line declaration multiple_declaration multiple_attribution
+%type <node> global main_scope line declaration multiple_declaration multiple_attribution expression
 %type <integer> indent sp type
 
 /*
@@ -99,7 +99,8 @@ declaration:
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5),
                                                                                               BinaryOperation::COMMA, $7); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareAssignVariable($3,
+                                                                                                            (Data::Type)$1); }
     ;
 
 //Multiplas declarações
@@ -116,9 +117,10 @@ multiple_attribution:
 
 // Expressão
 expression:
-    T_TRUE | T_FALSE
-    | T_NUM | T_DEC
-    |
+    T_TRUE {$$ = NULL; }| T_FALSE {$$ = NULL; }
+    | T_NUM {$$ = NULL; } | T_DEC {$$ = NULL; } | T_TEXT {$$ = NULL; }
+    | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC_ANALYZER.useVariable($1, $3); }
+    | {$$ = NULL; }
     ;
 
 // Tipos de dados
