@@ -31,7 +31,7 @@ std::string Function::printInOrder() const {
 
     // print the Function body
     if(this->body != NULL){
-      std::cout << ((CodeBlock*)this->body)->lines.size() << std::endl;
+      // std::cout << ((CodeBlock*)this->body)->lines.size() << std::endl;
       output += this->body->printInOrder();
     }
 

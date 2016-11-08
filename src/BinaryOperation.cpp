@@ -26,7 +26,13 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
     switch(operation) {
         case COMMA:
             return ",";
+        case ASSIGN:
+            return "=";
         default:
             return "unknown";
     }
+}
+
+void BinaryOperation::generateCode() const {
+  //TODO;
 }

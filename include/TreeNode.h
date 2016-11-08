@@ -33,6 +33,9 @@ class TreeNode {
             FUNCTION,
             VARIABLE,
             VARIABLE_DECLARATION,
+            BOOLEAN,
+            INTEGER,
+            FLOAT,
             UNKNOWN
         };
 

@@ -6,6 +6,10 @@
     #include "Function.h"
     #include "Variable.h"
     #include "VariableDeclaration.h"
+    #include "BinaryOperation.h"
+    #include "Integer.h"
+    #include "Float.h"
+    #include "Boolean.h"
 
     SemanticAnalyzer SEMANTIC_ANALYZER;
     TocAnalyzer TOC_ANALYZER;
@@ -31,15 +35,17 @@
     SyntaxTree* syntaxTree;
     char *string;
     int integer;
+    float decimal;
 }
 
 /*
  * Símbolos terminais (tokens) para a gramática.
  */
-%token <integer> T_VOID T_BOO T_FLT T_INT T_STR
+%token <integer> T_NUM T_STR T_BOO T_FLT T_INT
+%token <decimal> T_DEC
 %token T_TAB T_SP T_NL
-%token T_TOC
-%token T_NUM T_DEC T_TRUE T_FALSE
+%token T_FALSE T_TRUE
+%token T_TOC T_VOID
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_ASSIGN T_COMMA
 
@@ -93,27 +99,29 @@ line:
 declaration:
     type sp T_ID { TOC_ANALYZER.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); $$ = new VariableDeclaration((Data::Type)$1 ,v);}
     | type sp T_ID multiple_declaration { TOC_ANALYZER.analyzeVariable($3); SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
-                                                  $$ = NULL;}
+                                                  $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);}
     | T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
-                                                  $$ = NULL;}
+                                                  $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1),BinaryOperation::ASSIGN,$5);}
     | type sp T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
                                               TOC_ANALYZER.analyzeVariable($3);
-                                              SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
-                                                $$ = NULL; }
+                                              $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1),
+                                              BinaryOperation::ASSIGN, $7);}
     ;
 
 //Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); $$ = NULL;}
-    | T_COMMA sp T_ID multiple_declaration  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); $$ = NULL;}
+    T_COMMA sp T_ID  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
+                                    $$ = SEMANTIC_ANALYZER.declareVariable($3 , Data::UNKNOWN);}
+    | T_COMMA sp T_ID multiple_declaration  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
+                      $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN), BinaryOperation::COMMA, $4);}
     ;
 
 // Expressão
 expression:
-    T_TRUE {$$ = NULL;}
-    | T_FALSE {$$ = NULL;}
-    | T_NUM {$$ = NULL;}
-    | T_DEC {$$ = NULL;}
+    T_TRUE {$$ = new Boolean(true);}
+    | T_FALSE {$$ = new Boolean(false);}
+    | T_NUM {$$ = new Integer($1);}
+    | T_DEC {$$ = new Float($1);}
     | T_ID {SEMANTIC_ANALYZER.useVariable($1); $$ = NULL;}
     ;
 
@@ -121,8 +129,8 @@ expression:
 type:
     T_BOO { $$ = Data::BOO;}
     | T_FLT {$$ = Data::FLT;}
-    | T_INT{ $$ = Data::INT;}
-    | T_STR{ $$ = Data::STR;}
+    | T_INT { $$ = Data::INT;}
+    | T_STR { $$ = Data::STR;}
     | T_VOID {$$ = Data::VOID;}
     ;
 

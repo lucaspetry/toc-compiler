@@ -30,8 +30,8 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
 {text}              {yylval.string = new char[yyleng-1]; memcpy(yylval.string, &yytext[1], yyleng-2); yylval.string[yyleng-1] = '\0'; return T_TEXT;}
-{dec}               {return T_DEC;}
-{num}               {return T_NUM;}
+{dec}               {yylval.decimal = std::stof(yytext); return T_DEC;}
+{num}               {yylval.integer = std::atoi(yytext); return T_NUM;}
 {id}                {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_ID;}
 
 "("                 {return T_OPAR;}
