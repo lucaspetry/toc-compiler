@@ -4,7 +4,7 @@
 
 - In the root folder of the project:
 
-| Função                        | Comando               |
+| Task                          | Make command          |
 | :---------------------------- | :-------------------- |
 | Compile                       | `make`                |
 | Clean                         | `make clean`          |

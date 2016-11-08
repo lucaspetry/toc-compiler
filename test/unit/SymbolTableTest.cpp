@@ -8,12 +8,15 @@ class SymbolTableTest : public ::testing::Test {
 
 protected:
 	virtual void SetUp() {
+        symbol = Symbol(Data::INT, Symbol::VARIABLE, false, 0);
 	}
 
 	virtual void TearDown() {
 	}
     
+    Symbol symbol;
     SymbolTable table;
+    SymbolTable table2;
 
 };
 
@@ -21,7 +24,10 @@ protected:
  * @brief Teste do operador =
  */
 TEST_F(SymbolTableTest, operatorAssignTest) {
-	EXPECT_FALSE(true);
+	EXPECT_FALSE(table.existsSymbol("symbol1", Symbol::VARIABLE));
+    table2.addSymbol("symbol1", symbol);
+    table = table2;
+	EXPECT_TRUE(table.existsSymbol("symbol1", Symbol::VARIABLE));
 }
 
 /**
