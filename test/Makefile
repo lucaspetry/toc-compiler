@@ -4,7 +4,6 @@ CPPFLAGS = -DGTEST_HAS_PTHREAD=0
 CXXFLAGS = -g
 UNIT_EXECUTABLE = tocTest
 BLACK_BOX_SCRIPT = run-black-box.sh
-COMPILER = ../toc
 
 GTEST_DIR = gtest
 SRC_DIR = unit
@@ -37,5 +36,5 @@ clean:
 
 veryclean: clean
 	rm -rf ./$(GTEST_DIR)/*.o
-    
+
 FORCE:

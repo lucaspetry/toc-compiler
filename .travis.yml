@@ -1,16 +1,3 @@
-matrix:
-  include:
-    - compiler: clang
-      addons:
-          apt:
-            sources:
-            - sourceline: 'ppa:ubuntu-toolchain-r/test'
-            - sourceline: 'deb http://apt.llvm.org/precise/ llvm-toolchain-precise-3.8 main'
-              key_url: 'http://llvm.org/apt/llvm-snapshot.gpg.key'
-            packages:
-            - clang-3.8
-      env: COMPILER=clang++-3.8
-
 language: cpp
 
 install:

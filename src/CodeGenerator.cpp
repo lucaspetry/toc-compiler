@@ -2,11 +2,11 @@
 #include <iostream>
 
 CodeGenerator::CodeGenerator() {
-    
+
 }
 
 CodeGenerator::~CodeGenerator() {
-    
+
 }
 
 void CodeGenerator::setProgramTitle(std::string title) {
@@ -29,19 +29,22 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     // Bloco básico principal
     llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(context, "main", mainFunction);
     builder.SetInsertPoint(mainBB);
-    
+
     // Gera o código do programa
     syntaxTree->generateCode(&builder);
 
     // Verifica a função principal
     llvm::verifyFunction(*mainFunction);
 
+#ifdef LLVM_DUMP
     // Imprime o código gerado
     std::cout << "###########  LLVM Intermediate Representation  ###########\n\n";
     module->dump();
+    std::cout << "\n";
+    std::cout << "##################  LLVM Code Execution  #################\n\n";
+#endif
 
     // Executa o código intermediário com o LLVM
-    std::cout << "\n##################  LLVM Code Execution  #################\n\n";
     std::string Error;
     LLVMInitializeNativeAsmPrinter();
     LLVMInitializeNativeAsmParser();
@@ -51,16 +54,16 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
                                             .setErrorStr(&Error)
                                             .setMCPU(llvm::sys::getHostCPUName())
                                             .create();
-    
+
     if (!OurExecutionEngine) {
         fprintf(stderr, "Could not create OurExecutionEngine: %s\n", Error.c_str());
         exit(1);
     }
-    
+
     // Executa a função principal e imprime o resultado
     std::vector<llvm::GenericValue> noargs;
     llvm::GenericValue gv = OurExecutionEngine->runFunction(mainFunction, noargs);
     int result = gv.IntVal.getSExtValue();
-    std::cout << "Result: " << result << std::endl;
-    
+    std::cout << "Result: " << result;
+
 }
