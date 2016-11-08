@@ -10,14 +10,16 @@ int main(int argc, char **argv) {
 
     // Parsing da entrada
     yyparse();
-
-    // Imprime a árvore sintática
-    SYNTAX_TREE->print();
     
+#ifdef LLVM
     // Gera o código intermediário
     CodeGenerator codeGen;
     codeGen.setProgramTitle("TOC Program");
     codeGen.generateExecutableCode(SYNTAX_TREE);
-
+#else
+    // Imprime a árvore sintática
+    SYNTAX_TREE->print();
+#endif
+    
     return 0;
 }

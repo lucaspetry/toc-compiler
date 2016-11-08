@@ -1,4 +1,5 @@
 #include "CodeGenerator.h"
+#include <iostream>
 
 CodeGenerator::CodeGenerator() {
     
@@ -36,27 +37,30 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     llvm::verifyFunction(*mainFunction);
 
     // Imprime o código gerado
+    std::cout << "###########  LLVM Intermediate Representation  ###########\n\n";
     module->dump();
-    //mainFunction->dump();
+
+    // Executa o código intermediário com o LLVM
+    std::cout << "\n##################  LLVM Code Execution  #################\n\n";
+    std::string Error;
+    LLVMInitializeNativeAsmPrinter();
+    LLVMInitializeNativeAsmParser();
+    LLVMInitializeNativeAsmPrinter(); //target = generates code for my processor
+    llvm::ExecutionEngine* OurExecutionEngine =
+                            llvm::EngineBuilder(std::move(owner))
+                                            .setErrorStr(&Error)
+                                            .setMCPU(llvm::sys::getHostCPUName())
+                                            .create();
     
-//
-//    /*** Now lets compute it with a just in time (JIT) compiler ***/
-//    llvm::ExecutionEngine* OurExecutionEngine;
-//    std::string Error;
-//    LLVMInitializeNativeAsmPrinter();
-//    LLVMInitializeNativeAsmParser();
-//    LLVMInitializeNativeAsmPrinter(); //target = generates code for my processor
-//    OurExecutionEngine = llvm::EngineBuilder(std::move(owner)).setErrorStr(&Error).setMCPU(llvm::sys::getHostCPUName()).create();
-//    
-//    if (!OurExecutionEngine) {
-//        fprintf(stderr, "Could not create OurExecutionEngine: %s\n", Error.c_str());
-//        exit(1);
-//    }
-//
-//    // JIT our main. It returns a function pointer.
-//    void *mainPointer = OurExecutionEngine->getPointerToFunction(mainFunction);
-//    std::cout << "1\n";
-//    // Translate the pointer and run our main to get its results
-//    int (*result)() = (int (*)())(intptr_t)mainPointer;
-//    std::cout << "Result of our main = " << result() << std::endl;
+    if (!OurExecutionEngine) {
+        fprintf(stderr, "Could not create OurExecutionEngine: %s\n", Error.c_str());
+        exit(1);
+    }
+    
+    // Executa a função principal e imprime o resultado
+    std::vector<llvm::GenericValue> noargs;
+    llvm::GenericValue gv = OurExecutionEngine->runFunction(mainFunction, noargs);
+    int result = gv.IntVal.getSExtValue();
+    std::cout << "Result: " << result << std::endl;
+    
 }

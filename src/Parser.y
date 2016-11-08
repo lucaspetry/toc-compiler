@@ -78,7 +78,7 @@ global:
 
 main_scope: {$$ = NULL;}
     | indent line  { $$ = $2; }
-    | indent line T_NL main_scope {std::cout << "indent 2" << std::endl; $$ = $4; }
+    | indent line T_NL main_scope { $$ = $4; }
     ;
 
 line:
