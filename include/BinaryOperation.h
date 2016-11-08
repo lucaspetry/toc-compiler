@@ -7,6 +7,7 @@ class BinaryOperation : public TreeNode {
 
     public:
         enum Type {
+            ASSIGN,
             COMMA
         };
 

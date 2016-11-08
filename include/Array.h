@@ -20,6 +20,5 @@ class Array : public TreeNode {
       std::string id;
       Data::Type type;
       int size;
-
 };
 #endif

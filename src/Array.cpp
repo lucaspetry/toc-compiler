@@ -15,11 +15,10 @@ TreeNode::ClassType Array::classType() const {
 }
 
 std::string Array::printInOrder() const {
-    // [in] str saladas_de_frutas[5] >>> [out] str saladas_de_frutas[5]
     std::string output = "";
     if (this->type != Data::UNKNOWN){
       output += this->toString(this->type);
-      output += " ";      
+      output += " ";
     }
     output += this->id;
     output += "[";

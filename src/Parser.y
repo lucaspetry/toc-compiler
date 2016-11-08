@@ -6,6 +6,8 @@
     #include "BinaryOperation.h"
     #include "Comment.h"
     #include "Function.h"
+    #include "Integer.h"
+    #include "Variable.h"
 
     // to test
     #include <iostream>
@@ -52,7 +54,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global main_scope line declaration multiple_declaration multiple_attribution expression
+%type <node> global main_scope line declaration multiple_declaration multiple_attribution expression attribution
 %type <integer> indent sp type
 
 /*
@@ -89,6 +91,7 @@ main_scope:
 line:
     { $$ = NULL; }
     | declaration {$$ = $1; }
+    | attribution {$$ = $1; }
     | T_COMMENT {$$ = new Comment($1); }
     ;
 
@@ -99,8 +102,8 @@ declaration:
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5),
                                                                                               BinaryOperation::COMMA, $7); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC_ANALYZER.declareAssignVariable($3,
-                                                                                                            (Data::Type)$1); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1, $5),
+                                                                                                                                BinaryOperation::ASSIGN, $11); }
     ;
 
 //Multiplas declarações
@@ -112,15 +115,21 @@ multiple_declaration:
 
 // Multiplas atribuições para o array
 multiple_attribution:
-    expression {$$ = NULL; }
-    | expression T_COMMA sp multiple_attribution {$$ = NULL; }
+    expression {$$ = $1; }
+    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::COMMA, $4); }
 
 // Expressão
 expression:
     T_TRUE {$$ = NULL; }| T_FALSE {$$ = NULL; }
-    | T_NUM {$$ = NULL; } | T_DEC {$$ = NULL; } | T_TEXT {$$ = NULL; }
+    | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = NULL; } | T_TEXT {$$ = NULL; }
     | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC_ANALYZER.useVariable($1, $3); }
     | {$$ = NULL; }
+    ;
+
+// Atribuição
+attribution:
+    T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC_ANALYZER.useVariable($1),
+                                                                                          BinaryOperation::ASSIGN, $8); }
     ;
 
 // Tipos de dados

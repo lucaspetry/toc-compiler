@@ -3,6 +3,7 @@
 
 #include "SymbolTable.h"
 #include "Array.h"
+#include "Variable.h"
 #include <string>
 #include <vector>
 
@@ -26,7 +27,7 @@ class SemanticAnalyzer {
 
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
         TreeNode* assignVariable(std::string varId, Data::Type assignedType, TreeNode* index = NULL);
-        TreeNode* declareAssignVariable(std::string id, Data::Type dataType);
+        TreeNode* declareAssignVariable(std::string id, Data::Type dataType, int size = 0);
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL); // index se for array
         bool symbolExists(std::string id, Symbol::IdentifierType type, bool checkParentScope);
 
