@@ -1,0 +1,9 @@
+[Line 3] Lexical error : Unknown symbol $$
+[Line 4] Semantic error : Undeclared variable caqui
+[Line 6] Semantic error : redeclaration of variable manga
+# Funcao principal do programa
+void toc()
+  int kiwi$$
+  caqui = 2
+  int banana
+  flt banana

@@ -7,16 +7,18 @@
 class CodeBlock : public TreeNode {
 
     public:
-        CodeBlock();
+        CodeBlock(int indentation);
         virtual ~CodeBlock();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        std::string printIndentation() const;
         int numberOfLines() const;
         void insertLine(TreeNode* line);
         void generateCode(llvm::IRBuilder<>* builder) const;
-        
+
     private:
         std::vector<TreeNode*> lines;
+        int indentation;
 
 };
 

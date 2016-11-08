@@ -2,6 +2,7 @@
 #define SEMANTICANALYZER_H_
 
 #include "SymbolTable.h"
+#include "Variable.h"
 #include <string>
 #include <vector>
 
@@ -24,8 +25,8 @@ class SemanticAnalyzer {
 
 
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
-        TreeNode* assignVariable(std::string varId, Data::Type assignedType, TreeNode* index = NULL);
-        TreeNode* declareAssignVariable(std::string id, Data::Type dataType, Data::Type assignedType);
+        TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);
+        TreeNode* declareAssignVariable(std::string id, Data::Type dataType);
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
 
         //TreeNode* declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue);

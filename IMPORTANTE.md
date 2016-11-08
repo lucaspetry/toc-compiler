@@ -13,3 +13,8 @@
 - Classes da árvore sintática em arquivos distintos
 - Analisador semântico, analisador toc (warnings) e analisador sintático (se necessário)?
 - Nodo de bloco para várias linhas (ao invés do vetor)?
+
+## LLVM
+- Ubuntu 16.04
+- llvm 3.8
+- sudo apt-get install zlib1g-dev

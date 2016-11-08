@@ -1,0 +1,6 @@
+[Line 2] Warning : TOC recommends that you leave one space after comma.
+[Line 3] Warning : TOC recommends that you leave one space between the operands of an assignment, declaration or expression.
+# Funcao principal do programa
+void toc()
+  int banana,abobora
+  abobora=3

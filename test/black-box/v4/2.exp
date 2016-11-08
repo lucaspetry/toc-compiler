@@ -1,0 +1,6 @@
+[Line 5] Semantic error : variable abacaxi used but not initialized
+# Funcao principal do programa
+void toc()
+  int abacaxi
+  int banana
+  abacaxi = banana

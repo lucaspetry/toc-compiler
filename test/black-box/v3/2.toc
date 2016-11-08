@@ -1,0 +1,2 @@
+[Line 2] Syntax error : Unknown symbol Continuando.
+[Line 2] Syntax error : Unknown symbol exemplo.
