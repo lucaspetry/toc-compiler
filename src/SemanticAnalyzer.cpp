@@ -100,12 +100,12 @@ Symbol SemanticAnalyzer::getSymbol(std::string id, Symbol::IdentifierType type, 
 
 Data::Type SemanticAnalyzer::getSymbolType(std::string id, Symbol::IdentifierType type) const {
     if(symbolTable.existsSymbol(id, type))
-        return symbolTable.getSymbolType(id, type);
+        return symbolTable.getSymbol(id, type).getDataType();
 
     for(int i = scopes.size() - 1; i >= 0; i--) {
         SymbolTable t = scopes[i];
         if(t.existsSymbol(id, type))
-            return t.getSymbolType(id, type);
+            return t.getSymbol(id, type).getDataType();
     }
 
     // Dark zone: you shouldn't reach this zone!
@@ -128,13 +128,13 @@ bool SemanticAnalyzer::symbolExists(std::string id, Symbol::IdentifierType type,
 
 bool SemanticAnalyzer::isSymbolInitialized(std::string id, Symbol::IdentifierType type, bool checkParentScope) const {
     if(symbolTable.existsSymbol(id, type))
-        return symbolTable.isSymbolInitialized(id, type);
+        return symbolTable.getSymbol(id, type).isInitialized();
 
     if(checkParentScope) {
         for(int i = scopes.size() - 1; i >= 0; i--) {
             SymbolTable t = scopes[i];
             if(t.existsSymbol(id, type))
-                return t.isSymbolInitialized(id, type);
+                return t.getSymbol(id, type).isInitialized();
         }
     }
 
