@@ -1,7 +1,7 @@
 FLEX = flex
 BISON = bison
 LLVM=`llvm-config --cflags --ldflags --system-libs --libs core native mcjit engine interpreter`
-CC = clang++
+CC = clang++-3.8
 CFLAGS = -std=c++11 -fcxx-exceptions -Wno-deprecated-register -Wall -lffi
 EXECUTABLE = toc
 TYPE = 
