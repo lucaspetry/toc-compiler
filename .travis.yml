@@ -1,3 +1,9 @@
+matrix:
+  include:
+      - os: linux
+        sudo: required
+        llvm: 3.8
+
 language: cpp
 
 compiler:
