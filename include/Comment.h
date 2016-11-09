@@ -11,7 +11,7 @@ class Comment : public TreeNode {
         virtual ~Comment();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-
+        
     private:
       std::string comment;
 

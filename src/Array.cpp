@@ -1,9 +1,10 @@
 #include "Array.h"
 
-Array::Array(std::string id, Data::Type type, int size) : TreeNode(Data::UNKNOWN) {
+Array::Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values) : TreeNode(Data::UNKNOWN) {
     this->id = id;
     this->type = type;
     this->size = size;
+    this->values = values;
 }
 
 Array::~Array() {
@@ -16,16 +17,20 @@ TreeNode::ClassType Array::classType() const {
 
 std::string Array::printInOrder() const {
     std::string output = "";
-    if (this->type != Data::UNKNOWN){
+    if (this->type != Data::UNKNOWN and this->values == NULL){
       output += this->toString(this->type);
       output += " ";
     }
     output += this->id;
     output += "[";
-    output += std::to_string(size);
+    output += this->size->printInOrder();
     output += "]";
 
     return output;
+}
+
+std::string Array::printPreOrder() const {
+  return printInOrder();
 }
 
 void Array::setType(Data::Type type){

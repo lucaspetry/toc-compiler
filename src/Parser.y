@@ -116,7 +116,7 @@ multiple_declaration:
 // Multiplas atribuições para o array
 multiple_attribution:
     expression {$$ = $1; }
-    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::COMMA, $4); }
+    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4); }
 
 // Expressão
 expression:
@@ -128,7 +128,7 @@ expression:
 
 // Atribuição
 attribution:
-    T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC_ANALYZER.useVariable($1),
+    T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1, new Integer($3)),
                                                                                           BinaryOperation::ASSIGN, $8); }
     ;
 

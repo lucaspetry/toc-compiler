@@ -10,15 +10,17 @@
 class Array : public TreeNode {
 
     public:
-        Array(std::string id, Data::Type type, int size); // type name [size]
+        Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values = NULL); // type name [size]
         virtual ~Array();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        std::string printPreOrder() const;
         void setType(Data::Type type);
 
     private:
       std::string id;
       Data::Type type;
-      int size;
+      TreeNode* size;
+      std::vector<TreeNode*> *values;
 };
 #endif

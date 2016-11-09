@@ -8,7 +8,8 @@ class BinaryOperation : public TreeNode {
     public:
         enum Type {
             ASSIGN,
-            COMMA
+            COMMA,
+            MULT_ATT
         };
 
         BinaryOperation(TreeNode* left, Type operation, TreeNode* right);
@@ -16,6 +17,7 @@ class BinaryOperation : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
+        void setLeft(TreeNode* left);
 
     private:
         Type operation;
