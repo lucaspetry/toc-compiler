@@ -67,9 +67,13 @@
 /*
  * Símbolo inicial da gramática.
  */
-%start program
+%start start
 
 %%
+
+start:
+    program { /** TOC_ANALYZER.analyzeProgram() */ }
+    ;
 
 // Programa
 program:
