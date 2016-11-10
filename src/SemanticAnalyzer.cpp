@@ -22,6 +22,10 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
   else {
       symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
     }
+
+  if(dataType != Data::UNKNOWN)
+    symbolTable.setType(dataType);
+
   if(size > 0)
     return new Array(id, dataType, new Integer(size)); // id, type, size
   else
@@ -56,11 +60,11 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
       yyerror("semantic error: undeclared variable %s\n", id.c_str());
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
-  } else if (index != NULL){
-      return NULL; //TODO
   } else if(!isSymbolInitialized(id, Symbol::VARIABLE, true)) {
       yyerror("semantic error: uninitialized variable %s\n", id.c_str());
-  }
+  } else if (index != NULL){
+      return new Array(id, getSymbolType(id, Symbol::VARIABLE), index);
+    }
   return new Variable(id, getSymbolType(id, Symbol::VARIABLE));
 }
 

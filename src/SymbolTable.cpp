@@ -51,3 +51,12 @@ void SymbolTable::setSymbolData(const std::string id, Symbol::IdentifierType typ
 
     entryList[id].data = data;
 }
+
+void SymbolTable::setType(Data::Type type){
+  std::map<std::string, Symbol>::iterator iter;
+  for(iter = entryList.begin(); iter != entryList.end(); iter++){
+    if (iter->second.getDataType() == Data::UNKNOWN){
+      entryList[iter->first].setDataType(type);
+    }
+  }
+}
