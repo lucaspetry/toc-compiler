@@ -22,13 +22,13 @@ class SymbolTable {
         SymbolTable& operator=(const SymbolTable& table);
         virtual ~SymbolTable();
         void clear();
-        bool existsSymbol(std::string id, Symbol::IdentifierType type) const;
-        Symbol getSymbol(std::string id, Symbol::IdentifierType type) const;
+        bool existsSymbol(std::string id) const;
+        Symbol getSymbol(std::string id) const;
         std::vector<std::string> getUninitializedFunctions();
     
         void addSymbol(const std::string id, Symbol newSymbol);
-        void setInitializedSymbol(const std::string id, Symbol::IdentifierType type);
-        void setSymbolData(const std::string id, Symbol::IdentifierType type, TreeNode* data);
+        void setInitializedSymbol(const std::string id);
+        void setSymbolData(const std::string id, TreeNode* data);
     
     private:
         std::map<std::string, Symbol> entryList;

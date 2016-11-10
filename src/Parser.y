@@ -4,6 +4,7 @@
     #include "SyntaxTree.h"
     #include "Comment.h"
     #include "Function.h"
+    #include "TocFunction.h"
     #include "Variable.h"
     #include "VariableDeclaration.h"
     #include "BinaryOperation.h"
@@ -12,7 +13,7 @@
     #include "Boolean.h"
 
     SemanticAnalyzer SEMANTIC_ANALYZER;
-    TocAnalyzer TOC_ANALYZER;
+    TocAnalyzer TOC;
     SyntaxTree* SYNTAX_TREE;
 
     extern int yylex();
@@ -72,7 +73,7 @@
 %%
 
 start:
-    program { /** TOC_ANALYZER.analyzeProgram() */ }
+    program { /** TOC.analyzeProgram() */ }
     ;
 
 // Programa
@@ -85,7 +86,7 @@ program:
 // Linha
 global:
     T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new Function("toc", Data::VOID, NULL, $8); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new TocFunction((CodeBlock*) $8); }
     ;
 
 main_scope:
@@ -101,22 +102,22 @@ line:
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { TOC_ANALYZER.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); $$ = new VariableDeclaration((Data::Type)$1 ,v);}
-    | type sp T_ID multiple_declaration { TOC_ANALYZER.analyzeVariable($3); SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
+    type sp T_ID { TOC.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); $$ = new VariableDeclaration((Data::Type)$1 ,v);}
+    | type sp T_ID multiple_declaration { TOC.analyzeVariable($3); SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
                                                   $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);}
-    | T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
+    | T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4);
                                                   $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1),BinaryOperation::ASSIGN,$5);}
-    | type sp T_ID sp T_ASSIGN sp expression { TOC_ANALYZER.analyzeAssign($2,$4);
-                                              TOC_ANALYZER.analyzeVariable($3);
+    | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4);
+                                              TOC.analyzeVariable($3);
                                               $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1),
                                               BinaryOperation::ASSIGN, $7);}
     ;
 
 //Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
+    T_COMMA sp T_ID  { TOC.analyzeCommas($2); TOC.analyzeVariable($3);
                                     $$ = SEMANTIC_ANALYZER.declareVariable($3 , Data::UNKNOWN);}
-    | T_COMMA sp T_ID multiple_declaration  { TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
+    | T_COMMA sp T_ID multiple_declaration  { TOC.analyzeCommas($2); TOC.analyzeVariable($3);
                       $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN), BinaryOperation::COMMA, $4);}
     ;
 
@@ -144,7 +145,7 @@ sp:
     | T_SP sp { $$ = $2 + 1; }
     ;
 
-// Indentação
+// Indentação (2 espaços)
 indent:
     {  int a = 1; $$ = a; }
     | T_SP T_SP indent { $$ = ($3 + 1);}

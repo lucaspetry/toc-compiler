@@ -25,10 +25,7 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     llvm::Type* intType = llvm::Type::getInt64Ty(context);
     llvm::FunctionType* typeOfMain = llvm::FunctionType::get(intType, false);
     llvm::Function* mainFunction = llvm::Function::Create(typeOfMain, llvm::Function::ExternalLinkage, "main", module);
-
-    // Bloco básico principal
-    llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(context, "main", mainFunction);
-    builder.SetInsertPoint(mainBB);
+    IR::MainFunction = mainFunction;
 
     // Gera o código do programa
     syntaxTree->generateCode(&builder);

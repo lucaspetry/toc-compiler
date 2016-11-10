@@ -15,6 +15,7 @@
 #include "llvm/ExecutionEngine/MCJIT.h"
 
 namespace IR {
+    static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
     static llvm::Constant* Zero = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, 0));
 }
 

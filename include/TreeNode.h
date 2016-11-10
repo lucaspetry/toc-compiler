@@ -33,14 +33,16 @@ class TreeNode {
         enum ClassType {
             ARRAY,
             BINARY_OPERATION,
+            BOOLEAN,
             CODE_BLOCK,
             COMMENT,
+            FLOAT,
             FUNCTION,
+            INTEGER,
+            PRINT_FUNCTION,
+            TOC_FUNCTION,
             VARIABLE,
             VARIABLE_DECLARATION,
-            BOOLEAN,
-            INTEGER,
-            FLOAT,
             UNKNOWN
         };
 

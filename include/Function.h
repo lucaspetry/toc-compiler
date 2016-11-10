@@ -8,17 +8,17 @@
 class Function : public TreeNode {
 
     public:
-        Function(std::string id, Data::Type type, CodeBlock* params, TreeNode* body);
+        Function(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret);
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode(llvm::IRBuilder<>* builder);
 
-    private:
+    protected:
       std::string id;
       CodeBlock* params;
-      TreeNode* body;
-      Data::Type type;
+      CodeBlock* body;
+      TreeNode* ret;
 
 };
 

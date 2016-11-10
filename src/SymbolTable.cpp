@@ -15,11 +15,11 @@ void SymbolTable::clear() {
     entryList.clear();
 }
 
-bool SymbolTable::existsSymbol(std::string id, Symbol::IdentifierType type) const {
+bool SymbolTable::existsSymbol(std::string id) const {
     return entryList.find(id) != entryList.end();
 }
 
-Symbol SymbolTable::getSymbol(std::string id, Symbol::IdentifierType type) const {
+Symbol SymbolTable::getSymbol(std::string id) const {
     return entryList.at(id);
 }
 
@@ -39,11 +39,11 @@ void SymbolTable::addSymbol(std::string id, Symbol newSymbol) {
     entryList[id] = newSymbol;
 }
 
-void SymbolTable::setInitializedSymbol(std::string id, Symbol::IdentifierType type) {
+void SymbolTable::setInitializedSymbol(std::string id) {
     entryList[id].initialized = true;
 }
 
-void SymbolTable::setSymbolData(const std::string id, Symbol::IdentifierType type, TreeNode* data) {
+void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
     if(entryList[id].data) {
         delete entryList[id].data;
         entryList[id].data = 0;

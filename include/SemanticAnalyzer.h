@@ -29,13 +29,16 @@ class SemanticAnalyzer {
 
         //TreeNode* declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue);
         //TreeNode* callFunction(std::string functionId, Vector* params);
-        bool symbolExists(std::string id, Symbol::IdentifierType type, bool checkParentScope);
+        bool symbolExists(std::string id, bool checkParentScope);
 
     private:
-        Symbol getSymbol(std::string id, Symbol::IdentifierType type, bool checkParentScope);
-        Data::Type getSymbolType(std::string id, Symbol::IdentifierType type) const;
-        bool isSymbolInitialized(std::string id, Symbol::IdentifierType type, bool checkParentScope) const;
-        void setInitializedSymbol(std::string id, Symbol::IdentifierType type);
+        /**
+         * Métodos para gerência de múltiplos escopos.
+         */
+        Symbol getSymbol(std::string id, bool checkParentScope);
+        Data::Type getSymbolType(std::string id) const;
+        bool isSymbolInitialized(std::string id, bool checkParentScope) const;
+        void setInitializedSymbol(std::string id);
 
         SymbolTable symbolTable;
         std::vector<SymbolTable> scopes;

@@ -1,14 +1,13 @@
 #include "Function.h"
 
-Function::Function(std::string id, Data::Type type, CodeBlock* params, TreeNode* body) : TreeNode(Data::UNKNOWN) {
+Function::Function(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) : TreeNode(ret->dataType()) {
     this->id = id;
     this->params = params;
     this->body = body;
-    this->type = type;
+    this->ret = ret;
 }
 
 Function::~Function() {
-
 }
 
 TreeNode::ClassType Function::classType() const {
@@ -17,7 +16,7 @@ TreeNode::ClassType Function::classType() const {
 
 std::string Function::printInOrder() const {
     std::string output;
-    output = Data::toString(type) + " " + id + "(";
+    output = Data::toString(this->dataType()) + " " + id + "(";
 
     // Imprime os parâmetros
     if(this->params != NULL)
@@ -30,6 +29,8 @@ std::string Function::printInOrder() const {
     if(this->body != NULL) {
         output += this->body->printInOrder();
     }
+    
+    // Imprimir retorno
 
     return output;
 }
