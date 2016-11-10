@@ -13,6 +13,6 @@ TreeNode::ClassType TocFunction::classType() const {
 llvm::Value* TocFunction::generateCode(llvm::IRBuilder<>* builder) {
     llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "toc", IR::MainFunction);
     builder->SetInsertPoint(mainBB);
-    
+
     return NULL;//TODO;
 }

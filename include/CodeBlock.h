@@ -3,11 +3,13 @@
 
 #include <string>
 #include "TreeNode.h"
+#include "SemanticAnalyzer.h"
 
 class CodeBlock : public TreeNode {
 
     public:
         CodeBlock(int indentation);
+        CodeBlock();
         virtual ~CodeBlock();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
@@ -16,7 +18,6 @@ class CodeBlock : public TreeNode {
         void insertLine(TreeNode* line);
         llvm::Value* generateCode(llvm::IRBuilder<>* builder);
 
-    private:
         std::vector<TreeNode*> lines;
         int indentation;
 

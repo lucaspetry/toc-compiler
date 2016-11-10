@@ -3,6 +3,8 @@
 CodeBlock::CodeBlock(int indentation) : TreeNode(Data::UNKNOWN) {
   this->indentation = indentation;
 }
+CodeBlock::CodeBlock() : TreeNode(Data::UNKNOWN){
+}
 
 CodeBlock::~CodeBlock() {
 }
@@ -17,7 +19,8 @@ std::string CodeBlock::printInOrder() const {
     for(TreeNode* myTreenode: this->lines){
         output += this->printIndentation();
         output += myTreenode->printInOrder();
-        output += "\n";
+        if(myTreenode->classType()!= TreeNode::VARIABLE)
+          output += "\n";
     }
     return output;
 }
@@ -30,11 +33,11 @@ void CodeBlock::insertLine(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
 }
 
-llvm::Value* CodeBlock::generateCode(llvm::IRBuilder<>* builder) {    
+llvm::Value* CodeBlock::generateCode(llvm::IRBuilder<>* builder) {
     for (TreeNode* line: lines) {
         line->generateCode(builder);
     }
-    
+
     return NULL;
 }
 

@@ -13,11 +13,11 @@ TreeNode::ClassType Variable::classType() const {
 }
 
 std::string Variable::getId() const {
-    return id;
+    return id ;
 }
 
 std::string Variable::printInOrder() const {
-    return id;
+    return id +"tipo: " + toString(type);
 }
 
 llvm::Value* Variable::generateCode(llvm::IRBuilder<>* builder) {

@@ -5,15 +5,15 @@ std::string Data::toString(Data::Type type) {
         case Data::UNKNOWN:
             return "unknown";
         case Data::BOO:
-            return "boo";
+            return "boo ";
         case Data::FLT:
-            return "flt";
+            return "flt ";
         case Data::INT:
-            return "int";
+            return "int ";
         case Data::STR:
-            return "str";
+            return "str ";
         case Data::VOID:
-            return "void";
+            return "void ";
     }
 }
 

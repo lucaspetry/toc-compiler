@@ -1,6 +1,6 @@
 #include "Function.h"
 
-Function::Function(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) : TreeNode(ret->dataType()) {
+Function::Function(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) : TreeNode(Data::UNKNOWN) {
     this->id = id;
     this->params = params;
     this->body = body;
@@ -29,7 +29,7 @@ std::string Function::printInOrder() const {
     if(this->body != NULL) {
         output += this->body->printInOrder();
     }
-    
+
     // Imprimir retorno
 
     return output;

@@ -21,6 +21,7 @@ class SemanticAnalyzer {
         void newScope();
         void returnScope();
 
+        void setType(Data::Type tipo);
 
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
         TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);

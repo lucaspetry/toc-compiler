@@ -73,6 +73,12 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
     return new Variable(id, getSymbolType(id));
 }
 
+void SemanticAnalyzer::setType(Data::Type tipo){
+  for(std::map<std::string, Symbol>::iterator it = symbolTable.entryList.begin(); it != symbolTable.entryList.end(); ++it) {
+      if (it->second.getDataType() == Data::UNKNOWN)
+        symbolTable.addSymbol(it->first, Symbol(tipo, Symbol::VARIABLE, false));
+}
+}
 // TreeNode* SemanticAnalyzer::declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue) {
 //   return NULL;
 //
