@@ -1,12 +1,9 @@
 #ifndef TREENODE_H_
 #define TREENODE_H_
 
-<<<<<<< HEAD
 #include "LLVM.h"
-=======
 #include <string>
 #include <vector>
->>>>>>> master
 
 class SemanticAnalyzer;
 class SyntaxTree;
@@ -24,9 +21,13 @@ namespace Data {
         STR = 4,
         VOID = 5
     };
+    
+    std::string toString(Data::Type type);
 }
 
 class TreeNode {
+    
+    friend class BinaryOperation;
 
     public:
         enum ClassType {
@@ -49,9 +50,8 @@ class TreeNode {
         void setType(Data::Type type);
 
         virtual TreeNode::ClassType classType() const = 0;
-        virtual void generateCode(llvm::IRBuilder<>* builder) const = 0;
+        virtual void generateCode(llvm::IRBuilder<>* builder) = 0;
         virtual std::string printInOrder() const = 0;
-        std::string toString(Data::Type type) const;
 
     protected:
         llvm::Value* code;

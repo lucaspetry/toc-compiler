@@ -11,7 +11,7 @@ class Variable : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string getId() const;
         std::string printInOrder() const;
-        virtual void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder);
 
     private:
         std::string id;

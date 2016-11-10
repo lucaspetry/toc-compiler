@@ -14,4 +14,8 @@
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
 
+namespace IR {
+    static llvm::Constant* Zero = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, 0));
+}
+
 #endif

@@ -1,11 +1,14 @@
 #ifndef SYMBOLTABLE_H_
 #define SYMBOLTABLE_H_
 
+#include "LLVM.h"
 #include "Symbol.h"
 #include "TreeNode.h"
 #include <map>
 #include <string>
 #include <vector>
+
+typedef std::map<std::string, llvm::Value*> MemoryMap;
 
 /**
  * Tabela de símbolos gerada na análise sintática.
@@ -29,6 +32,7 @@ class SymbolTable {
     
     private:
         std::map<std::string, Symbol> entryList;
+        MemoryMap allocations;
     
 };
 

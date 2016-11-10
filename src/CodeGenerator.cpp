@@ -64,6 +64,6 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     std::vector<llvm::GenericValue> noargs;
     llvm::GenericValue gv = OurExecutionEngine->runFunction(mainFunction, noargs);
     int result = gv.IntVal.getSExtValue();
-    std::cout << "Result: " << result;
+    std::cout << "Result: " << result << std::endl;
 
 }

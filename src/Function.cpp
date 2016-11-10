@@ -1,5 +1,5 @@
 #include "Function.h"
-#include <iostream>
+
 Function::Function(std::string id, Data::Type type, CodeBlock* params, TreeNode* body) : TreeNode(Data::UNKNOWN) {
     this->id = id;
     this->params = params;
@@ -16,28 +16,24 @@ TreeNode::ClassType Function::classType() const {
 }
 
 std::string Function::printInOrder() const {
-  std::string output;
-    output += toString(type);
-    output += " ";
-    output += this->id;
-    output += "(";
+    std::string output;
+    output = Data::toString(type) + " " + id + "(";
 
-    // print the params
+    // Imprime os parâmetros
     if(this->params != NULL)
-      output += this->params->printInOrder();
+        output += this->params->printInOrder();
 
     output += ")";
     output += "\n";
 
-    // print the Function body
-    if(this->body != NULL){
-      // std::cout << ((CodeBlock*)this->body)->lines.size() << std::endl;
-      output += this->body->printInOrder();
+    // Imprime o corpo da função
+    if(this->body != NULL) {
+        output += this->body->printInOrder();
     }
 
     return output;
-  }
+}
 
-void Function::generateCode(llvm::IRBuilder<>* builder) const {
+void Function::generateCode(llvm::IRBuilder<>* builder) {
   //TODO;
 }

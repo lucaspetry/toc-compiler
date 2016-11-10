@@ -7,7 +7,7 @@ class Float : public TreeNode {
         virtual ~Float();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        virtual void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder);
 
     private:
         float value;

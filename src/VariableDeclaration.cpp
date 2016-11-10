@@ -13,11 +13,11 @@ TreeNode::ClassType VariableDeclaration::classType() const {
 }
 
 std::string VariableDeclaration::printInOrder() const {
-  std::string output = toString(this->type);
-  output+= next->printInOrder();
-  return output;
+    std::string output = toString(this->type);
+    output+= next->printInOrder();
+    return output;
 }
 
-void VariableDeclaration::generateCode() const {
-      //TODO;
+void VariableDeclaration::generateCode(llvm::IRBuilder<>* builder) {
+    // TODO;
 }

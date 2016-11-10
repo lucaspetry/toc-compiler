@@ -7,8 +7,9 @@ class Integer : public TreeNode {
         virtual ~Integer();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        virtual void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder);
         int getValue();
+    
     private:
         int value;
 

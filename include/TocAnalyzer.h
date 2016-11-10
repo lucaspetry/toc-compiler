@@ -1,12 +1,11 @@
 #ifndef TOCANALYZER_H_
 #define TOCANALYZER_H_
+
+#include "ErrorLogger.h"
 #include <ctype.h>
 #include <string>
 
-class TocAnalyzer;
-
-extern TocAnalyzer TOC_ANALYZER;
-extern void yyerror(const char* s, ...);
+extern ErrorLogger* ERROR_LOGGER;
 
 /**
  * Analisador TOC.

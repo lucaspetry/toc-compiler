@@ -7,7 +7,7 @@ class Boolean : public TreeNode {
         virtual ~Boolean();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        virtual void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder);
 
     private:
         bool value;

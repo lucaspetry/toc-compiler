@@ -12,14 +12,15 @@ TreeNode::ClassType Boolean::classType() const {
 }
 
 std::string Boolean::printInOrder() const {
-  switch(value) {
-    case true:
-       return "true";
-    default:
-       return "false";
-  }
+    if(value)
+        return "true";
+    
+    return "false";
 }
 
-void Boolean::generateCode() const {
-  //TODO;
+void Boolean::generateCode(llvm::IRBuilder<>* builder) {
+    // TODO não sei se isso está ok
+    bool equivalent = value ? 1 : 0;
+    if(this->code == NULL)
+        this->code = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, equivalent));
 }

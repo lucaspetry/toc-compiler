@@ -18,7 +18,7 @@ void SemanticAnalyzer::returnScope() {
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
   if(symbolExists(id, Symbol::VARIABLE, false))
-        yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);
     else {
         symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
     }
@@ -34,7 +34,7 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id);
       // return NULL; //TODO
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if (index != NULL){
@@ -50,7 +50,7 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType) {
   if(symbolExists(id, Symbol::VARIABLE, false))
-          yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
+          ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);
       else
          symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
 
@@ -61,14 +61,14 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id);
       // return NULL; //TODO
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if (index != NULL){
       return NULL; //TODO
       //return new Array(id, getSymbolType(id, Symbol::VARIABLE), index);
   } else if(!isSymbolInitialized(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: uninitialized variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Uninitialized variable " + id);
   }
   // return NULL; //TODO
   return new Variable(id, getSymbolType(id, Symbol::VARIABLE));

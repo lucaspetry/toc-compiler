@@ -1,15 +1,13 @@
 #ifndef SEMANTICANALYZER_H_
 #define SEMANTICANALYZER_H_
 
+#include "ErrorLogger.h"
 #include "SymbolTable.h"
 #include "Variable.h"
 #include <string>
 #include <vector>
 
-class SemanticAnalyzer;
-
-extern SemanticAnalyzer SEMANTIC_ANALYZER;
-extern void yyerror(const char* s, ...);
+extern ErrorLogger* ERROR_LOGGER;
 
 /**
  * Analisador semântico.

@@ -2,6 +2,7 @@
 #define BINARYOPERATION_H_
 
 #include "TreeNode.h"
+#include "Variable.h"
 
 class BinaryOperation : public TreeNode {
 
@@ -17,7 +18,8 @@ class BinaryOperation : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
-        void generateCode() const;
+        void generateCode(llvm::IRBuilder<>* builder);
+    
     private:
         Type operation;
         TreeNode* left;
