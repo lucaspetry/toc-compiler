@@ -65,9 +65,12 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if(!isSymbolInitialized(id, Symbol::VARIABLE, true)) {
       yyerror("semantic error: uninitialized variable %s\n", id.c_str());
-  } else if (index != NULL){
-      return new Array(id, getSymbolType(id, Symbol::VARIABLE), index);
-    }
+  }
+
+  if (index != NULL){
+    return new Array(id, Data::UNKNOWN, index);
+  }
+
   return new Variable(id, getSymbolType(id, Symbol::VARIABLE));
 }
 

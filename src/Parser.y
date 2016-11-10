@@ -106,9 +106,11 @@ line:
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); } // TOC_ANALYZER.analyzeVariable($3);
-    | type sp T_ID multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);} // TOC_ANALYZER.analyzeVariable($3);
-    | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);} // TOC_ANALYZER.analyzeAssign($2,$4); TOC_ANALYZER.analyzeVariable($3);
+    type sp T_ID { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); TOC_ANALYZER.analyzeVariable($3); }
+    | type sp T_ID multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);
+                                          TOC_ANALYZER.analyzeVariable($3); }
+    | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
+                                              TOC_ANALYZER.analyzeAssign($2,$4); TOC_ANALYZER.analyzeVariable($3); } 
     // array
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5), BinaryOperation::COMMA, $7); }
@@ -118,8 +120,10 @@ declaration:
 
 //Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID  { $$ = SEMANTIC_ANALYZER.declareVariable($3 , Data::UNKNOWN);}// TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
-    | T_COMMA sp T_ID multiple_declaration  { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN), BinaryOperation::COMMA, $4);} // TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);
+    T_COMMA sp T_ID  { $$ = SEMANTIC_ANALYZER.declareVariable($3 , Data::UNKNOWN);
+                      TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); }
+    | T_COMMA sp T_ID multiple_declaration  { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN), BinaryOperation::COMMA, $4);
+                                              TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);}
     // array
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5); }
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5),
@@ -145,16 +149,16 @@ expression:
 attribution:
     // array
     T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1, new Integer($3)), BinaryOperation::ASSIGN, $8); }
-    | T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1), BinaryOperation::ASSIGN, $5);} // TOC_ANALYZER.analyzeAssign($2,$4);
+    | T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1), BinaryOperation::ASSIGN, $5); TOC_ANALYZER.analyzeAssign($2,$4); }
     ;
 
 // Tipos de dados
 type:
-    T_BOO { $$ = Data::BOO;}
-    | T_FLT { $$ = Data::FLT;}
-    | T_INT { $$ = Data::INT;}
-    | T_STR { $$ = Data::STR;}
-    | T_VOID { $$ = Data::VOID;}
+    T_BOO {$$ = Data::BOO;}
+    | T_FLT {$$ = Data::FLT;}
+    | T_INT {$$ = Data::INT;}
+    | T_STR {$$ = Data::STR;}
+    | T_VOID {$$ = Data::VOID;}
     ;
 
 // Espaços
