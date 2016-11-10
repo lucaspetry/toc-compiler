@@ -12,6 +12,8 @@ class Function : public TreeNode {
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+
     private:
       std::string id;
       CodeBlock* params;

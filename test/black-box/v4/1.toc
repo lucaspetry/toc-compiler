@@ -1,0 +1,6 @@
+#Funcao principal do programa
+void toc()
+  int abacate, banana, caqui
+  abacate = 0
+  boo figo, goiaba
+  flt kiwi = 2

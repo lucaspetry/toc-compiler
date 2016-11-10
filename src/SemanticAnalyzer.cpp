@@ -22,23 +22,24 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
   else {
       symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
     }
-
   if(size > 0)
     return new Array(id, dataType, new Integer(size)); // id, type, size
-
+  else
+    return new Variable(id, dataType);
   return NULL;
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
       yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if (index != NULL){
         setInitializedSymbol(id, Symbol::VARIABLE);
         return new Array(id, getSymbolType(id, Symbol::VARIABLE), index, new std::vector<TreeNode*>);
+  }  else {
+      setInitializedSymbol(id, Symbol::VARIABLE);
+      return new Variable(id, getSymbolType(id, Symbol::VARIABLE));
   }
-
-  return NULL;
-
 }
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, int size) {
@@ -52,13 +53,15 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
-  if(!symbolExists(id, Symbol::VARIABLE, true))
-    yyerror("semantic error: undeclared variable %s\n", id.c_str());
-  else
-    return new Variable(id);
-
-  return NULL;
-
+  if(!symbolExists(id, Symbol::VARIABLE, true)) {
+      yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
+  } else if (index != NULL){
+      return NULL; //TODO
+  } else if(!isSymbolInitialized(id, Symbol::VARIABLE, true)) {
+      yyerror("semantic error: uninitialized variable %s\n", id.c_str());
+  }
+  return new Variable(id, getSymbolType(id, Symbol::VARIABLE));
 }
 
 Symbol SemanticAnalyzer::getSymbol(std::string id, Symbol::IdentifierType type, bool checkParentScope) {
@@ -77,12 +80,12 @@ Symbol SemanticAnalyzer::getSymbol(std::string id, Symbol::IdentifierType type, 
 
 Data::Type SemanticAnalyzer::getSymbolType(std::string id, Symbol::IdentifierType type) const {
     if(symbolTable.existsSymbol(id, type))
-        return symbolTable.getSymbolType(id, type);
+        return symbolTable.getSymbol(id, type).getDataType();
 
     for(int i = scopes.size() - 1; i >= 0; i--) {
         SymbolTable t = scopes[i];
         if(t.existsSymbol(id, type))
-            return t.getSymbolType(id, type);
+            return t.getSymbol(id, type).getDataType();
     }
 
     // Dark zone: you shouldn't reach this zone!
@@ -105,13 +108,13 @@ bool SemanticAnalyzer::symbolExists(std::string id, Symbol::IdentifierType type,
 
 bool SemanticAnalyzer::isSymbolInitialized(std::string id, Symbol::IdentifierType type, bool checkParentScope) const {
     if(symbolTable.existsSymbol(id, type))
-        return symbolTable.isSymbolInitialized(id, type);
+        return symbolTable.getSymbol(id, type).isInitialized();
 
     if(checkParentScope) {
         for(int i = scopes.size() - 1; i >= 0; i--) {
             SymbolTable t = scopes[i];
             if(t.existsSymbol(id, type))
-                return t.isSymbolInitialized(id, type);
+                return t.getSymbol(id, type).isInitialized();
         }
     }
 

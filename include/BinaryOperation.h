@@ -2,6 +2,7 @@
 #define BINARYOPERATION_H_
 
 #include "TreeNode.h"
+#include "Variable.h"
 
 class BinaryOperation : public TreeNode {
 
@@ -9,7 +10,8 @@ class BinaryOperation : public TreeNode {
         enum Type {
             ASSIGN,
             COMMA,
-            MULT_ATT
+            MULT_ATT,
+            UNKNOWN
         };
 
         BinaryOperation(TreeNode* left, Type operation, TreeNode* right);
@@ -18,6 +20,7 @@ class BinaryOperation : public TreeNode {
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
+        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
 
     private:
         Type operation;

@@ -29,10 +29,10 @@ std::string Array::printInOrder() const {
     return output;
 }
 
-std::string Array::printPreOrder() const {
-  return printInOrder();
-}
-
 void Array::setType(Data::Type type){
   this->type = type;
+}
+
+llvm::Value* Array::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL;
 }

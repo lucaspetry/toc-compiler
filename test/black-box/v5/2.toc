@@ -1,4 +1,12 @@
+<<<<<<< HEAD
 # Exemplo de criacao de arrays em TOC
 void toc()
   str saladas_de_frutas[5]
   boo a[5], b[7], j[10]
+=======
+# Funcao principal do programa
+void toc()
+  # Exemplo de criação de arrays em TOC
+  str saladas_de_frutas[5]
+  str banana = saladas_de_frutas[3]
+>>>>>>> llvm

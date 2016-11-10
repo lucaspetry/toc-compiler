@@ -1,4 +1,5 @@
 toc
+tocTree
 *~
 include/Parser.h
 include/*~
@@ -9,3 +10,4 @@ test/black-box/*.o
 test/unit/*.o
 test/gtest/*.o
 tmp/*
+comandos

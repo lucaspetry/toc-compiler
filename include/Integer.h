@@ -7,14 +7,15 @@
 class Integer : public TreeNode {
 
     public:
-        Integer(int integer);
+        Integer(int value);
         virtual ~Integer();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        int getValue();
 
     private:
-      int integer;
+        int value;
 
 };
-
 #endif

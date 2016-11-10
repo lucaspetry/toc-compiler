@@ -1,0 +1,9 @@
+[Line 8] Semantic error : Value of groselha is not a number.
+# Funcao principal do programa
+void toc()
+  # Exemplo de conversão entre tipos
+  str laranja = “5”
+  flt suco = laranja
+  boo bom = suco
+  str groselha = “groselha”
+  flt suco = groselha

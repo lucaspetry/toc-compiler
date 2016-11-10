@@ -1,6 +1,6 @@
 #include "Variable.h"
 
-Variable::Variable(std::string id) : TreeNode(Data::STR) {
+Variable::Variable(std::string id, Data::Type type) : TreeNode(type) {
     this->id = id;
 }
 
@@ -13,4 +13,12 @@ TreeNode::ClassType Variable::classType() const {
 
 std::string Variable::printInOrder() const {
     return this->id;
+}
+
+std::string Variable::getId() const {
+    return id;
+}
+
+llvm::Value* Variable::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL;// TODO;
 }

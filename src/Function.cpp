@@ -17,6 +17,7 @@ TreeNode::ClassType Function::classType() const {
 
 std::string Function::printInOrder() const {
     std::string output;
+
     output += toString(type);
     output += " ";
     output += this->id;
@@ -25,6 +26,12 @@ std::string Function::printInOrder() const {
     // print the params
     if(this->params != NULL)
       output += this->params->printInOrder();
+
+    output = Data::toString(type) + " " + id + "(";
+
+    // Imprime os parâmetros
+    if(this->params != NULL)
+        output += this->params->printInOrder();
 
     output += ")";
     output += "\n";
@@ -35,4 +42,8 @@ std::string Function::printInOrder() const {
     }
 
     return output;
+}
+
+llvm::Value* Function::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL;//TODO;
 }

@@ -19,10 +19,12 @@ std::string BinaryOperation::printInOrder() const {
     output += "{";
 
   output += left->printInOrder();
+
   if(operation != COMMA)
       output += " ";
 
   output += operationToString(operation) + " ";
+
   output += right->printInOrder();
 
   if(operation == MULT_ATT)
@@ -46,4 +48,19 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
 
 void BinaryOperation::setLeft(TreeNode* left){
   this->left = left;
+}
+
+llvm::Value* BinaryOperation::generateCode(llvm::IRBuilder<>* builder) {
+  if (this->operation == BinaryOperation::ASSIGN) {
+    Variable* lvar = dynamic_cast<Variable *>(left); // TODO pode ser VariableDeclaration
+    return builder->CreateAdd(right->generateCode(builder), IR::Zero, lvar->getId().c_str());
+  } else {
+    left->generateCode(builder); // TODO
+    right->generateCode(builder); // TODO
+    switch(this->operation){
+      default:
+        return NULL; //Not the greatest error capture, but okay for the example
+        break;
+    }
+  }
 }

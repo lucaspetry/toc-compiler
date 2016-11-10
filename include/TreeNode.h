@@ -1,6 +1,7 @@
 #ifndef TREENODE_H_
 #define TREENODE_H_
 
+#include "LLVM.h"
 #include <string>
 #include <vector>
 
@@ -20,9 +21,13 @@ namespace Data {
         STR = 4,
         VOID = 5
     };
+
+    std::string toString(Data::Type type);
 }
 
 class TreeNode {
+
+    friend class BinaryOperation;
 
     public:
         enum ClassType {
@@ -32,7 +37,10 @@ class TreeNode {
             COMMENT,
             FUNCTION,
             VARIABLE,
+            VARIABLE_DECLARATION,
+            BOOLEAN,
             INTEGER,
+            FLOAT,
             UNKNOWN
         };
 
@@ -40,7 +48,9 @@ class TreeNode {
         virtual ~TreeNode();
         Data::Type dataType() const;
         void setType(Data::Type type);
+
         virtual TreeNode::ClassType classType() const = 0;
+        virtual llvm::Value* generateCode(llvm::IRBuilder<>* builder) = 0;
         virtual std::string printInOrder() const = 0;
         std::string toString(Data::Type type) const;
 

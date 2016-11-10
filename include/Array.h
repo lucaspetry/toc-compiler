@@ -4,18 +4,15 @@
 #include <string>
 #include "TreeNode.h"
 
-// to test
-#include <iostream>
-
 class Array : public TreeNode {
 
     public:
-        Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values = NULL); // type name [size]
+        Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values = NULL);
         virtual ~Array();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        std::string printPreOrder() const;
         void setType(Data::Type type);
+        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
 
     private:
       std::string id;
