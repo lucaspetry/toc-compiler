@@ -18,25 +18,26 @@ void SemanticAnalyzer::returnScope() {
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
   if(symbolExists(id, Symbol::VARIABLE, false))
-      yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);
   else {
-      symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
+      if(dataType != Data::UNKNOWN)
+        symbolTable.setType(dataType);
+
+      if(size > 0){
+        symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, new Integer(size))); // Adds variable to symbol table and save array size
+        return new Array(id, dataType, new Integer(size));
+      }else{
+        symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
+        return new VariableDeclaration(dataType , new Variable(id, dataType));
+      }
     }
-
-  if(dataType != Data::UNKNOWN)
-    symbolTable.setType(dataType);
-
-  if(size > 0)
-    return new Array(id, dataType, new Integer(size));
-  else
-    return new VariableDeclaration(dataType , new Variable(id, dataType));
 
   return NULL;
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclaration of variable " + id);
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if (index != NULL){
         setInitializedSymbol(id, Symbol::VARIABLE);
@@ -49,25 +50,31 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, int size) {
   if(symbolExists(id, Symbol::VARIABLE, false))
-    yyerror("semantic error: re-declaration of variable %s\n", id.c_str());
-  else
+    ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);
+  else{
     symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
-  if(size > 0)
-    return new Array(id, dataType, new Integer(size));
-  else
-    return new VariableDeclaration(dataType, new Variable(id, dataType));
+    if(size > 0)
+      return new Array(id, dataType, new Integer(size));
+      else
+      return new VariableDeclaration(dataType, new Variable(id, dataType));
+  }
   return NULL;
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   if(!symbolExists(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: undeclared variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclaration of variable " + id);
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
   } else if(!isSymbolInitialized(id, Symbol::VARIABLE, true)) {
-      yyerror("semantic error: uninitialized variable %s\n", id.c_str());
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Uninitialized variable " + id);
   }
 
   if (index != NULL){
+    Symbol s = getSymbol(id, Symbol::VARIABLE, true);
+    Integer *i = ((Integer*)s.getData());
+    Integer *local = ((Integer*) index);
+    if(local->getValue() > i->getValue() || local->getValue() < 0)
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id);
     return new Array(id, Data::UNKNOWN, index);
   }
 

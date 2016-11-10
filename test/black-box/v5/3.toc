@@ -1,0 +1,4 @@
+# Main
+void toc()
+  flt j[14]
+  flt a = j[15]

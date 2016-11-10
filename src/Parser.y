@@ -110,12 +110,14 @@ declaration:
     | type sp T_ID multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);
                                           TOC_ANALYZER.analyzeVariable($3); }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
-                                              TOC_ANALYZER.analyzeAssign($2,$4); TOC_ANALYZER.analyzeVariable($3); } 
+                                              TOC_ANALYZER.analyzeAssign($2,$4); TOC_ANALYZER.analyzeVariable($3); }
     // array
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5), BinaryOperation::COMMA, $7); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5);
+                                                TOC_ANALYZER.analyzeVariable($3); }
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1, $5), BinaryOperation::COMMA, $7);
+                                                                      TOC_ANALYZER.analyzeVariable($3); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1, $5),
-                                                                                                                                BinaryOperation::ASSIGN, $11); }
+                                                                                                        BinaryOperation::ASSIGN, $11); TOC_ANALYZER.analyzeVariable($3); }
     ;
 
 //Multiplas declarações
@@ -125,9 +127,10 @@ multiple_declaration:
     | T_COMMA sp T_ID multiple_declaration  { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN), BinaryOperation::COMMA, $4);
                                               TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3);}
     // array
-    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5); }
+    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5);
+                                                    TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); }
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN, $5),
-                                                                                                  BinaryOperation::COMMA, $7); }
+                                                                          BinaryOperation::COMMA, $7); TOC_ANALYZER.analyzeCommas($2); TOC_ANALYZER.analyzeVariable($3); }
 
     ;
 

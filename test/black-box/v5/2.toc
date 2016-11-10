@@ -6,4 +6,6 @@ void toc()
   flt j[14]
   boo um[2], dois[9], tres[8]
   int aaa[2] = {1, 4}
-  int bbb = aaa[0]
+  flt Up[9]
+  boo gg[66], GG[6]
+  str aAa[10],bBb[1]
