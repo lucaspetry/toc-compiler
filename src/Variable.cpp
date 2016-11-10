@@ -20,6 +20,6 @@ std::string Variable::printInOrder() const {
     return id;
 }
 
-void Variable::generateCode(llvm::IRBuilder<>* builder) {
-    // TODO;
+llvm::Value* Variable::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL;// TODO;
 }

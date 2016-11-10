@@ -50,11 +50,10 @@ class TreeNode {
         void setType(Data::Type type);
 
         virtual TreeNode::ClassType classType() const = 0;
-        virtual void generateCode(llvm::IRBuilder<>* builder) = 0;
+        virtual llvm::Value* generateCode(llvm::IRBuilder<>* builder) = 0;
         virtual std::string printInOrder() const = 0;
 
     protected:
-        llvm::Value* code;
         Data::Type type;
 
 };

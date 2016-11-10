@@ -30,8 +30,12 @@ void CodeBlock::insertLine(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
 }
 
-void CodeBlock::generateCode(llvm::IRBuilder<>* builder) {
-    // Doesn't generate any code.
+llvm::Value* CodeBlock::generateCode(llvm::IRBuilder<>* builder) {    
+    for (TreeNode* line: lines) {
+        line->generateCode(builder);
+    }
+    
+    return NULL;
 }
 
 std::string CodeBlock::printIndentation() const {

@@ -15,6 +15,6 @@ std::string Comment::printInOrder() const {
     return this->comment;
 }
 
-void Comment::generateCode(llvm::IRBuilder<>* builder) {
-    // Doesn't generate any code.
+llvm::Value* Comment::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL; // Doesn't generate any code.
 }

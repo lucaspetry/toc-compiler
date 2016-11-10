@@ -18,7 +18,6 @@ std::string Integer::printInOrder() const {
     return std::to_string(value);
 }
 
-void Integer::generateCode(llvm::IRBuilder<>* builder) {
-    if(this->code == NULL)
-        this->code = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, value));
+llvm::Value* Integer::generateCode(llvm::IRBuilder<>* builder) {
+    return llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, value));
 }

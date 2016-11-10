@@ -18,6 +18,6 @@ std::string VariableDeclaration::printInOrder() const {
     return output;
 }
 
-void VariableDeclaration::generateCode(llvm::IRBuilder<>* builder) {
-    // TODO;
+llvm::Value* VariableDeclaration::generateCode(llvm::IRBuilder<>* builder) {
+    return NULL;// TODO;
 }

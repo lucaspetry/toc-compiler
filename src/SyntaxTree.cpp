@@ -18,7 +18,7 @@ void SyntaxTree::print() {
     }
 }
 
-void SyntaxTree::generateCode(llvm::IRBuilder<>* builder) {    
+void SyntaxTree::generateCode(llvm::IRBuilder<>* builder) {
     for (TreeNode* line: lines) {
         line->generateCode(builder);
     }
