@@ -27,9 +27,10 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     symbolTable.setType(dataType);
 
   if(size > 0)
-    return new Array(id, dataType, new Integer(size)); // id, type, size
+    return new Array(id, dataType, new Integer(size));
   else
-    return new Variable(id, dataType);
+    return new VariableDeclaration(dataType , new Variable(id, dataType));
+
   return NULL;
 }
 
@@ -53,6 +54,8 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
   if(size > 0)
     return new Array(id, dataType, new Integer(size));
+  else
+    return new VariableDeclaration(dataType, new Variable(id, dataType));
   return NULL;
 }
 

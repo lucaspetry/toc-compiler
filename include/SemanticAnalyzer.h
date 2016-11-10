@@ -6,6 +6,7 @@
 #include "Array.h"
 #include "Integer.h"
 #include "Variable.h"
+#include "VariableDeclaration.h"
 #include <string>
 #include <vector>
 
