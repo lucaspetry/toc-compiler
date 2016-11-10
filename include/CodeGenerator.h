@@ -6,7 +6,6 @@
 #include<iostream>
 #include<string>
 
-
 class CodeGenerator {
 
     public:
@@ -14,7 +13,7 @@ class CodeGenerator {
         virtual ~CodeGenerator();
         void setProgramTitle(std::string title);
         void generateExecutableCode(SyntaxTree* const syntaxTree) const;
-    
+
     private:
         std::string programTitle;
 

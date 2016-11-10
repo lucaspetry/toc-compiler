@@ -4,6 +4,7 @@
 #include "ErrorLogger.h"
 #include "SymbolTable.h"
 #include "Variable.h"
+#include "LLVM.h"
 #include <string>
 #include <vector>
 
@@ -27,7 +28,6 @@ class SemanticAnalyzer {
         TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);
         TreeNode* declareAssignVariable(std::string id, Data::Type dataType);
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
-
         //TreeNode* declareFunction(std::string functionId, Vector* params, Vector* body, TreeNode* returnValue);
         //TreeNode* callFunction(std::string functionId, Vector* params);
         bool symbolExists(std::string id, bool checkParentScope);

@@ -17,7 +17,7 @@ std::string Variable::getId() const {
 }
 
 std::string Variable::printInOrder() const {
-    return id +"tipo: " + toString(type);
+    return id;
 }
 
 llvm::Value* Variable::generateCode(llvm::IRBuilder<>* builder) {

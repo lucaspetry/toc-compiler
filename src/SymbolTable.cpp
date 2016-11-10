@@ -51,3 +51,26 @@ void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
 
     entryList[id].data = data;
 }
+
+llvm::Value* SymbolTable::useVariable(std::string id){
+  if (!existsSymbol(id)) { //Variable never declared
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id);
+      return NULL;
+  } else {
+      return allocations[id]; //Gets its value
+  }
+}
+
+void SymbolTable::allocateVariable(std::string id, llvm::Value* v){
+    if (v!= NULL)
+      allocations[id] = v;
+    allocations[id] = IR::Zero;
+}
+
+void SymbolTable::updateVariable (std::string id, llvm::Value * value){
+    if (!existsSymbol(id) ) { //Variable never declared
+        std::cout << "Variable not declared: " << id.c_str() << std::endl;
+    } else {
+        allocations[id] = value; //Updates its value
+    }
+}

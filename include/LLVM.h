@@ -13,6 +13,9 @@
 #include "llvm/ExecutionEngine/GenericValue.h"      // for GenericValue
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
+// #include "SymbolTable.h"
+
+// extern SymbolTable SYMBOL_TABLE;
 
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
