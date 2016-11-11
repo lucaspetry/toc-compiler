@@ -16,7 +16,7 @@ class CodeBlock : public TreeNode {
         std::string printIndentation() const;
         int numberOfLines() const;
         void insertLine(TreeNode* line);
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
         std::vector<TreeNode*> lines;
         int indentation;

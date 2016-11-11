@@ -18,6 +18,6 @@ std::string PrintFunction::printInOrder() const {
     return "";
 }
 
-llvm::Value* PrintFunction::generateCode(llvm::IRBuilder<>* builder) {
+llvm::Value* PrintFunction::generateCode() {
     return NULL;//TODO;
 }

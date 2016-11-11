@@ -33,9 +33,9 @@ void CodeBlock::insertLine(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
 }
 
-llvm::Value* CodeBlock::generateCode(llvm::IRBuilder<>* builder) {
+llvm::Value* CodeBlock::generateCode() {
     for (TreeNode* line: lines) {
-        line->generateCode(builder);
+        line->generateCode();
     }
 
     return NULL;

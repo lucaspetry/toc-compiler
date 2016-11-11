@@ -9,7 +9,7 @@ class TocFunction : public Function {
         TocFunction(CodeBlock* body);
         virtual ~TocFunction();
         TreeNode::ClassType classType() const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
 };
 

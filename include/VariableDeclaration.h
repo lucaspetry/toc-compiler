@@ -10,7 +10,7 @@ class VariableDeclaration : public TreeNode {
         virtual ~VariableDeclaration();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
     private:
         TreeNode* next;

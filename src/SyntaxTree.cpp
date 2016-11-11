@@ -18,13 +18,13 @@ void SyntaxTree::print() {
     }
 }
 
-void SyntaxTree::generateCode(llvm::IRBuilder<>* builder) {    
+void SyntaxTree::generateCode() {    
     for (TreeNode* line: lines) {
-        line->generateCode(builder);
+        line->generateCode();
     }
     
 //    builder->CreateStore(x, A); //5
-//    builder->CreateRet(x); //6
+//    IR::Builder.CreateNoRet();
 }
 
 void SyntaxTree::insertLine(TreeNode* line) {

@@ -20,6 +20,6 @@ std::string Variable::printInOrder() const {
     return id;
 }
 
-llvm::Value* Variable::generateCode(llvm::IRBuilder<>* builder) {
-    return NULL;// TODO;
+llvm::Value* Variable::generateCode() {
+    return NULL;// return symbolTable.getVariableAllocation(id);
 }

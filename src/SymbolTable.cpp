@@ -6,6 +6,11 @@ SymbolTable::SymbolTable() {
 SymbolTable::~SymbolTable() {
 }
 
+SymbolTable& SymbolTable::operator=(const SymbolTable& table) {
+    this->currentScope = table.currentScope;
+    return *this;
+}
+
 void SymbolTable::newScope() {
     this->currentScope = new Scope(this->currentScope);
     this->currentScope->clear();
@@ -82,6 +87,7 @@ void SymbolTable::setInitializedSymbol(std::string id) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
+            
             if(scopeIt->existsSymbol(id)) {
                 scopeIt->setInitializedSymbol(id);
                 break;
@@ -95,9 +101,34 @@ void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
 }
 
 llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
-    return NULL; //TODO
+    if(this->existsSymbol(id))
+        return this->currentScope->getVariableAllocation(id);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+            
+            if(scopeIt->existsSymbol(id))
+                return this->currentScope->getVariableAllocation(id);
+        }
+    }
+    
+    // Dark zone: you shouldn't reach this zone!
+    return NULL;
 }
 
 void SymbolTable::updateVariableAllocation(std::string id, llvm::Value* value) {
-    // TODO
+    if(this->existsSymbol(id))
+        this->currentScope->updateVariableAllocation(id, value);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+            
+            if(scopeIt->existsSymbol(id)) {
+                this->currentScope->updateVariableAllocation(id, value);
+                break;
+            }
+        }
+    }
 }

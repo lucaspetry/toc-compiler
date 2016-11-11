@@ -10,9 +10,9 @@ TreeNode::ClassType TocFunction::classType() const {
     return TreeNode::TOC_FUNCTION;
 }
 
-llvm::Value* TocFunction::generateCode(llvm::IRBuilder<>* builder) {
-    llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(llvm::getGlobalContext(), "toc", IR::MainFunction);
-    builder->SetInsertPoint(mainBB);
+llvm::Value* TocFunction::generateCode() {
+    llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
+    IR::Builder.SetInsertPoint(mainBB);
 
-    return NULL;//TODO;
+    return mainBB;
 }

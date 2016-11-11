@@ -33,20 +33,21 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
     }
 }
 
-llvm::Value* BinaryOperation::generateCode(llvm::IRBuilder<>* builder) {
+llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable *>(left); // TODO pode ser VariableDeclaration
-        return builder->CreateAdd(right->generateCode(builder), IR::Zero, lvar->getId().c_str());
-        //symbolTable.updateVariable(lvar->id, code); /*Gives the new code and value to the variable in the symbol table.*/
+        return IR::Builder.CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
+        lvar->generateCode();
+        //symbolTable.updateVariableAllocation(lvar->getId(), lvar->generateCode());
     } else {
-        left->generateCode(builder); // TODO
-        right->generateCode(builder); // TODO
+        left->generateCode(); // TODO
+        right->generateCode(); // TODO
         switch(this->operation){
 //            case plus:
-//                code = builder->CreateAdd(left->code, right->code, "addtmp");
+//                code = IR::Builder.CreateAdd(left->code, right->code, "addtmp");
 //                break;
 //            case times:
-//                code = builder->CreateMul(left->code, right->code, "multmp");
+//                code = IR::Builder.CreateMul(left->code, right->code, "multmp");
 //                break;
             default:
                 return NULL; //Not the greatest error capture, but okay for the example

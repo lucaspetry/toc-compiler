@@ -18,7 +18,7 @@ class BinaryOperation : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
     
     private:
         Type operation;

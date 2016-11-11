@@ -33,7 +33,6 @@ class SemanticAnalyzer {
 
     private:
         SymbolTable symbolTable;
-
 };
 
 #endif

@@ -35,6 +35,6 @@ std::string Function::printInOrder() const {
     return output;
 }
 
-llvm::Value* Function::generateCode(llvm::IRBuilder<>* builder) {
+llvm::Value* Function::generateCode() {
     return NULL;//TODO;
 }

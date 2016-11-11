@@ -10,7 +10,7 @@ class PrintFunction : public Function {
         virtual ~PrintFunction();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
 };
 

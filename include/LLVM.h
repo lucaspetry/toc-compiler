@@ -13,13 +13,13 @@
 #include "llvm/ExecutionEngine/GenericValue.h"      // for GenericValue
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
-// #include "SymbolTable.h"
-
-// extern SymbolTable SYMBOL_TABLE;
 
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
-    static llvm::Constant* Zero = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, 0));
+    static llvm::LLVMContext &Context = llvm::getGlobalContext();
+    static llvm::Module *Module = 0; // Criado no CodeGenerator.
+    static llvm::IRBuilder<> Builder(Context);
+    static llvm::Constant* Zero = llvm::ConstantInt::get(Context, llvm::APInt(64, 0));
 }
 
 #endif

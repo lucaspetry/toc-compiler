@@ -13,6 +13,7 @@ class SymbolTable {
     public:
         SymbolTable();
         virtual ~SymbolTable();
+        SymbolTable& operator=(const SymbolTable& table);
 
         void newScope();
         void returnScope();

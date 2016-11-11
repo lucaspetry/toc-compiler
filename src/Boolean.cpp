@@ -18,8 +18,8 @@ std::string Boolean::printInOrder() const {
     return "false";
 }
 
-llvm::Value* Boolean::generateCode(llvm::IRBuilder<>* builder) {
+llvm::Value* Boolean::generateCode() {
     // TODO não sei se isso está ok
     bool equivalent = value ? 1 : 0;
-    return llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, equivalent));
+    return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, equivalent));
 }
