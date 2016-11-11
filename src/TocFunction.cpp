@@ -14,5 +14,7 @@ llvm::Value* TocFunction::generateCode() {
     llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder.SetInsertPoint(mainBB);
 
+    this->body->generateCode();
+    
     return mainBB;
 }
