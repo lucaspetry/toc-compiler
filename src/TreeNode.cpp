@@ -1,5 +1,5 @@
 #include "TreeNode.h"
-
+#include "SymbolTable.h"
 std::string Data::toString(Data::Type type) {
     switch(type) {
         case Data::UNKNOWN:
@@ -19,6 +19,7 @@ std::string Data::toString(Data::Type type) {
 
 TreeNode::TreeNode(Data::Type type) {
     this->type = type;
+    this->table = new SymbolTable();
 }
 
 TreeNode::~TreeNode() {
@@ -30,4 +31,8 @@ Data::Type TreeNode::dataType() const {
 
 void TreeNode::setType(Data::Type type) {
     this->type = type;
+}
+
+void TreeNode::setSymbolTable(SymbolTable* t){
+    this->table = t;
 }

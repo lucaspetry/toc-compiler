@@ -3,10 +3,11 @@
 
 #include "LLVM.h"
 #include "Symbol.h"
-#include "TreeNode.h"
+// #include "TreeNode.h"
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
 
 typedef std::map<std::string, llvm::Value*> MemoryMap;
 

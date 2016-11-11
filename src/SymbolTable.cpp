@@ -1,6 +1,7 @@
 #include "SymbolTable.h"
 
 SymbolTable::SymbolTable() {
+    newScope();
 }
 
 SymbolTable::~SymbolTable() {
@@ -25,9 +26,9 @@ void SymbolTable::clear() {
 }
 
 bool SymbolTable::existsSymbol(std::string id, bool checkParentScope) const {
-    if(currentScope->existsSymbol(id))
+    if(currentScope->existsSymbol(id)){
         return true;
-
+    }
     if(checkParentScope) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
@@ -87,7 +88,7 @@ void SymbolTable::setInitializedSymbol(std::string id) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
-            
+
             if(scopeIt->existsSymbol(id)) {
                 scopeIt->setInitializedSymbol(id);
                 break;
@@ -107,12 +108,12 @@ llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
-            
+
             if(scopeIt->existsSymbol(id))
                 return this->currentScope->getVariableAllocation(id);
         }
     }
-    
+
     // Dark zone: you shouldn't reach this zone!
     return NULL;
 }
@@ -124,7 +125,7 @@ void SymbolTable::updateVariableAllocation(std::string id, llvm::Value* value) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
-            
+
             if(scopeIt->existsSymbol(id)) {
                 this->currentScope->updateVariableAllocation(id, value);
                 break;

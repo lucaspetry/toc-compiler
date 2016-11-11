@@ -8,7 +8,7 @@
 class SemanticAnalyzer;
 class SyntaxTree;
 class TreeNode;
-
+class SymbolTable;
 /**
  * Namespace de dados.
  */
@@ -21,14 +21,14 @@ namespace Data {
         STR = 4,
         VOID = 5
     };
-    
+
     std::string toString(Data::Type type);
 }
 
 class TreeNode {
-    
-    friend class BinaryOperation;
 
+    friend class BinaryOperation;
+    friend class SymbolTable;
     public:
         enum ClassType {
             ARRAY,
@@ -54,10 +54,11 @@ class TreeNode {
         virtual TreeNode::ClassType classType() const = 0;
         virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
+        void setSymbolTable(SymbolTable* t);
 
     protected:
         Data::Type type;
-
+        SymbolTable* table;
 };
 
 #endif

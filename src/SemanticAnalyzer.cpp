@@ -15,18 +15,23 @@ void SemanticAnalyzer::returnScope() {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
-    if(this->symbolTable.existsSymbol(id, false))
+    if(this->symbolTable.existsSymbol(id, false)){
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);
-    else {
+
+    } else {
         this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
     }
 
     if (size > 0) {
         return NULL; //TODO
         //return new Array(id, dataType, size);
-    } else
+    } else{
         // return NULL; //TODO Precisa setar a tabela de símbolos
-        return new Variable(id, dataType); //Creates variable node anyway
+        Variable* v = new Variable(id,dataType);
+        v->setSymbolTable(&this->symbolTable);
+        return v;
+      }
+        // return new Variable(id, dataType); //Creates variable node anyway
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {

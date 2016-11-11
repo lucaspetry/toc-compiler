@@ -23,7 +23,16 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     IR::MainFunction = llvm::Function::Create(typeOfMain, llvm::Function::ExternalLinkage, "main", IR::Module);
 
     // Gera o código do programa
-    syntaxTree->generateCode();
+    syntaxTree->generateCode(IR::Context);
+    // llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
+    // IR::Builder.SetInsertPoint(mainBB);
+    // llvm::Type* intType2 = llvm::Type::getInt64Ty(IR::Context);
+    // llvm::AllocaInst * A = IR::Builder.CreateAlloca(intType2,NULL,"A");
+    // IR::Builder.CreateStore(IR::Zero,A);
+    // IR::Builder.CreateStore(IR::Zero,IR::Zero); //5
+    // llvm::Value* x = IR::Builder.CreateLoad(A,"x");
+    // IR::Builder.CreateStore(x,A);
+    // IR::Builder.CreateRet(x);
 
     // Verifica a função principal
     llvm::verifyFunction(*IR::MainFunction);

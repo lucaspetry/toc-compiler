@@ -21,5 +21,5 @@ std::string Variable::printInOrder() const {
 }
 
 llvm::Value* Variable::generateCode() {
-    return NULL;// return symbolTable.getVariableAllocation(id);
+    return this->table->getVariableAllocation(id);
 }

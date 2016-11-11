@@ -28,6 +28,8 @@ void Scope::clear() {
 }
 
 bool Scope::existsSymbol(std::string id) const {
+  std::cout<< "existsSymbol"<<std::endl;
+
     return entryList.find(id) != entryList.end();
 }
 
@@ -40,6 +42,7 @@ bool Scope::isSymbolInitialized(std::string id) const {
 }
 
 void Scope::addSymbol(std::string id, Symbol newSymbol) {
+  std::cout<< "scope"<<std::endl;
     entryList[id] = newSymbol;
 
     if(newSymbol.getType() == Symbol::VARIABLE)

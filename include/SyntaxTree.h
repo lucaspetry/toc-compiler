@@ -17,7 +17,7 @@ class SyntaxTree {
         virtual ~SyntaxTree();
         void print();
         void insertLine(TreeNode* line);
-        void generateCode();
+        void generateCode(llvm::LLVMContext &Context);
 
     private:
         std::vector<TreeNode*> lines;

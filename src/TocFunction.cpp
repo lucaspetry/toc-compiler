@@ -13,8 +13,10 @@ TreeNode::ClassType TocFunction::classType() const {
 llvm::Value* TocFunction::generateCode() {
     llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder.SetInsertPoint(mainBB);
-
+    // llvm::Type* intType = llvm::Type::getInt64Ty(IR::Context);
+    // llvm::AllocaInst * A = IR::Builder.CreateAlloca(intType,NULL,"A");
+    // IR::Builder.CreateStore(IR::Zero,A);
     this->body->generateCode();
-    
+
     return mainBB;
 }

@@ -2,7 +2,7 @@
 #define VARIABLE_H_
 
 #include "TreeNode.h"
-
+#include "SymbolTable.h"
 class Variable : public TreeNode {
 
     public:
