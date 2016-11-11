@@ -3,74 +3,101 @@
 SymbolTable::SymbolTable() {
 }
 
-SymbolTable& SymbolTable::operator=(const SymbolTable& table) {
-    this->entryList = table.entryList;
-    return *this;
-}
-
 SymbolTable::~SymbolTable() {
 }
 
+void SymbolTable::newScope() {
+    this->currentScope = new Scope(this->currentScope);
+    this->currentScope->clear();
+}
+
+void SymbolTable::returnScope() {
+    this->currentScope = this->currentScope->getParent();
+}
+
 void SymbolTable::clear() {
-    entryList.clear();
+    currentScope->clear();
 }
 
-bool SymbolTable::existsSymbol(std::string id) const {
-    return entryList.find(id) != entryList.end();
-}
+bool SymbolTable::existsSymbol(std::string id, bool checkParentScope) const {
+    if(currentScope->existsSymbol(id))
+        return true;
 
-Symbol SymbolTable::getSymbol(std::string id) const {
-    return entryList.at(id);
-}
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
 
-std::vector<std::string> SymbolTable::getUninitializedFunctions() {
-    std::map<std::string, Symbol>::iterator iter;
-    std::vector<std::string> functions;
-
-    for(iter = entryList.begin(); iter != entryList.end(); iter++) {
-        if(!entryList[iter->first].initialized)
-            functions.push_back(iter->first);
+            if(scopeIt->existsSymbol(id))
+                return true;
+        }
     }
 
-    return functions;
+    return false;
+}
+
+Symbol SymbolTable::getSymbol(std::string id, bool checkParentScope) const {
+    if(this->currentScope->existsSymbol(id))
+        return this->currentScope->getSymbol(id);
+
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+            if(scopeIt->existsSymbol(id))
+                return scopeIt->getSymbol(id);
+        }
+    }
+
+    // Dark zone: you shouldn't reach this zone!
+    return Symbol(Data::UNKNOWN, Symbol::VARIABLE, false);
+}
+
+bool SymbolTable::isSymbolInitialized(std::string id, bool checkParentScope) const {
+    if(this->existsSymbol(id))
+        return this->getSymbol(id).isInitialized();
+
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+
+            if(scopeIt->existsSymbol(id))
+                return scopeIt->getSymbol(id).isInitialized();
+        }
+    }
+
+    // Dark zone: you shouldn't reach this zone!
+    return false;
 }
 
 void SymbolTable::addSymbol(std::string id, Symbol newSymbol) {
-    entryList[id] = newSymbol;
+    currentScope->addSymbol(id, newSymbol);
 }
 
 void SymbolTable::setInitializedSymbol(std::string id) {
-    entryList[id].initialized = true;
+    if(this->existsSymbol(id))
+        this->currentScope->setInitializedSymbol(id);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+            if(scopeIt->existsSymbol(id)) {
+                scopeIt->setInitializedSymbol(id);
+                break;
+            }
+        }
+    }
 }
 
 void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
-    if(entryList[id].data) {
-        delete entryList[id].data;
-        entryList[id].data = 0;
-    }
-
-    entryList[id].data = data;
+    currentScope->setSymbolData(id, data);
 }
 
-llvm::Value* SymbolTable::useVariable(std::string id){
-  if (!existsSymbol(id)) { //Variable never declared
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id);
-      return NULL;
-  } else {
-      return allocations[id]; //Gets its value
-  }
+llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
+    return NULL; //TODO
 }
 
-void SymbolTable::allocateVariable(std::string id, llvm::Value* v){
-    if (v!= NULL)
-      allocations[id] = v;
-    allocations[id] = IR::Zero;
-}
-
-void SymbolTable::updateVariable (std::string id, llvm::Value * value){
-    if (!existsSymbol(id) ) { //Variable never declared
-        std::cout << "Variable not declared: " << id.c_str() << std::endl;
-    } else {
-        allocations[id] = value; //Updates its value
-    }
+void SymbolTable::updateVariableAllocation(std::string id, llvm::Value* value) {
+    // TODO
 }
