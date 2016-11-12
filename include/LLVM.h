@@ -16,9 +16,10 @@
 
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
-    static llvm::LLVMContext &Context = llvm::getGlobalContext();
+    static llvm::BasicBlock* TocFunction; // Criado no CodeGenerator.
+    static llvm::LLVMContext& Context = llvm::getGlobalContext();
     static llvm::Module *Module = 0; // Criado no CodeGenerator.
-    static llvm::IRBuilder<> Builder(Context);
+    static llvm::IRBuilder<>* Builder = new llvm::IRBuilder<>(Context);
     static llvm::Constant* Zero = llvm::ConstantInt::get(Context, llvm::APInt(64, 0));
 }
 

@@ -1,7 +1,12 @@
 #ifndef SYMBOLTABLE_H_
 #define SYMBOLTABLE_H_
 
-#include "Scope.h"
+#include "LLVM.h"
+#include <string>
+
+class Symbol;
+class Scope;
+class TreeNode;
 
 /**
  * Tabela de símbolos gerada na análise sintática.

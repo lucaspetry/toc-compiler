@@ -15,6 +15,6 @@ std::string Float::printInOrder() const{
     return std::to_string(value);
 }
 
-llvm::Value* Float::generateCode() {
-    return llvm::ConstantFP::get(IR::Context, llvm::APFloat(value));
-}
+/**
+ * llvm::Value* Float::generateCode() no CodeGenerator.cpp
+ */

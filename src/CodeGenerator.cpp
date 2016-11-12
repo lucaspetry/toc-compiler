@@ -1,6 +1,18 @@
 #include "CodeGenerator.h"
 #include <iostream>
 
+#include "SyntaxTree.h"
+#include "BinaryOperation.h"
+#include "Boolean.h"
+#include "Comment.h"
+#include "Float.h"
+#include "Function.h"
+#include "Integer.h"
+#include "PrintFunction.h"
+#include "TocFunction.h"
+#include "Variable.h"
+#include "VariableDeclaration.h"
+
 CodeGenerator::CodeGenerator() {
 
 }
@@ -18,21 +30,13 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     IR::Module = owner.get();
 
     // Função do programa
-    llvm::Type* intType = llvm::Type::getInt64Ty(IR::Context);
-    llvm::FunctionType* typeOfMain = llvm::FunctionType::get(intType, false);
-    IR::MainFunction = llvm::Function::Create(typeOfMain, llvm::Function::ExternalLinkage, "main", IR::Module);
-
+    llvm::Type* voidType = llvm::Type::getVoidTy(IR::Context);
+    llvm::FunctionType* typeOfMain = llvm::FunctionType::get(voidType, false);
+    IR::Module->getOrInsertFunction("main", typeOfMain);
+    IR::MainFunction = IR::Module->getFunction("main");
+    
     // Gera o código do programa
-    syntaxTree->generateCode(IR::Context);
-    // llvm::BasicBlock *mainBB = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
-    // IR::Builder.SetInsertPoint(mainBB);
-    // llvm::Type* intType2 = llvm::Type::getInt64Ty(IR::Context);
-    // llvm::AllocaInst * A = IR::Builder.CreateAlloca(intType2,NULL,"A");
-    // IR::Builder.CreateStore(IR::Zero,A);
-    // IR::Builder.CreateStore(IR::Zero,IR::Zero); //5
-    // llvm::Value* x = IR::Builder.CreateLoad(A,"x");
-    // IR::Builder.CreateStore(x,A);
-    // IR::Builder.CreateRet(x);
+    syntaxTree->generateCode();
 
     // Verifica a função principal
     llvm::verifyFunction(*IR::MainFunction);
@@ -63,8 +67,83 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
 
     // Executa a função principal e imprime o resultado
     std::vector<llvm::GenericValue> noargs;
-    llvm::GenericValue gv = executionEngine->runFunction(IR::MainFunction, noargs);
-    int result = gv.IntVal.getSExtValue();
-    std::cout << "Result: " << result << std::endl;
+    executionEngine->runFunction(IR::MainFunction, noargs);
+    std::cout << "\nExecution finished!" << std::endl;
 
+}
+
+void SyntaxTree::generateCode() {
+    for (TreeNode* line: lines) {
+        line->generateCode();
+    }
+}
+
+llvm::Value* BinaryOperation::generateCode() {
+    if (this->operation == BinaryOperation::ASSIGN) {
+        Variable* lvar = dynamic_cast<Variable *>(left); // TODO pode ser VariableDeclaration
+        return IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
+        lvar->generateCode();
+        //symbolTable.updateVariableAllocation(lvar->getId(), lvar->generateCode());
+    } else {
+        left->generateCode(); // TODO
+        right->generateCode(); // TODO
+        switch(this->operation){
+//            case plus:
+//                code = IR::Builder->CreateAdd(left->code, right->code, "addtmp");
+//                break;
+//            case times:
+//                code = IR::Builder->CreateMul(left->code, right->code, "multmp");
+//                break;
+            default:
+                return NULL; //Not the greatest error capture, but okay for the example
+                break;
+        }
+    }
+
+}
+
+llvm::Value* Boolean::generateCode() {
+    // TODO não sei se isso está ok
+    bool equivalent = value ? 1 : 0;
+    return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, equivalent));
+}
+
+llvm::Value* Comment::generateCode() {
+    return NULL; // Doesn't generate any code.
+}
+
+llvm::Value* Float::generateCode() {
+    return llvm::ConstantFP::get(IR::Context, llvm::APFloat(value));
+}
+
+llvm::Value* Function::generateCode() {
+    return NULL;//TODO;
+}
+
+llvm::Value* Integer::generateCode() {
+    return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, value));
+}
+
+llvm::Value* PrintFunction::generateCode() {
+    return NULL;//TODO;
+}
+
+llvm::Value* TocFunction::generateCode() {
+    IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
+    IR::Builder->SetInsertPoint(IR::TocFunction);
+    
+    this->body->generateCode();
+    
+    IR::Builder->SetInsertPoint(IR::TocFunction);
+    IR::Builder->CreateRetVoid();
+
+    return IR::TocFunction;
+}
+
+llvm::Value* Variable::generateCode() {
+    return this->symbolTable.getVariableAllocation(id);
+}
+
+llvm::Value* VariableDeclaration::generateCode() {
+    return next->generateCode();
 }

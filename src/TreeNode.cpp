@@ -19,7 +19,6 @@ std::string Data::toString(Data::Type type) {
 
 TreeNode::TreeNode(Data::Type type) {
     this->type = type;
-    this->table = new SymbolTable();
 }
 
 TreeNode::~TreeNode() {
@@ -33,6 +32,6 @@ void TreeNode::setType(Data::Type type) {
     this->type = type;
 }
 
-void TreeNode::setSymbolTable(SymbolTable* t){
-    this->table = t;
+void TreeNode::setSymbolTable(SymbolTable table){
+    this->symbolTable = table;
 }

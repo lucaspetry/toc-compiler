@@ -20,6 +20,6 @@ std::string Variable::printInOrder() const {
     return id;
 }
 
-llvm::Value* Variable::generateCode() {
-    return this->table->getVariableAllocation(id);
-}
+/**
+ * llvm::Value* Variable::generateCode() no CodeGenerator.cpp
+ */

@@ -18,6 +18,6 @@ std::string VariableDeclaration::printInOrder() const {
     return output;
 }
 
-llvm::Value* VariableDeclaration::generateCode() {
-    return NULL;// TODO;
-}
+/**
+ * llvm::Value* VariableDeclaration::generateCode() no CodeGenerator.cpp
+ */

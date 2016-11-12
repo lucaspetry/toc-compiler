@@ -1,4 +1,5 @@
 #include "SymbolTable.h"
+#include "Scope.h"
 
 SymbolTable::SymbolTable() {
     newScope();

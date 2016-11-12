@@ -15,6 +15,6 @@ std::string Comment::printInOrder() const {
     return this->comment;
 }
 
-llvm::Value* Comment::generateCode() {
-    return NULL; // Doesn't generate any code.
-}
+/**
+ * llvm::Value* Comment::generateCode() no CodeGenerator.cpp
+ */

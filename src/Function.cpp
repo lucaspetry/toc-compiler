@@ -35,6 +35,6 @@ std::string Function::printInOrder() const {
     return output;
 }
 
-llvm::Value* Function::generateCode() {
-    return NULL;//TODO;
-}
+/**
+ * llvm::Value* Function::generateCode() no CodeGenerator.cpp
+ */

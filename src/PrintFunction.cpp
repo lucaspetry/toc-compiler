@@ -18,6 +18,6 @@ std::string PrintFunction::printInOrder() const {
     return "";
 }
 
-llvm::Value* PrintFunction::generateCode() {
-    return NULL;//TODO;
-}
+/**
+ * llvm::Value* PrintFunction::generateCode() no CodeGenerator.cpp
+ */

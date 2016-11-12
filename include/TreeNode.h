@@ -2,13 +2,13 @@
 #define TREENODE_H_
 
 #include "LLVM.h"
+#include "SymbolTable.h"
 #include <string>
 #include <vector>
 
 class SemanticAnalyzer;
 class SyntaxTree;
-class TreeNode;
-class SymbolTable;
+
 /**
  * Namespace de dados.
  */
@@ -29,6 +29,7 @@ class TreeNode {
 
     friend class BinaryOperation;
     friend class SymbolTable;
+    
     public:
         enum ClassType {
             ARRAY,
@@ -54,11 +55,11 @@ class TreeNode {
         virtual TreeNode::ClassType classType() const = 0;
         virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
-        void setSymbolTable(SymbolTable* t);
+        void setSymbolTable(SymbolTable table);
 
     protected:
         Data::Type type;
-        SymbolTable* table;
+        SymbolTable symbolTable;
 };
 
 #endif

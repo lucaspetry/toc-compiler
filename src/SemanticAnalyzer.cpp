@@ -1,4 +1,5 @@
 #include "SemanticAnalyzer.h"
+#include "Symbol.h"
 
 SemanticAnalyzer::SemanticAnalyzer() {
 }
@@ -28,7 +29,7 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     } else{
         // return NULL; //TODO Precisa setar a tabela de símbolos
         Variable* v = new Variable(id,dataType);
-        v->setSymbolTable(&this->symbolTable);
+        v->setSymbolTable(this->symbolTable);
         return v;
       }
         // return new Variable(id, dataType); //Creates variable node anyway

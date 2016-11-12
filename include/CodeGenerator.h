@@ -3,8 +3,8 @@
 
 #include "SyntaxTree.h"
 #include "LLVM.h"
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
 
 class CodeGenerator {
 
