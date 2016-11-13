@@ -108,8 +108,9 @@ declaration:
                                                   $$ = new BinaryOperation(new VariableDeclaration((Data::Type)$1 ,v),
                                                                                               BinaryOperation::COMMA, $4); }
     | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4); TOC.analyzeVariable($3);
-                                              $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1),
-                                              BinaryOperation::ASSIGN, $7);}
+                                              $$ = new BinaryOperation(new VariableDeclaration((Data::Type)$1, SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1)),
+                                              BinaryOperation::ASSIGN, $7);
+                                            SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$);}
     ;
 
 //Multiplas declarações
@@ -122,14 +123,16 @@ multiple_declaration:
 //Atribuição
 attribuition:
     T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4);
-                                    $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1),BinaryOperation::ASSIGN,$5);}
+                                    $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1),BinaryOperation::ASSIGN,$5);
+                                    SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$);}
 // Expressão
 expression:
     T_TRUE {$$ = new Boolean(true);}
     | T_FALSE {$$ = new Boolean(false);}
     | T_NUM {$$ = new Integer($1);}
     | T_DEC {$$ = new Float($1);}
-    | T_ID {SEMANTIC_ANALYZER.useVariable($1); $$ = NULL;}
+    | T_ID {$$ = SEMANTIC_ANALYZER.useVariable($1);}
+    | T_TEXT {$$ = new String($1);}
     ;
 
 // Tipos de dados

@@ -34,7 +34,7 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     llvm::FunctionType* typeOfMain = llvm::FunctionType::get(voidType, false);
     IR::Module->getOrInsertFunction("main", typeOfMain);
     IR::MainFunction = IR::Module->getFunction("main");
-    
+
     // Gera o código do programa
     syntaxTree->generateCode();
 
@@ -131,9 +131,9 @@ llvm::Value* PrintFunction::generateCode() {
 llvm::Value* TocFunction::generateCode() {
     IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder->SetInsertPoint(IR::TocFunction);
-    
+
     this->body->generateCode();
-    
+
     IR::Builder->SetInsertPoint(IR::TocFunction);
     IR::Builder->CreateRetVoid();
 
@@ -146,4 +146,8 @@ llvm::Value* Variable::generateCode() {
 
 llvm::Value* VariableDeclaration::generateCode() {
     return next->generateCode();
+}
+
+llvm::Value* String::generateCode(){
+  return NULL;//TODO
 }

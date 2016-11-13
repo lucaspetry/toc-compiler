@@ -15,6 +15,45 @@ void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
 }
 
+void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
+  TreeNode* left = binaryOp->left;
+  BinaryOperation::Type op = binaryOp->operation;
+  TreeNode* right = binaryOp->right;
+
+  if (left->dataType() != right->dataType() && op == BinaryOperation::ASSIGN){
+    if(right->dataType() == Data::STR){
+      std::string text = "";
+      if(left->dataType() == Data::BOO){
+        text = ((String*)right)->getText();
+        text.erase(0, 1);
+        text.erase(text.size() - 1);
+        if (text == "false" || text == "true"){
+          binaryOp->right = new TypeCasting(left->dataType(),right);
+          right = binaryOp->right;
+        } else {
+          ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is not false or true.");
+        }
+      } else if (left->dataType() == Data::FLT || left->dataType() == Data::INT){
+          text = ((String*)right)->getText();
+          text.erase(0, 1);
+          text.erase(text.size() - 1);
+          if (std::all_of(text.begin(), text.end(), ::isdigit)) {
+            binaryOp->right = new TypeCasting(left->dataType(),right);
+            right = binaryOp->right;
+          } else {
+            ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
+          }
+      }
+    } else{
+        binaryOp->right = new TypeCasting(left->dataType(),right);
+        right = binaryOp->right;
+      }
+
+}
+
+}
+
+
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
     if(this->symbolTable.existsSymbol(id, false)){
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Re-declaration of variable " + id);

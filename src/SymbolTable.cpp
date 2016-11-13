@@ -1,5 +1,6 @@
 #include "SymbolTable.h"
 #include "Scope.h"
+#include <iostream>
 
 SymbolTable::SymbolTable() {
     newScope();
@@ -44,9 +45,9 @@ bool SymbolTable::existsSymbol(std::string id, bool checkParentScope) const {
 }
 
 Symbol SymbolTable::getSymbol(std::string id, bool checkParentScope) const {
-    if(this->currentScope->existsSymbol(id))
+    if(this->currentScope->existsSymbol(id)){
         return this->currentScope->getSymbol(id);
-
+}
     if(checkParentScope) {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {

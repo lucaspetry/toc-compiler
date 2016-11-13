@@ -29,7 +29,7 @@ class TreeNode {
 
     friend class BinaryOperation;
     friend class SymbolTable;
-    
+
     public:
         enum ClassType {
             ARRAY,
@@ -44,6 +44,8 @@ class TreeNode {
             TOC_FUNCTION,
             VARIABLE,
             VARIABLE_DECLARATION,
+            TYPE_CASTING,
+            STRING,
             UNKNOWN
         };
 

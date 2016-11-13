@@ -4,8 +4,14 @@
 #include "ErrorLogger.h"
 #include "SymbolTable.h"
 #include "Variable.h"
+#include "BinaryOperation.h"
+#include "TypeCasting.h"
+#include "String.h"
 #include "LLVM.h"
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <vector>
 
 extern ErrorLogger* ERROR_LOGGER;
@@ -23,6 +29,8 @@ class SemanticAnalyzer {
         void returnScope();
 
         void setType(Data::Type tipo);
+
+        void analyzeCasting(BinaryOperation* op);
 
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
         TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);
