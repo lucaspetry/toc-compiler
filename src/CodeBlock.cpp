@@ -1,9 +1,7 @@
 #include "CodeBlock.h"
 
 CodeBlock::CodeBlock(int indentation) : TreeNode(Data::UNKNOWN) {
-  this->indentation = indentation;
-}
-CodeBlock::CodeBlock() : TreeNode(Data::UNKNOWN){
+    this->indentation = indentation;
 }
 
 CodeBlock::~CodeBlock() {
@@ -15,7 +13,7 @@ TreeNode::ClassType CodeBlock::classType() const {
 
 std::string CodeBlock::printInOrder() const {
     std::string output = "";
-    printIndentation();
+    
     for(TreeNode* myTreenode: this->lines){
         output += this->printIndentation();
         output += myTreenode->printInOrder();
@@ -42,9 +40,10 @@ llvm::Value* CodeBlock::generateCode() {
 }
 
 std::string CodeBlock::printIndentation() const {
-  std::string output = "";
-  for(int a = 0; a < this->indentation; a++){
-    output += "  ";
-  }
-  return output;
+    std::string output = "";
+    
+    for(int i = 0; i < this->indentation; i++){
+        output += "  ";
+    }
+    return output;
 }

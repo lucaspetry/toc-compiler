@@ -3,7 +3,7 @@
 #include <iostream>
 
 SymbolTable::SymbolTable() {
-    newScope();
+    this->newScope();
 }
 
 SymbolTable::~SymbolTable() {

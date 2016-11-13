@@ -18,6 +18,7 @@ class CodeBlock : public TreeNode {
         void insertLine(TreeNode* line);
         llvm::Value* generateCode();
 
+    private:
         std::vector<TreeNode*> lines;
         int indentation;
 

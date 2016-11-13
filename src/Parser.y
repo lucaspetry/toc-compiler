@@ -24,6 +24,7 @@
 
 %code requires {
     class TreeNode;
+    class CodeBlock;
     class SyntaxTree;
 }
 
@@ -33,6 +34,7 @@
  */
 %union {
     TreeNode* node;
+    CodeBlock* codeBlock;
     SyntaxTree* syntaxTree;
     char *string;
     int integer;
@@ -56,7 +58,8 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global main_scope line declaration multiple_declaration expression attribuition
+%type <node> global line declaration expression attribuition
+%type <codeBlock> main_scope multiple_declaration
 %type <integer> indent sp type
 
 /*
@@ -72,6 +75,7 @@
 
 %%
 
+// Início do parsing
 start:
     program { /** TOC.analyzeProgram() */ }
     ;
@@ -83,48 +87,59 @@ program:
     | error T_NL { yyerrok; $$ = NULL; }
     ;
 
-// Linha
+// Escopo global
 global:
     T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope {  $$ = new TocFunction((CodeBlock*) $8);   }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new TocFunction($8); }
     ;
 
+// Escopo principal (função toc())
 main_scope:
-    indent line  {$$ = new CodeBlock($1); if($2 != NULL) ((CodeBlock*)$$)->insertLine($2);  }
-    | indent line T_NL main_scope { $$ = $4; if($2 != NULL) ((CodeBlock*)$4)->insertLine($2);}
+    indent line { $$ = new CodeBlock(1); if($2 != NULL) $$->insertLine($2); }
+    | indent line T_NL main_scope { $$ = $4; if($2 != NULL) $$->insertLine($2); }
     ;
 
+// Linha de código
 line:
     { $$ = NULL; }
+    | attribuition
     | declaration {$$ = $1; }
     | T_COMMENT {$$ = new Comment($1); }
-    | attribuition
     ;
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { TOC.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1); $$ = new VariableDeclaration((Data::Type)$1 ,v);}
-    | type sp T_ID multiple_declaration { TOC.analyzeVariable($3); SEMANTIC_ANALYZER.setType((Data::Type)$1); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
-                                                  $$ = new BinaryOperation(new VariableDeclaration((Data::Type)$1 ,v),
-                                                                                              BinaryOperation::COMMA, $4); }
-    | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4); TOC.analyzeVariable($3);
-                                              $$ = new BinaryOperation(new VariableDeclaration((Data::Type)$1, SEMANTIC_ANALYZER.declareAssignVariable($3,(Data::Type)$1)),
-                                              BinaryOperation::ASSIGN, $7);
-                                            SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$);}
+
+    type sp T_ID { TOC.analyzeSpaces(1, $2);
+                   TOC.analyzeVariable($3);
+                   Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
+                   $$ = new VariableDeclaration((Data::Type)$1 ,v); }
+    | type sp T_ID multiple_declaration { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
+                                          SEMANTIC_ANALYZER.setType((Data::Type)$1);
+                                          $$ = $4;
+                                          $4->insertLine(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1)); }
+    | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(3, $2, $4, $6);
+                                               TOC.analyzeVariable($3);
+                                               $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3, (Data::Type)$1),
+                                                                            BinaryOperation::ASSIGN, $7);
+                                                                          SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$); }
     ;
 
-//Multiplas declarações
+// Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID  { TOC.analyzeCommas($2); TOC.analyzeVariable($3); Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::UNKNOWN));
-                                    $$ = new CodeBlock(); ((CodeBlock*)$$)->insertLine(v);}
-    | T_COMMA sp T_ID multiple_declaration  { TOC.analyzeCommas($2); TOC.analyzeVariable($3);
-                      $$ = $4; Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::UNKNOWN)); ((CodeBlock*)$4)->insertLine(v);}
+    T_COMMA sp T_ID  { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
+                       $$ = new CodeBlock(0);
+                       $$->insertLine(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN)); }
+    | T_COMMA sp T_ID multiple_declaration  { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
+                                              $$ = $4;
+                                              $$->insertLine(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN));}
     ;
-//Atribuição
+// Atribuição
 attribuition:
-    T_ID sp T_ASSIGN sp expression { TOC.analyzeAssign($2,$4);
-                                    $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1),BinaryOperation::ASSIGN,$5);
-                                    SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$);}
+
+    T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(2, $2, $4);
+                                     $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1), BinaryOperation::ASSIGN, $5);
+                                     SEMANTIC_ANALYZER.analyzeCasting((BinaryOperation*) $$);}
 // Expressão
 expression:
     T_TRUE {$$ = new Boolean(true);}
@@ -152,8 +167,8 @@ sp:
 
 // Indentação (2 espaços)
 indent:
-    {  int a = 1; $$ = a; }
-    | T_SP T_SP indent { $$ = ($3 + 1);}
+    { $$ = 0; }
+    | T_SP T_SP indent { $$ = $3 + 1;}
     ;
 
 %%
