@@ -14,18 +14,15 @@ TreeNode::ClassType BinaryOperation::classType() const {
 }
 
 std::string BinaryOperation::printInOrder() const {
-  std::string output = left->printInOrder();
-  if(operation != COMMA)
-      output += " ";
+    std::string output = left->printInOrder();
+    output += " ";
 
-  output += operationToString(operation) + " ";
-  return output + right->printInOrder();
+    output += operationToString(operation) + " ";
+return output + right->printInOrder();
 }
 
 std::string BinaryOperation::operationToString(BinaryOperation::Type operation) const {
     switch(operation) {
-        case BinaryOperation::COMMA:
-            return ",";
         case BinaryOperation::ASSIGN:
             return "=";
         default:

@@ -2,7 +2,7 @@
 #include "Scope.h"
 
 SymbolTable::SymbolTable() {
-    newScope();
+    this->newScope();
 }
 
 SymbolTable::~SymbolTable() {

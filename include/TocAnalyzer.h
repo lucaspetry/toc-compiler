@@ -3,6 +3,7 @@
 
 #include "ErrorLogger.h"
 #include <ctype.h>
+#include <stdarg.h>
 #include <string>
 
 extern ErrorLogger* ERROR_LOGGER;
@@ -16,8 +17,10 @@ class TocAnalyzer {
         TocAnalyzer();
         virtual ~TocAnalyzer();
         void analyzeVariable(std::string id);
-        void analyzeAssign(int sp1, int sp2);
-        void analyzeCommas(int sp);
+//        void analyzeAssign(int sp1, int sp2);
+//        void analyzeCommas(int sp);
+        void analyzeSpaces(int n_args, ...);
+    
 };
 
 #endif
