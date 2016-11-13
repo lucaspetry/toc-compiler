@@ -15,7 +15,12 @@
 #include "llvm/ExecutionEngine/MCJIT.h"
 
 namespace IR {
-    static llvm::Constant* Zero = llvm::ConstantInt::get(llvm::getGlobalContext(), llvm::APInt(64, 0));
+    static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
+    static llvm::BasicBlock* TocFunction; // Criado no CodeGenerator.
+    static llvm::LLVMContext& Context = llvm::getGlobalContext();
+    static llvm::Module *Module = 0; // Criado no CodeGenerator.
+    static llvm::IRBuilder<>* Builder = new llvm::IRBuilder<>(Context);
+    static llvm::Constant* Zero = llvm::ConstantInt::get(Context, llvm::APInt(64, 0));
 }
 
 #endif

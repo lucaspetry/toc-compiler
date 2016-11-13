@@ -14,7 +14,3 @@ TreeNode::ClassType Float::classType() const {
 std::string Float::printInOrder() const{
     return std::to_string(value);
 }
-
-llvm::Value* Float::generateCode(llvm::IRBuilder<>* builder) {
-    return llvm::ConstantFP::get(llvm::getGlobalContext(), llvm::APFloat(value));
-}

@@ -7,9 +7,6 @@
 #include <string>
 #include <vector>
 
-/**
- * Árvore sintática abstrata.
- */
 class SyntaxTree {
 
     public:
@@ -17,7 +14,7 @@ class SyntaxTree {
         virtual ~SyntaxTree();
         void print();
         void insertLine(TreeNode* line);
-        void generateCode(llvm::IRBuilder<>* builder);
+        void generateCode();
 
     private:
         std::vector<TreeNode*> lines;

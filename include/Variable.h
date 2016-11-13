@@ -3,6 +3,7 @@
 
 #include <string>
 #include "TreeNode.h"
+#include "SymbolTable.h"
 
 class Variable : public TreeNode {
 
@@ -12,7 +13,7 @@ class Variable : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string getId() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
     private:
         std::string id;

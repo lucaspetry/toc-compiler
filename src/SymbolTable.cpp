@@ -1,62 +1,136 @@
 #include "SymbolTable.h"
+#include "Scope.h"
 
 SymbolTable::SymbolTable() {
-}
-
-SymbolTable& SymbolTable::operator=(const SymbolTable& table) {
-    this->entryList = table.entryList;
-    return *this;
+    newScope();
 }
 
 SymbolTable::~SymbolTable() {
 }
 
+SymbolTable& SymbolTable::operator=(const SymbolTable& table) {
+    this->currentScope = table.currentScope;
+    return *this;
+}
+
+void SymbolTable::newScope() {
+    this->currentScope = new Scope(this->currentScope);
+    this->currentScope->clear();
+}
+
+void SymbolTable::returnScope() {
+    this->currentScope = this->currentScope->getParent();
+}
+
 void SymbolTable::clear() {
-    entryList.clear();
+    currentScope->clear();
 }
 
-bool SymbolTable::existsSymbol(std::string id, Symbol::IdentifierType type) const {
-    return entryList.find(id) != entryList.end();
-}
+bool SymbolTable::existsSymbol(std::string id, bool checkParentScope) const {
+    if(currentScope->existsSymbol(id)){
+        return true;
+    }
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
 
-Symbol SymbolTable::getSymbol(std::string id, Symbol::IdentifierType type) const {
-    return entryList.at(id);
-}
-
-std::vector<std::string> SymbolTable::getUninitializedFunctions() {
-    std::map<std::string, Symbol>::iterator iter;
-    std::vector<std::string> functions;
-
-    for(iter = entryList.begin(); iter != entryList.end(); iter++) {
-        if(!entryList[iter->first].initialized)
-            functions.push_back(iter->first);
+            if(scopeIt->existsSymbol(id))
+                return true;
+        }
     }
 
-    return functions;
+    return false;
+}
+
+Symbol SymbolTable::getSymbol(std::string id, bool checkParentScope) const {
+    if(this->currentScope->existsSymbol(id))
+        return this->currentScope->getSymbol(id);
+
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+            if(scopeIt->existsSymbol(id))
+                return scopeIt->getSymbol(id);
+        }
+    }
+
+    // Dark zone: you shouldn't reach this zone!
+    return Symbol(Data::UNKNOWN, Symbol::VARIABLE, false);
+}
+
+bool SymbolTable::isSymbolInitialized(std::string id, bool checkParentScope) const {
+    if(this->existsSymbol(id))
+        return this->getSymbol(id).isInitialized();
+
+    if(checkParentScope) {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+
+            if(scopeIt->existsSymbol(id))
+                return scopeIt->getSymbol(id).isInitialized();
+        }
+    }
+
+    // Dark zone: you shouldn't reach this zone!
+    return false;
 }
 
 void SymbolTable::addSymbol(std::string id, Symbol newSymbol) {
-    entryList[id] = newSymbol;
+    currentScope->addSymbol(id, newSymbol);
 }
 
-void SymbolTable::setInitializedSymbol(std::string id, Symbol::IdentifierType type) {
-    entryList[id].initialized = true;
+void SymbolTable::setInitializedSymbol(std::string id) {
+    if(this->existsSymbol(id))
+        this->currentScope->setInitializedSymbol(id);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+
+            if(scopeIt->existsSymbol(id)) {
+                scopeIt->setInitializedSymbol(id);
+                break;
+            }
+        }
+    }
 }
 
-void SymbolTable::setSymbolData(const std::string id, Symbol::IdentifierType type, TreeNode* data) {
-    if(entryList[id].data) {
-        delete entryList[id].data;
-        entryList[id].data = 0;
+void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
+    currentScope->setSymbolData(id, data);
+}
+
+llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
+    if(this->existsSymbol(id))
+        return this->currentScope->getVariableAllocation(id);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+
+            if(scopeIt->existsSymbol(id))
+                return this->currentScope->getVariableAllocation(id);
+        }
     }
 
-    entryList[id].data = data;
+    // Dark zone: you shouldn't reach this zone!
+    return NULL;
 }
 
-void SymbolTable::setType(Data::Type type){
-  std::map<std::string, Symbol>::iterator iter;
-  for(iter = entryList.begin(); iter != entryList.end(); iter++){
-    if (iter->second.getDataType() == Data::UNKNOWN){
-      entryList[iter->first].setDataType(type);
+void SymbolTable::updateVariableAllocation(std::string id, llvm::Value* value) {
+    if(this->existsSymbol(id))
+        this->currentScope->updateVariableAllocation(id, value);
+    else {
+        Scope* scopeIt = this->currentScope;
+        while(scopeIt->getParent() != NULL) {
+            scopeIt = scopeIt->getParent();
+
+            if(scopeIt->existsSymbol(id)) {
+                this->currentScope->updateVariableAllocation(id, value);
+                break;
+            }
+        }
     }
-  }
 }

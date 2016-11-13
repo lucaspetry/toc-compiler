@@ -20,7 +20,7 @@ class BinaryOperation : public TreeNode {
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
     private:
         Type operation;

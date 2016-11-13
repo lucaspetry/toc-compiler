@@ -19,7 +19,6 @@ std::string Array::printInOrder() const {
     std::string output = "";
     if (this->type != Data::UNKNOWN and this->values == NULL){
       output += this->toString(this->type);
-      output += " ";
     }
     output += this->id;
     output += "[";
@@ -31,8 +30,4 @@ std::string Array::printInOrder() const {
 
 void Array::setType(Data::Type type){
   this->type = type;
-}
-
-llvm::Value* Array::generateCode(llvm::IRBuilder<>* builder) {
-    return NULL;
 }

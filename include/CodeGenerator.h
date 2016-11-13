@@ -3,9 +3,8 @@
 
 #include "SyntaxTree.h"
 #include "LLVM.h"
-#include<iostream>
-#include<string>
-
+#include <iostream>
+#include <string>
 
 class CodeGenerator {
 
@@ -14,7 +13,7 @@ class CodeGenerator {
         virtual ~CodeGenerator();
         void setProgramTitle(std::string title);
         void generateExecutableCode(SyntaxTree* const syntaxTree) const;
-    
+
     private:
         std::string programTitle;
 

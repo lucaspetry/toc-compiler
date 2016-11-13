@@ -1,14 +1,13 @@
 #include "Function.h"
 
-Function::Function(std::string id, Data::Type type, CodeBlock* params, TreeNode* body) : TreeNode(Data::UNKNOWN) {
+Function::Function(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) : TreeNode(Data::UNKNOWN) {
     this->id = id;
     this->params = params;
     this->body = body;
-    this->type = type;
+    this->ret = ret;
 }
 
 Function::~Function() {
-
 }
 
 TreeNode::ClassType Function::classType() const {
@@ -27,7 +26,7 @@ std::string Function::printInOrder() const {
     if(this->params != NULL)
       output += this->params->printInOrder();
 
-    output = Data::toString(type) + " " + id + "(";
+    output = toString(this->dataType()) + " " + id + "(";
 
     // Imprime os parâmetros
     if(this->params != NULL)
@@ -42,8 +41,4 @@ std::string Function::printInOrder() const {
     }
 
     return output;
-}
-
-llvm::Value* Function::generateCode(llvm::IRBuilder<>* builder) {
-    return NULL;//TODO;
 }

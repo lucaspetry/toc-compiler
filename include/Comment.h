@@ -11,7 +11,7 @@ class Comment : public TreeNode {
         virtual ~Comment();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
     private:
       std::string comment;

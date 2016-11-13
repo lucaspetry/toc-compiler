@@ -7,9 +7,6 @@
 
 extern ErrorLogger* ERROR_LOGGER;
 
-/**
- * Analisador TOC.
- */
 class TocAnalyzer {
 
     public:

@@ -12,7 +12,7 @@ class Array : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         void setType(Data::Type type);
-        llvm::Value* generateCode(llvm::IRBuilder<>* builder);
+        llvm::Value* generateCode();
 
     private:
       std::string id;

@@ -16,12 +16,8 @@ std::string VariableDeclaration::printInOrder() const {
     std::string output = "";
     if(this->type != Data::UNKNOWN){
       output += toString(this->type);
-      output += " ";  
+      output += " ";
     }
     output += next->printInOrder();
     return output;
-}
-
-llvm::Value* VariableDeclaration::generateCode(llvm::IRBuilder<>* builder) {
-    return NULL;// TODO;
 }

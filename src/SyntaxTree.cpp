@@ -18,12 +18,6 @@ void SyntaxTree::print() {
     }
 }
 
-void SyntaxTree::generateCode(llvm::IRBuilder<>* builder) {
-    for (TreeNode* line: lines) {
-        line->generateCode(builder);
-    }  
-}
-
 void SyntaxTree::insertLine(TreeNode* line) {
     this->lines.insert(lines.begin(), line);
 }

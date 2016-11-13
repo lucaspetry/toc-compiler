@@ -2,12 +2,12 @@
 #define TREENODE_H_
 
 #include "LLVM.h"
+#include "SymbolTable.h"
 #include <string>
 #include <vector>
 
 class SemanticAnalyzer;
 class SyntaxTree;
-class TreeNode;
 
 /**
  * Namespace de dados.
@@ -28,35 +28,38 @@ namespace Data {
 class TreeNode {
 
     friend class BinaryOperation;
+    friend class SymbolTable;
 
     public:
         enum ClassType {
             ARRAY,
             BINARY_OPERATION,
+            BOOLEAN,
             CODE_BLOCK,
             COMMENT,
+            FLOAT,
             FUNCTION,
+            INTEGER,
+            PRINT_FUNCTION,
+            TOC_FUNCTION,
             VARIABLE,
             VARIABLE_DECLARATION,
-            BOOLEAN,
-            INTEGER,
-            FLOAT,
             UNKNOWN
         };
 
         TreeNode(Data::Type type);
         virtual ~TreeNode();
-        Data::Type dataType() const;
-        void setType(Data::Type type);
-
         virtual TreeNode::ClassType classType() const = 0;
-        virtual llvm::Value* generateCode(llvm::IRBuilder<>* builder) = 0;
+        virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
+        void setType(Data::Type type);
+        void setSymbolTable(SymbolTable table);
+        Data::Type dataType() const;
         std::string toString(Data::Type type) const;
 
     protected:
         Data::Type type;
-
+        SymbolTable symbolTable;
 };
 
 #endif
