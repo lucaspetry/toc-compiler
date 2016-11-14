@@ -1,5 +1,5 @@
 #include "Scope.h"
-
+#include <iostream>
 Scope::Scope(Scope* parent) {
   this->parent = parent;
 }

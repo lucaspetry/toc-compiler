@@ -35,7 +35,7 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     llvm::FunctionType* typeOfMain = llvm::FunctionType::get(voidType, false);
     IR::Module->getOrInsertFunction("main", typeOfMain);
     IR::MainFunction = IR::Module->getFunction("main");
-    
+
     // Gera o código do programa
     syntaxTree->generateCode();
 

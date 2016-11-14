@@ -107,11 +107,12 @@ line:
     | attribuition
     | declaration {$$ = $1; }
     | T_COMMENT {$$ = new Comment($1); }
-    | T_PRINT sp T_TEXT { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction(new String($3)); }
+    | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
     ;
 
 // Declaração de variáveis
 declaration:
+
     type sp T_ID { TOC.analyzeSpaces(1, $2);
                    TOC.analyzeVariable($3);
                    Variable* v = (Variable*)SEMANTIC.declareVariable($3, (Data::Type)$1);
@@ -123,7 +124,8 @@ declaration:
     | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(3, $2, $4, $6);
                                                TOC.analyzeVariable($3);
                                                $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1),
-                                                                            BinaryOperation::ASSIGN, $7); }
+                                                                            BinaryOperation::ASSIGN, $7);
+                                                                          SEMANTIC.analyzeCasting((BinaryOperation*) $$); }
     ;
 
 // Multiplas declarações
@@ -138,7 +140,10 @@ multiple_declaration:
 // Atribuição
 attribuition:
     T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(2, $2, $4);
-                                     $$ = new BinaryOperation(SEMANTIC.assignVariable($1), BinaryOperation::ASSIGN, $5);}
+                                     $$ = new BinaryOperation(SEMANTIC.assignVariable($1), BinaryOperation::ASSIGN, $5);
+                                     SEMANTIC.analyzeCasting((BinaryOperation*) $$);}
+    ;
+    
 // Expressão
 expression:
     T_TRUE {$$ = new Boolean(true);}
@@ -146,6 +151,7 @@ expression:
     | T_NUM {$$ = new Integer($1);}
     | T_DEC {$$ = new Float($1);}
     | T_ID {$$ = SEMANTIC.useVariable($1);}
+    | T_TEXT {$$ = new String($1);}
     ;
 
 // Tipos de dados

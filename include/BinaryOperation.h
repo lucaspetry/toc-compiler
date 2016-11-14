@@ -6,6 +6,8 @@
 
 class BinaryOperation : public TreeNode {
 
+  friend class SemanticAnalyzer;
+
     public:
         enum Type {
             ASSIGN,
@@ -22,7 +24,7 @@ class BinaryOperation : public TreeNode {
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
         llvm::Value* generateCode();
-    
+
     private:
         Type operation;
         TreeNode* left;

@@ -15,7 +15,7 @@ String::String(std::string value) : TreeNode(Data::STR) {
 String::~String() {    
 }
 
-TreeNode::ClassType String::String::classType() const {
+TreeNode::ClassType String::classType() const {
     return TreeNode::STRING;
 }
 
@@ -26,3 +26,7 @@ std::string String::printInOrder() const {
 std::string String::getValue() {
     return this->value;
 }
+
+/**
+ * llvm::Value* Integer::generateCode() no CodeGenerator.cpp
+ */
