@@ -3,6 +3,10 @@
 
 #include "Function.h"
 
+/**
+  Class PrintFunction 
+**/
+
 class PrintFunction : public Function {
 
     public:

@@ -1,2 +1,2 @@
-# apenas um exemplo de comentário …
+# apenas um exemplo de comentario
 void toc()

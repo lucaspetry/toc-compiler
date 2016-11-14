@@ -7,11 +7,12 @@
 #include <string>
 #include <vector>
 
+/**
+  Class Scope 
+**/
+
 typedef std::map<std::string, llvm::Value*> MemoryMap;
 
-/**
- * Tabela de símbolos gerada na análise sintática.
- */
 class Scope {
 
     friend class SymbolTable;

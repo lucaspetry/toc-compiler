@@ -1,6 +1,0 @@
-[Line 5] Semantic error : Element at index 3 used but not initialized.
-# Funcao principal do programa
-void toc()
-  # Exemplo de criação de arrays em TOC
-  str saladas_de_frutas[5]
-  str banana = saladas_de_frutas[3]

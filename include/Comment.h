@@ -4,6 +4,10 @@
 #include <string>
 #include "TreeNode.h"
 
+/**
+  Class Comment 
+**/
+
 class Comment : public TreeNode {
 
     public:

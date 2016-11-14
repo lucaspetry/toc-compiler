@@ -3,6 +3,10 @@
 
 #include "TreeNode.h"
 
+/**
+  Class Float 
+**/
+
 class Float : public TreeNode {
 
     public:

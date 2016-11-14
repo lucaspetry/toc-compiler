@@ -13,7 +13,7 @@ TreeNode::ClassType CodeBlock::classType() const {
 
 std::string CodeBlock::printInOrder() const {
     std::string output = "";
-    
+
     for(TreeNode* myTreenode: this->lines){
         output += this->printIndentation();
         output += myTreenode->printInOrder();
@@ -36,10 +36,9 @@ void CodeBlock::insertLine(TreeNode* line) {
 }
 
 std::string CodeBlock::printIndentation() const {
-    std::string output = "";
-    
-    for(int i = 0; i < this->indentation; i++){
-        output += "  ";
-    }
-    return output;
+  std::string output = "";
+  for(int a = 0; a <= this->indentation; a++){
+    output += "  ";
+  }
+  return output;
 }

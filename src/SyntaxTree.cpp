@@ -21,7 +21,3 @@ void SyntaxTree::print() {
 void SyntaxTree::insertLine(TreeNode* line) {
     this->lines.insert(lines.begin(), line);
 }
-
-/**
- * void SyntaxTree::generateCode() no CodeGenerator.cpp
- */

@@ -16,7 +16,17 @@ TreeNode::ClassType Function::classType() const {
 
 std::string Function::printInOrder() const {
     std::string output;
-    output = Data::toString(this->dataType()) + " " + id + "(";
+
+    output += toString(type);
+    output += " ";
+    output += this->id;
+    output += "(";
+
+    // print the params
+    if(this->params != NULL)
+      output += this->params->printInOrder();
+
+    output = toString(this->dataType()) + " " + id + "(";
 
     // Imprime os parâmetros
     if(this->params != NULL)
@@ -25,16 +35,10 @@ std::string Function::printInOrder() const {
     output += ")";
     output += "\n";
 
-    // Imprime o corpo da função
-    if(this->body != NULL) {
-        output += this->body->printInOrder();
+    // print the Function body
+    if(this->body != NULL){
+      output += this->body->printInOrder();
     }
-
-    // Imprimir retorno
 
     return output;
 }
-
-/**
- * llvm::Value* Function::generateCode() no CodeGenerator.cpp
- */

@@ -5,6 +5,10 @@
 #include "TreeNode.h"
 #include "CodeBlock.h"
 
+/**
+  Class Function
+**/
+
 class Function : public TreeNode {
 
     public:

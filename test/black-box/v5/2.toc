@@ -1,5 +1,11 @@
-# Funcao principal do programa
+# Main
 void toc()
-  # Exemplo de criação de arrays em TOC
-  str saladas_de_frutas[5]
-  str banana = saladas_de_frutas[3]
+  int a, b, d
+  a = 0
+  int h = 9
+  flt j[14]
+  boo um[2], dois[9], tres[8]
+  int aaa[2] = {1, 4}
+  flt Up[9]
+  boo gg[66], GG[6]
+  str aAa[10],bBb[1]

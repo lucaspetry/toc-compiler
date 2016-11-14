@@ -4,6 +4,10 @@
 #include "TreeNode.h"
 #include "SymbolTable.h"
 
+/**
+  Class TypeCasting
+**/
+
 class TypeCasting : public TreeNode {
 
     public:

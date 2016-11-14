@@ -4,6 +4,10 @@
 #include <iostream>
 #include <string>
 
+/**
+  Class ErrorLogger
+**/
+
 class ErrorLogger;
 
 extern ErrorLogger* ERROR_LOGGER;
@@ -19,14 +23,13 @@ class ErrorLogger {
             SYNTAX = 2,
             WARNING = 3
         };
-    
+
         ErrorLogger();
         virtual ~ErrorLogger();
         void log(ErrorLogger::Type type, std::string message = "Unknown error.");
 
     private:
         std::string typeToString(ErrorLogger::Type type) const;
-    
         int errorCount[4];
 
 };

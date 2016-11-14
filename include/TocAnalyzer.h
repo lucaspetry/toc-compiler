@@ -6,21 +6,20 @@
 #include <stdarg.h>
 #include <string>
 
+/**
+  Class TocAnalyzer
+**/
+
 extern ErrorLogger* ERROR_LOGGER;
 
-/**
- * Analisador TOC.
- */
 class TocAnalyzer {
 
     public:
         TocAnalyzer();
         virtual ~TocAnalyzer();
         void analyzeVariable(std::string id);
-//        void analyzeAssign(int sp1, int sp2);
-//        void analyzeCommas(int sp);
         void analyzeSpaces(int n_args, ...);
-    
+
 };
 
 #endif

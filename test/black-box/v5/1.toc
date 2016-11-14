@@ -1,6 +1,7 @@
 # Funcao principal do programa
 void toc()
-  # Exemplo de criação de arrays em TOC
+  # Exemplo de criacao de arrays em TOC
   str saladas_de_frutas[5]
-  flt sucos[5], vitaminas[10]
-  str frutas[2] = {“melancia”, “mamão”}
+  flt sucos[5], vitaminas[10], arvores[2]
+  int frutas[2] = {1, 3}
+  frutas[0] = 2

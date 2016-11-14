@@ -1,8 +1,14 @@
 #ifndef VARIABLE_H_
 #define VARIABLE_H_
 
+#include <string>
 #include "TreeNode.h"
 #include "SymbolTable.h"
+
+/**
+  Class Variable
+**/
+
 class Variable : public TreeNode {
 
     public:
@@ -15,7 +21,6 @@ class Variable : public TreeNode {
 
     private:
         std::string id;
-
 };
 
 #endif

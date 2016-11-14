@@ -3,6 +3,10 @@
 
 #include "TreeNode.h"
 
+/**
+  Class Boolean 
+**/
+
 class Boolean : public TreeNode {
 
     public:

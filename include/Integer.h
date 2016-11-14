@@ -1,7 +1,12 @@
 #ifndef INTEGER_H_
 #define INTEGER_H_
 
+#include <string>
 #include "TreeNode.h"
+
+/**
+  Class Integer
+**/
 
 class Integer : public TreeNode {
 
@@ -10,9 +15,9 @@ class Integer : public TreeNode {
         virtual ~Integer();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode();
         int getValue();
-    
+        llvm::Value* generateCode();
+
     private:
         int value;
 

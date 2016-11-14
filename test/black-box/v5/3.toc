@@ -1,4 +1,4 @@
-# Funcao principal do programa
+# Main
 void toc()
-  int banana = 4
-  str frutas[3] = {“cereja”, “jaca”, “limão”, “pitanga”}
+  flt j[14]
+  flt a = j[15]

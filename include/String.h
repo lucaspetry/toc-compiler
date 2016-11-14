@@ -4,6 +4,10 @@
 #include "TreeNode.h"
 #include <string>
 
+/**
+  Class String
+**/
+
 class String : public TreeNode {
 
     public:
@@ -13,7 +17,7 @@ class String : public TreeNode {
         std::string printInOrder() const;
         llvm::Value* generateCode();
         std::string getValue();
-    
+
     private:
         std::string value;
 

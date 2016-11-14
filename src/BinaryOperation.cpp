@@ -14,22 +14,38 @@ TreeNode::ClassType BinaryOperation::classType() const {
 }
 
 std::string BinaryOperation::printInOrder() const {
-    std::string output = left->printInOrder();
-    output += " ";
+  std::string output = "";
+  if(operation == MULT_ATT)
+    output += "{";
 
-    output += operationToString(operation) + " ";
-return output + right->printInOrder();
+  output += left->printInOrder();
+
+  if(operation != COMMA)
+      output += " ";
+
+  output += operationToString(operation) + " ";
+
+  output += right->printInOrder();
+
+  if(operation == MULT_ATT)
+    output += "}";
+
+  return output;
 }
 
 std::string BinaryOperation::operationToString(BinaryOperation::Type operation) const {
     switch(operation) {
-        case BinaryOperation::ASSIGN:
+        case COMMA:
+            return ",";
+        case ASSIGN:
             return "=";
+        case MULT_ATT:
+            return ",";
         default:
             return "unknown";
     }
 }
 
-/**
- * llvm::Value* BinaryOperation::generateCode() no CodeGenerator.cpp
- */
+void BinaryOperation::setLeft(TreeNode* left){
+  this->left = left;
+}

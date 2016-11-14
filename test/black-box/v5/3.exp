@@ -1,5 +1,0 @@
-[Line 4] Semantic error : Number of elements in assignment differs from array length.
-# Funcao principal do programa
-void toc()
-  int banana = 4
-  str frutas[3] = {“cereja”, “jaca”, “limão”, “pitanga”}

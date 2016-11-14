@@ -5,6 +5,10 @@
 #include "TreeNode.h"
 #include "SemanticAnalyzer.h"
 
+/**
+  Class CodeBlock 
+**/
+
 class CodeBlock : public TreeNode {
 
     public:

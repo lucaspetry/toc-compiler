@@ -42,8 +42,8 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     // Verifica a função principal
     llvm::verifyFunction(*IR::MainFunction);
 
-#ifdef LLVM_DUMP
     // Imprime o código gerado
+#ifdef LLVM_DUMP
     std::cout << "###########  LLVM Intermediate Representation  ###########\n\n";
     IR::Module->dump();
     std::cout << "\n";
@@ -143,7 +143,7 @@ llvm::Value* PrintFunction::generateCode() {
 
 llvm::Value* String::generateCode() {
     llvm::GlobalVariable* globalString = new llvm::GlobalVariable(
-        /*Module=*/     *IR::Module, 
+        /*Module=*/     *IR::Module,
         /*Type=*/       llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), this->value.size()),
         /*isConstant=*/ false,
         /*Linkage=*/    llvm::GlobalValue::PrivateLinkage,
@@ -153,16 +153,16 @@ llvm::Value* String::generateCode() {
 
     llvm::Constant *arrayString = llvm::ConstantDataArray::getString(IR::Context, this->value.c_str(), true);
     globalString->setInitializer(arrayString);
-    
+
     return globalString;
 }
 
 llvm::Value* TocFunction::generateCode() {
     IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder->SetInsertPoint(IR::TocFunction);
-    
+
     this->body->generateCode();
-    
+
     IR::Builder->SetInsertPoint(IR::TocFunction);
     IR::Builder->CreateRetVoid();
 
@@ -175,4 +175,8 @@ llvm::Value* Variable::generateCode() {
 
 llvm::Value* VariableDeclaration::generateCode() {
     return next->generateCode();
+}
+
+llvm::Value* Array::generateCode(){
+  return NULL;
 }

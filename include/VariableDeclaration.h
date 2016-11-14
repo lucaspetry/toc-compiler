@@ -3,6 +3,10 @@
 
 #include "TreeNode.h"
 
+/**
+  Class VariableDeclaration
+**/
+
 class VariableDeclaration : public TreeNode {
 
     public:

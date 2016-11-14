@@ -4,6 +4,10 @@
 #include "TreeNode.h"
 #include "Variable.h"
 
+/**
+  Class BinaryOperation 
+**/
+
 class BinaryOperation : public TreeNode {
 
   friend class SemanticAnalyzer;
@@ -15,6 +19,8 @@ class BinaryOperation : public TreeNode {
             MINUS,
             PLUS,
             TIMES,
+            COMMA,
+            MULT_ATT,
             UNKNOWN
         };
 
@@ -23,6 +29,7 @@ class BinaryOperation : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
+        void setLeft(TreeNode* left);
         llvm::Value* generateCode();
 
     private:

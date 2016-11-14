@@ -8,13 +8,16 @@
 #include <vector>
 
 /**
- * Árvore sintática abstrata.
- */
+  Class SyntaxTree
+**/
+
+
 class SyntaxTree {
 
     public:
         SyntaxTree();
         virtual ~SyntaxTree();
+
         void print();
         void insertLine(TreeNode* line);
         void generateCode();

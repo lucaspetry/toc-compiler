@@ -14,10 +14,5 @@ TreeNode::ClassType Boolean::classType() const {
 std::string Boolean::printInOrder() const {
     if(value)
         return "true";
-    
     return "false";
 }
-
-/**
- * llvm::Value* Boolean::generateCode() no CodeGenerator.cpp
- */

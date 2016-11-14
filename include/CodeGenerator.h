@@ -6,6 +6,10 @@
 #include <iostream>
 #include <string>
 
+/**
+  Class CodeGenerator 
+**/
+
 class CodeGenerator {
 
     public:

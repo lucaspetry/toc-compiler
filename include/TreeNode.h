@@ -25,6 +25,10 @@ namespace Data {
     std::string toString(Data::Type type);
 }
 
+/**
+  Class TreeNode
+**/
+
 class TreeNode {
 
     friend class BinaryOperation;
@@ -51,13 +55,13 @@ class TreeNode {
 
         TreeNode(Data::Type type);
         virtual ~TreeNode();
-        Data::Type dataType() const;
-        void setType(Data::Type type);
-
         virtual TreeNode::ClassType classType() const = 0;
         virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
+        void setType(Data::Type type);
         void setSymbolTable(SymbolTable table);
+        Data::Type dataType() const;
+        std::string toString(Data::Type type) const;
 
     protected:
         Data::Type type;

@@ -38,6 +38,10 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 
 "("                 {return T_OPAR;}
 ")"                 {return T_CPAR;}
+"["                 {return T_OBRACKET;}
+"]"                 {return T_CBRACKET;}
+"{"                 {return T_OBRACE;}
+"}"                 {return T_CBRACE;}
 ","                 {return T_COMMA;}
 "="                 {return T_ASSIGN;}
 \n                  {return T_NL;} /* New line */

@@ -3,6 +3,10 @@
 
 #include "Function.h"
 
+/**
+  Class TocFunction
+**/
+
 class TocFunction : public Function {
 
     public:

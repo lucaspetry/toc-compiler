@@ -14,10 +14,5 @@ TreeNode::ClassType PrintFunction::classType() const {
 }
 
 std::string PrintFunction::printInOrder() const {
-    // Print especial
     return "";
 }
-
-/**
- * llvm::Value* PrintFunction::generateCode() no CodeGenerator.cpp
- */
