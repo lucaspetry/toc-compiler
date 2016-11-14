@@ -1,3 +1,6 @@
+#ifndef FLOAT_H_
+#define FLOAT_H_
+
 #include "TreeNode.h"
 
 class Float : public TreeNode {
@@ -13,3 +16,5 @@ class Float : public TreeNode {
         float value;
 
 };
+
+#endif

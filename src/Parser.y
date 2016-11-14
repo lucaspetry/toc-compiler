@@ -8,11 +8,13 @@
     #include "Variable.h"
     #include "VariableDeclaration.h"
     #include "BinaryOperation.h"
+    #include "String.h"
+    #include "PrintFunction.h"
     #include "Integer.h"
     #include "Float.h"
     #include "Boolean.h"
 
-    SemanticAnalyzer SEMANTIC_ANALYZER;
+    SemanticAnalyzer SEMANTIC;
     TocAnalyzer TOC;
     SyntaxTree* SYNTAX_TREE;
 
@@ -48,7 +50,7 @@
 %token <decimal> T_DEC
 %token T_TAB T_SP T_NL
 %token T_FALSE T_TRUE
-%token T_TOC T_VOID
+%token T_TOC T_VOID T_PRINT
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_ASSIGN T_COMMA
 
@@ -105,65 +107,66 @@ line:
     | attribuition
     | declaration {$$ = $1; }
     | T_COMMENT {$$ = new Comment($1); }
+    | T_PRINT sp T_TEXT { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction(new String($3)); }
     ;
 
 // Declaração de variáveis
 declaration:
     type sp T_ID { TOC.analyzeSpaces(1, $2);
                    TOC.analyzeVariable($3);
-                   Variable* v = (Variable*)SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1);
+                   Variable* v = (Variable*)SEMANTIC.declareVariable($3, (Data::Type)$1);
                    $$ = new VariableDeclaration((Data::Type)$1 ,v); }
     | type sp T_ID multiple_declaration { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
-                                          SEMANTIC_ANALYZER.setType((Data::Type)$1);
+                                          SEMANTIC.setType((Data::Type)$1);
                                           $$ = $4;
-                                          $4->insertLine(SEMANTIC_ANALYZER.declareVariable($3, (Data::Type)$1)); }
+                                          $4->insertLine(SEMANTIC.declareVariable($3, (Data::Type)$1)); }
     | type sp T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(3, $2, $4, $6);
                                                TOC.analyzeVariable($3);
-                                               $$ = new BinaryOperation(SEMANTIC_ANALYZER.declareAssignVariable($3, (Data::Type)$1),
+                                               $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1),
                                                                             BinaryOperation::ASSIGN, $7); }
     ;
 
 // Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID  { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
+    T_COMMA sp T_ID { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
                        $$ = new CodeBlock(0);
-                       $$->insertLine(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN)); }
-    | T_COMMA sp T_ID multiple_declaration  { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
-                                              $$ = $4;
-                                              $$->insertLine(SEMANTIC_ANALYZER.declareVariable($3, Data::UNKNOWN));}
+                       $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN)); }
+    | T_COMMA sp T_ID multiple_declaration { TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3);
+                                             $$ = $4;
+                                             $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));}
     ;
 // Atribuição
 attribuition:
     T_ID sp T_ASSIGN sp expression { TOC.analyzeSpaces(2, $2, $4);
-                                     $$ = new BinaryOperation(SEMANTIC_ANALYZER.assignVariable($1), BinaryOperation::ASSIGN, $5);}
+                                     $$ = new BinaryOperation(SEMANTIC.assignVariable($1), BinaryOperation::ASSIGN, $5);}
 // Expressão
 expression:
     T_TRUE {$$ = new Boolean(true);}
     | T_FALSE {$$ = new Boolean(false);}
     | T_NUM {$$ = new Integer($1);}
     | T_DEC {$$ = new Float($1);}
-    | T_ID {SEMANTIC_ANALYZER.useVariable($1); $$ = NULL;}
+    | T_ID {$$ = SEMANTIC.useVariable($1);}
     ;
 
 // Tipos de dados
 type:
-    T_BOO { $$ = Data::BOO;}
+    T_BOO {$$ = Data::BOO;}
     | T_FLT {$$ = Data::FLT;}
-    | T_INT { $$ = Data::INT;}
-    | T_STR { $$ = Data::STR;}
+    | T_INT {$$ = Data::INT;}
+    | T_STR {$$ = Data::STR;}
     | T_VOID {$$ = Data::VOID;}
     ;
 
 // Espaços
 sp:
-    { $$ = 0; }
-    | T_SP sp { $$ = $2 + 1; }
+    {$$ = 0;}
+    | T_SP sp {$$ = $2 + 1;}
     ;
 
 // Indentação (2 espaços)
 indent:
-    { $$ = 0; }
-    | T_SP T_SP indent { $$ = $3 + 1;}
+    {$$ = 0;}
+    | T_SP T_SP indent {$$ = $3 + 1;}
     ;
 
 %%

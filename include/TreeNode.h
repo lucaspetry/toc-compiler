@@ -41,6 +41,7 @@ class TreeNode {
             FUNCTION,
             INTEGER,
             PRINT_FUNCTION,
+            STRING,
             TOC_FUNCTION,
             VARIABLE,
             VARIABLE_DECLARATION,

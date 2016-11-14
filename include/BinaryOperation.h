@@ -9,6 +9,10 @@ class BinaryOperation : public TreeNode {
     public:
         enum Type {
             ASSIGN,
+            DIVIDE,
+            MINUS,
+            PLUS,
+            TIMES,
             UNKNOWN
         };
 

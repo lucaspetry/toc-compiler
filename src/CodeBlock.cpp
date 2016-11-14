@@ -27,16 +27,12 @@ int CodeBlock::numberOfLines() const {
     return this->lines.size();
 }
 
-void CodeBlock::insertLine(TreeNode* line) {
-    this->lines.insert(this->lines.begin(), line);
+TreeNode* CodeBlock::getLine(int lineNumber) {
+    return this->lines[lineNumber];
 }
 
-llvm::Value* CodeBlock::generateCode() {
-    for (TreeNode* line: lines) {
-        line->generateCode();
-    }
-
-    return NULL;
+void CodeBlock::insertLine(TreeNode* line) {
+    this->lines.insert(this->lines.begin(), line);
 }
 
 std::string CodeBlock::printIndentation() const {

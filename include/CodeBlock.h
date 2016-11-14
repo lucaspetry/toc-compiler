@@ -15,6 +15,7 @@ class CodeBlock : public TreeNode {
         std::string printInOrder() const;
         std::string printIndentation() const;
         int numberOfLines() const;
+        TreeNode* getLine(int lineNumber);
         void insertLine(TreeNode* line);
         llvm::Value* generateCode();
 

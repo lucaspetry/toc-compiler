@@ -1,3 +1,6 @@
+#ifndef INTEGER_H_
+#define INTEGER_H_
+
 #include "TreeNode.h"
 
 class Integer : public TreeNode {
@@ -14,3 +17,5 @@ class Integer : public TreeNode {
         int value;
 
 };
+
+#endif

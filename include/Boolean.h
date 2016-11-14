@@ -1,3 +1,6 @@
+#ifndef BOOLEAN_H_
+#define BOOLEAN_H_
+
 #include "TreeNode.h"
 
 class Boolean : public TreeNode {
@@ -13,3 +16,5 @@ class Boolean : public TreeNode {
         bool value;
 
 };
+
+#endif

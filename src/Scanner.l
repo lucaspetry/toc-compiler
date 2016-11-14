@@ -14,13 +14,14 @@
 id ([a-z|A-Z][a-z|A-Z|_|0-9]*)
 dec ([0-9]+.[0-9]+)
 num ([0-9]+)
-text ([\"][a-z|A-Z][a-z|A-Z|_|0-9]*[\"])
+text ([\"][a-z|A-Z][a-z|A-Z|_|0-9| |'\\']*[\"])
 comment ([#][a-z|A-Z|_|0-9| ]*)
 
 %%
 {comment}           {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_COMMENT;}
 [ ]                 {return T_SP;}
 \t                  {return T_TAB;}
+"print"             {return T_PRINT;}
 "boo"               {yylval.integer = Data::BOO; return T_BOO;}
 "flt"               {yylval.integer = Data::FLT; return T_FLT;}
 "int"               {yylval.integer = Data::INT; return T_INT;}

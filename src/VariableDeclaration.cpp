@@ -2,7 +2,6 @@
 
 VariableDeclaration::VariableDeclaration(Data::Type type, TreeNode* next) : TreeNode(type) {
     this->next = next;
-
 }
 
 VariableDeclaration::~VariableDeclaration() {
@@ -13,8 +12,8 @@ TreeNode::ClassType VariableDeclaration::classType() const {
 }
 
 std::string VariableDeclaration::printInOrder() const {
-    std::string output = toString(this->type);
-    output+= next->printInOrder();
+    std::string output = Data::toString(this->type);
+    output += " " + next->printInOrder();
     return output;
 }
 
