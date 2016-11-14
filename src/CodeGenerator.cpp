@@ -65,9 +65,6 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
         fprintf(stderr, "Could not create executionEngine: %s\n", Error.c_str());
         exit(1);
     }
-    
-//    llvm::Function* printFunction = llvm::Function::Create(llvm::FunctionType::get(voidType, false), llvm::Function::ExternalLinkage, "putchard", IR::Module);
-//    executionEngine->addGlobalMapping(printFunction, &putchard);
 
     // Executa a função principal e imprime o resultado
     std::vector<llvm::GenericValue> noargs;
@@ -128,7 +125,7 @@ llvm::Value* Float::generateCode() {
 }
 
 llvm::Value* Function::generateCode() {
-    return NULL;//TODO;
+    return NULL; //TODO;
 }
 
 llvm::Value* Integer::generateCode() {
@@ -140,48 +137,31 @@ llvm::Value* PrintFunction::generateCode() {
                                    llvm::FunctionType::get(llvm::IntegerType::getInt32Ty(IR::Context), llvm::PointerType::get(llvm::Type::getInt8Ty(IR::Context), 0), true));
     llvm::Function *printFunction = IR::Module->getFunction("printf");
     std::vector<llvm::Value*> args;
-    args.push_back(this->body->getLine(0)->generateCode());//llvm::ConstantDataArray::getString(IR::Context, llvm::StringRef("test"), true));
+    args.push_back(this->body->getLine(0)->generateCode());
     return IR::Builder->CreateCall(printFunction, args, "printfCall");
 }
 
 llvm::Value* String::generateCode() {
-    llvm::GlobalVariable* gvar_array__str = new llvm::GlobalVariable(/*Module=*/*IR::Module, 
-    /*Type=*/llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), 5),
-    /*isConstant=*/true,
-    /*Linkage=*/llvm::GlobalValue::PrivateLinkage,
-    /*Initializer=*/0, // has initializer, specified below
-    /*Name=*/".str");
-    gvar_array__str->setAlignment(1);
+    llvm::GlobalVariable* globalString = new llvm::GlobalVariable(
+        /*Module=*/     *IR::Module, 
+        /*Type=*/       llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), this->value.size()),
+        /*isConstant=*/ false,
+        /*Linkage=*/    llvm::GlobalValue::PrivateLinkage,
+        /*Initializer=*/0,
+        /*Name=*/       ".str");
+    globalString->setAlignment(1);
 
-    // Constant Definitions
-    llvm::Constant *const_array_4 = llvm::ConstantDataArray::getString(IR::Context, this->value.c_str(), true);
-//    std::vector<llvm::Constant*> const_ptr_5_indices;
-//    llvm::ConstantInt* const_int64_6 = llvm::ConstantInt::get(IR::Context, llvm::APInt(64, llvm::StringRef("0"), 10));
-//    const_ptr_5_indices.push_back(const_int64_6);
-//    const_ptr_5_indices.push_back(const_int64_6);
-//    llvm::Constant* const_ptr_5 = llvm::ConstantExpr::getGetElementPtr(gvar_array__str, const_ptr_5_indices);
-
-    // Global Variable Definitions
-    gvar_array__str->setInitializer(const_array_4);
+    llvm::Constant *arrayString = llvm::ConstantDataArray::getString(IR::Context, this->value.c_str(), true);
+    globalString->setInitializer(arrayString);
     
-    return gvar_array__str;
+    return globalString;
 }
 
 llvm::Value* TocFunction::generateCode() {
     IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder->SetInsertPoint(IR::TocFunction);
     
-    this->body->generateCode();    
-    
-    std::cout << "test print" << std::endl;
-//    llvm::Type* voidType = llvm::Type::getVoidTy(IR::Context);
-//    IR::Module->getOrInsertFunction("putchard", llvm::FunctionType::get(voidType, false));
-//    llvm::Function* printFunction = IR::Module->getFunction("putchard");
-//    std::vector<llvm::Value*> arguments;
-//    arguments.push_back(llvm::ConstantInt::get(IR::Context, llvm::APInt(64, 41)));
-//    IR::Builder->CreateCall(printFunction, arguments, "callprint");
-//    
-//    std::cout << "test print2" << std::endl;
+    this->body->generateCode();
     
     IR::Builder->SetInsertPoint(IR::TocFunction);
     IR::Builder->CreateRetVoid();
