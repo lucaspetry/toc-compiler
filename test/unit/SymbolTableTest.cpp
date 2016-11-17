@@ -1,4 +1,5 @@
 #include "gtest.h"
+#include "Symbol.h"
 #include "SymbolTable.h"
 
 /**
