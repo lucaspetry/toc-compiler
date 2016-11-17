@@ -17,16 +17,16 @@ void SemanticAnalyzer::returnScope() {
 
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   TreeNode* left = binaryOp->left;
-  BinaryOperation::Type op = binaryOp->operation;
+  //BinaryOperation::Type op = binaryOp->operation;
   TreeNode* right = binaryOp->right;
+  binaryOp->setType(left->dataType());
 
-  if (left->dataType() != right->dataType() && op == BinaryOperation::ASSIGN){
+  if (left->dataType() != right->dataType()){
     if(right->dataType() == Data::STR){
       std::string text = "";
       if(left->dataType() == Data::BOO){
         text = ((String*)right)->getValue();
-        text.erase(0, 1);
-        text.erase(text.size() - 1);
+        std::cout << text << std::endl;
         if (text == "false" || text == "true"){
           binaryOp->right = new TypeCasting(left->dataType(),right);
           right = binaryOp->right;
@@ -35,8 +35,6 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
         }
       } else if (left->dataType() == Data::FLT || left->dataType() == Data::INT){
           text = ((String*)right)->getValue();
-          text.erase(0, 1);
-          text.erase(text.size() - 1);
           if (std::all_of(text.begin(), text.end(), ::isdigit)) {
             binaryOp->right = new TypeCasting(left->dataType(),right);
             right = binaryOp->right;
@@ -47,10 +45,14 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
     } else{
         binaryOp->right = new TypeCasting(left->dataType(),right);
         right = binaryOp->right;
+
     }
   }
 }
 
+void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binaryop) {
+
+}
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
   if(this->symbolTable.existsSymbol(id, false))

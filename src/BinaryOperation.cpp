@@ -41,6 +41,14 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
             return "=";
         case MULT_ATT:
             return ",";
+        case PLUS:
+            return "+";
+        case TIMES:
+            return "*";
+        case MINUS:
+            return "-";
+        case DIVIDE:
+            return "/";
         default:
             return "unknown";
     }

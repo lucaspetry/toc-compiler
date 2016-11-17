@@ -50,6 +50,7 @@ class TreeNode {
             VARIABLE,
             VARIABLE_DECLARATION,
             TYPE_CASTING,
+            UNARY_OPERATION,
             UNKNOWN
         };
 

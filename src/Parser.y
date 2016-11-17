@@ -14,6 +14,7 @@
     #include "Integer.h"
     #include "Float.h"
     #include "Boolean.h"
+    #include "UnaryOperation.h"
 
     SemanticAnalyzer SEMANTIC;
     TocAnalyzer TOC;
@@ -61,7 +62,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global line declaration expression attribuition multiple_attribution
+%type <node> global line declaration expression attribuition multiple_attribution op_binary
 %type <codeBlock> main_scope multiple_declaration
 %type <integer> indent sp type
 
@@ -70,6 +71,11 @@
  * Os primeiros listados têm menor precedência do que os últimos.
  * (left, right, nonassoc)
  */
+
+ %left T_PLUS T_MINUS
+ %left T_TIMES T_DIVIDE
+ %left T_MOD
+ %nonassoc U_MINUS error
 
 /*
  * Símbolo inicial da gramática.
@@ -119,6 +125,7 @@ declaration:
     | type sp T_ID multiple_declaration { $$ = new BinaryOperation(SEMANTIC.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);
                                             TOC.analyzeVariable($3); }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
+                                                SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                                 TOC.analyzeSpaces(1, $2);
                                                 TOC.analyzeVariable($3); }
     // array
@@ -165,12 +172,30 @@ multiple_attribution:
 // Expressão
 expression:
     T_TRUE {$$ = new Boolean(true); }| T_FALSE {$$ = new Boolean(false); }
-    | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = NULL; }
+    | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = new String($1); }
     | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
     | T_ID {SEMANTIC.useVariable($1); $$ = NULL;}
+    | T_MINUS expression %prec U_MINUS { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
+    | T_OPAR expression T_CPAR { $$ = $2; }
+    | op_binary
     | {$$ = NULL; }
     ;
 
+//Operaçoes binárias
+op_binary:
+    expression sp T_PLUS sp expression { $$ = new BinaryOperation($1, BinaryOperation::PLUS, $5);
+                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                        ;}
+    | expression sp T_MINUS sp expression { $$ = new BinaryOperation($1, BinaryOperation::MINUS, $5);
+                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                        ; }
+    | expression sp T_TIMES sp expression { $$ = new BinaryOperation($1, BinaryOperation::TIMES, $5);
+                         SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                         ; }
+    | expression sp T_DIVIDE sp expression { $$ = new BinaryOperation($1, BinaryOperation::DIVIDE, $5);
+                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                        ; }
+    ;
 // Tipos de dados
 type:
     T_BOO {$$ = Data::BOO;}

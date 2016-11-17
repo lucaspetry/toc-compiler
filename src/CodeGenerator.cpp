@@ -13,6 +13,7 @@
 #include "TocFunction.h"
 #include "Variable.h"
 #include "VariableDeclaration.h"
+#include "UnaryOperation.h"
 
 CodeGenerator::CodeGenerator() {
 
@@ -100,6 +101,10 @@ llvm::Value* BinaryOperation::generateCode() {
         }
     }
 
+}
+
+llvm::Value* UnaryOperation::generateCode(){
+    return NULL; //TODO
 }
 
 llvm::Value* Boolean::generateCode() {

@@ -12,9 +12,9 @@
 %option nounput noinput noyywrap nodefault yylineno
 
 id ([a-z|A-Z][a-z|A-Z|_|0-9]*)
-dec ([0-9]+.[0-9]+)
+dec ([0-9]+\.[0-9]+)
 num ([0-9]+)
-text ([\"][a-z|A-Z][a-z|A-Z|_|0-9| |'\\']*[\"])
+text ([\"][a-z|A-Z|_|0-9| |'\\']*[\"])
 comment ([#][a-z|A-Z|_|0-9| ]*)
 
 %%
@@ -31,6 +31,13 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
+
+"+"                 {return T_PLUS;} /* Binary operator PLUS */
+"-"                 {return T_MINUS;} /* Binary/unary operator MINUS */
+\*                  {return T_TIMES;} /* Binary operator TIMES */
+"/"                 {return T_DIVIDE;} /* Binary operator DIVIDE */
+"mod"               {return T_MOD;}
+
 {text}              {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_TEXT;}
 {dec}               {yylval.decimal = std::stof(yytext); return T_DEC;}
 {num}               {yylval.integer = std::atoi(yytext); return T_NUM;}
