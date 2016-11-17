@@ -11,10 +11,32 @@ GTEST_DIR = gtest
 TEST_SRC_DIR = unit
 
 SRCS += $(wildcard $(TEST_SRC_DIR)/*.cpp)
-SRCS += ../src/Scope.cpp \
+SRCS += ../src/Array.cpp \
+../src/BinaryOperation.cpp \
+../src/Boolean.cpp \
+../src/CodeBlock.cpp \
+../src/CodeGenerator.cpp \
+../src/Comment.cpp \
+../src/ErrorLogger.cpp \
+../src/Float.cpp \
+../src/Function.cpp \
+../src/Integer.cpp \
+../src/PrintFunction.cpp \
+../src/Scope.cpp \
+../src/SemanticAnalyzer.cpp \
+../src/String.cpp \
 ../src/Symbol.cpp \
- ../src/SymbolTable.cpp \
- ../src/TreeNode.cpp \
+../src/SymbolTable.cpp \
+../src/SyntaxTree.cpp \
+../src/TocAnalyzer.cpp \
+../src/TocFunction.cpp \
+../src/TreeNode.cpp \
+../src/TypeCasting.cpp \
+../src/UnaryOperation.cpp \
+../src/Variable.cpp \
+../src/VariableDeclaration.cpp \
+../tmp/Parser.cpp \
+../tmp/Scanner.cpp \
 
 OBJS += $(SRCS:.cpp=.o)
 
