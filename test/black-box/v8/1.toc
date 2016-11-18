@@ -1,0 +1,11 @@
+#Exemplo de relacionais e logicos
+void toc()
+  boo a = 6 > 7
+  a = 6 < 7
+  a = 6 >= 7
+  a = 6 <= 7
+  a = 6 and 7
+  a = 6 or 7
+  a = 6 != 7
+  a = 6 == 7
+  a = not (4 > 7)

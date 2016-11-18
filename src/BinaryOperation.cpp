@@ -55,6 +55,24 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
             return "-";
         case DIVIDE:
             return "/";
+        case GREATER:
+            return ">";
+        case GREATER_E:
+            return ">=";
+        case LOWER:
+            return "<";
+        case LOWER_E:
+            return "<=";
+        case EQUAL:
+            return "==";
+        case DIFF:
+            return "!=";
+        case NOT:
+            return "not";
+        case AND:
+            return "and";
+        case OR:
+            return "or";
         default:
             return "unknown";
     }

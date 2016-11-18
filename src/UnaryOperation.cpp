@@ -23,7 +23,7 @@ std::string UnaryOperation::operationToString(UnaryOperation::Type operation) co
         case MINUS:
             return "-u";
         case NOT:
-            return "!";
+            return "not";
         default:
             return "unknown";
     }

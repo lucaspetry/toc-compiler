@@ -32,11 +32,22 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
 
-"+"                 {return T_PLUS;} /* Binary operator PLUS */
-"-"                 {return T_MINUS;} /* Binary/unary operator MINUS */
-\*                  {return T_TIMES;} /* Binary operator TIMES */
-"/"                 {return T_DIVIDE;} /* Binary operator DIVIDE */
+"+"                 {return T_PLUS;}
+"-"                 {return T_MINUS;}
+\*                  {return T_TIMES;}
+"/"                 {return T_DIVIDE;}
 "mod"               {return T_MOD;}
+
+">"                 {return T_GREATER;}
+">="                {return T_GREATER_E;}
+"<"                 {return T_LOWER;}
+"<="                {return T_LOWER_E;}
+"=="                {return T_EQUAL;}
+"!="                {return T_DIFF;}
+
+"not"               {return T_NOT;}
+"and"               {return T_AND;}
+"or"                {return T_OR;}
 
 {text}              {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_TEXT;}
 {dec}               {yylval.decimal = std::stof(yytext); return T_DEC;}

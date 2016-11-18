@@ -72,9 +72,14 @@
  * (left, right, nonassoc)
  */
 
+
+ %left T_NOT T_AND T_OR
+ %left T_GREATER T_GREATER_E T_LOWER T_LOWER_E T_EQUAL T_DIFF
+
  %left T_PLUS T_MINUS
  %left T_TIMES T_DIVIDE
  %left T_MOD
+
  %nonassoc U_MINUS error
 
 /*
@@ -176,6 +181,7 @@ expression:
     | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
     | T_ID {$$ = SEMANTIC.useVariable($1); }
     | T_MINUS expression %prec U_MINUS { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
+    | T_NOT sp expression { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
     | T_OPAR expression T_CPAR { $$ = $2; }
     | expression sp op_binary sp expression {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5); }
     ;
@@ -186,6 +192,14 @@ op_binary:
     | T_MINUS { $$ = BinaryOperation::MINUS; }
     | T_TIMES { $$ = BinaryOperation::TIMES; }
     | T_DIVIDE { $$ = BinaryOperation::DIVIDE; }
+    | T_GREATER { $$ = BinaryOperation::GREATER; }
+    | T_GREATER_E { $$ = BinaryOperation::GREATER_E; }
+    | T_LOWER { $$ = BinaryOperation::LOWER; }
+    | T_LOWER_E { $$ = BinaryOperation::LOWER_E; }
+    | T_EQUAL { $$ = BinaryOperation::EQUAL; }
+    | T_DIFF { $$ = BinaryOperation::DIFF; }
+    | T_AND { $$ = BinaryOperation::AND; }
+    | T_OR { $$ = BinaryOperation::OR; }
     ;
 
 // Tipos de dados

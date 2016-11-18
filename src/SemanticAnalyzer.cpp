@@ -22,6 +22,7 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
 
   if (left->dataType() != right->dataType()){
     if(right->dataType() == Data::STR){
+
       switch (left->dataType()) {
         case Data::BOO:
           if (((String*)right)->isBoolean()){
@@ -36,12 +37,15 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
           if (((String*)right)->isNumber()) {
             binaryOp->right = new TypeCasting(left->dataType(),right);
             right = binaryOp->right;
-        } else {
-          ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
+          } else {
+            ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
           }
           break;
-        }
-    } else{
+        default:
+          break;
+      }
+
+    }else{
         binaryOp->right = new TypeCasting(left->dataType(),right);
         right = binaryOp->right;
     }
@@ -98,11 +102,12 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     if(size > 0){
       this->symbolTable.setInitializedSymbol(id);
       return new Array(id, dataType, new Integer(size));
-    }
-
+      }
     this->symbolTable.setInitializedSymbol(id);
     return new VariableDeclaration(dataType, new Variable(id, dataType));
   }
+  // não deve chegar nesse ponto
+  return NULL;
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {

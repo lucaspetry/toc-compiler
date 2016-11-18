@@ -5,7 +5,7 @@
 #include "Variable.h"
 
 /**
-  Class BinaryOperation 
+  Class BinaryOperation
 **/
 
 class BinaryOperation : public TreeNode {
@@ -21,6 +21,15 @@ class BinaryOperation : public TreeNode {
             TIMES,
             COMMA,
             MULT_ATT,
+            GREATER,
+            GREATER_E,
+            LOWER,
+            LOWER_E,
+            EQUAL,
+            DIFF,
+            NOT,
+            AND,
+            OR,
             UNKNOWN
         };
 
