@@ -17,35 +17,33 @@ void SemanticAnalyzer::returnScope() {
 
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   TreeNode* left = binaryOp->left;
-  //BinaryOperation::Type op = binaryOp->operation;
   TreeNode* right = binaryOp->right;
-  binaryOp->setType(left->dataType());
+  std::string text = "";
 
   if (left->dataType() != right->dataType()){
     if(right->dataType() == Data::STR){
-      std::string text = "";
-      if(left->dataType() == Data::BOO){
-        text = ((String*)right)->getValue();
-        std::cout << text << std::endl;
-        if (text == "false" || text == "true"){
-          binaryOp->right = new TypeCasting(left->dataType(),right);
-          right = binaryOp->right;
-        } else {
-          ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is not false or true.");
-        }
-      } else if (left->dataType() == Data::FLT || left->dataType() == Data::INT){
-          text = ((String*)right)->getValue();
-          if (std::all_of(text.begin(), text.end(), ::isdigit)) {
+      switch (left->dataType()) {
+        case Data::BOO:
+          if (((String*)right)->isBoolean()){
             binaryOp->right = new TypeCasting(left->dataType(),right);
             right = binaryOp->right;
           } else {
-            ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
+            ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is not false or true.");
+          }
+          break;
+        case Data::FLT:
+        case Data::INT:
+          if (((String*)right)->isNumber()) {
+            binaryOp->right = new TypeCasting(left->dataType(),right);
+            right = binaryOp->right;
+        } else {
+          ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
+          }
+          break;
         }
-      }
     } else{
         binaryOp->right = new TypeCasting(left->dataType(),right);
         right = binaryOp->right;
-
     }
   }
 }
@@ -100,12 +98,11 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     if(size > 0){
       this->symbolTable.setInitializedSymbol(id);
       return new Array(id, dataType, new Integer(size));
-    }else{
-      this->symbolTable.setInitializedSymbol(id);
-      return new VariableDeclaration(dataType, new Variable(id, dataType));
     }
+
+    this->symbolTable.setInitializedSymbol(id);
+    return new VariableDeclaration(dataType, new Variable(id, dataType));
   }
-  return NULL;
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {

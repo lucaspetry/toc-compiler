@@ -3,6 +3,9 @@
 
 #include "TreeNode.h"
 #include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 /**
   Class String
@@ -17,6 +20,8 @@ class String : public TreeNode {
         std::string printInOrder() const;
         llvm::Value* generateCode();
         std::string getValue();
+        bool isBoolean();
+        bool isNumber();
 
     private:
         std::string value;

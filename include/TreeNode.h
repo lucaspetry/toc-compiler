@@ -16,8 +16,8 @@ namespace Data {
     enum Type {
         UNKNOWN = -1,
         BOO = 1,
-        FLT = 2,
-        INT = 3,
+        FLT = 3,
+        INT = 2,
         STR = 4,
         VOID = 5
     };

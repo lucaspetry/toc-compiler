@@ -4,6 +4,12 @@ BinaryOperation::BinaryOperation(TreeNode* left, BinaryOperation::Type operation
     this->left = left;
     this->operation = operation;
     this->right = right;
+
+    // setando o tipo da BinaryOperation com o tipo mais forte
+    if(left->dataType() > right->dataType())
+      setType(left->dataType());
+    else
+      setType(right->dataType());
 }
 
 BinaryOperation::~BinaryOperation() {

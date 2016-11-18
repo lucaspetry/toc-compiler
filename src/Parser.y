@@ -62,9 +62,9 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global line declaration expression attribuition multiple_attribution op_binary
+%type <node> global line declaration expression attribuition multiple_attribution
 %type <codeBlock> main_scope multiple_declaration
-%type <integer> indent sp type
+%type <integer> indent sp type op_binary
 
 /*
  * Precedência de operadores.
@@ -174,28 +174,20 @@ expression:
     T_TRUE {$$ = new Boolean(true); }| T_FALSE {$$ = new Boolean(false); }
     | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = new String($1); }
     | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
-    | T_ID {SEMANTIC.useVariable($1); $$ = NULL;}
+    | T_ID {$$ = SEMANTIC.useVariable($1); }
     | T_MINUS expression %prec U_MINUS { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
     | T_OPAR expression T_CPAR { $$ = $2; }
-    | op_binary
-    | {$$ = NULL; }
+    | expression sp op_binary sp expression {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5); }
     ;
 
 //Operaçoes binárias
 op_binary:
-    expression sp T_PLUS sp expression { $$ = new BinaryOperation($1, BinaryOperation::PLUS, $5);
-                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                        ;}
-    | expression sp T_MINUS sp expression { $$ = new BinaryOperation($1, BinaryOperation::MINUS, $5);
-                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                        ; }
-    | expression sp T_TIMES sp expression { $$ = new BinaryOperation($1, BinaryOperation::TIMES, $5);
-                         SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                         ; }
-    | expression sp T_DIVIDE sp expression { $$ = new BinaryOperation($1, BinaryOperation::DIVIDE, $5);
-                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                        ; }
+    T_PLUS { $$ = BinaryOperation::PLUS ;}
+    | T_MINUS { $$ = BinaryOperation::MINUS; }
+    | T_TIMES { $$ = BinaryOperation::TIMES; }
+    | T_DIVIDE { $$ = BinaryOperation::DIVIDE; }
     ;
+
 // Tipos de dados
 type:
     T_BOO {$$ = Data::BOO;}

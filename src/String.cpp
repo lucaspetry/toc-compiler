@@ -26,3 +26,15 @@ std::string String::printInOrder() const {
 std::string String::getValue() {
     return this->value;
 }
+
+bool String::isBoolean(){
+  if(this->value == "true" || this->value == "false")
+    return true;
+  return false;
+}
+
+bool String::isNumber(){
+  if (std::all_of(this->value.begin(), this->value.end(), ::isdigit))
+    return true;
+  return false;
+}
