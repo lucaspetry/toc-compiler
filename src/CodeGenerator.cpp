@@ -70,8 +70,6 @@ void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
     // Executa a função principal e imprime o resultado
     std::vector<llvm::GenericValue> noargs;
     executionEngine->runFunction(IR::MainFunction, noargs);
-    std::cout << "\nExecution finished!" << std::endl;
-
 }
 
 void SyntaxTree::generateCode() {

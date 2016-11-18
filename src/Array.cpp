@@ -18,7 +18,7 @@ TreeNode::ClassType Array::classType() const {
 std::string Array::printInOrder() const {
     std::string output = "";
     if (this->type != Data::UNKNOWN and this->values == NULL){
-      output += this->toString(this->type);
+      output += Data::toString(this->type);
     }
     output += this->id;
     output += "[";

@@ -207,14 +207,14 @@ type:
 
 // Espaços
 sp:
-    {$$ = 0;}
-    | T_SP sp {$$ = $2 + 1;}
+    { $$ = 0; }
+    | T_SP sp { $$ = $2 + 1; }
     ;
 
 // Indentação (2 espaços)
 indent:
-    {  int a = 0; $$ = a; }
-    | T_SP T_SP indent { $$ = ($3 + 1);}
+    { $$ = 0; }
+    | T_SP T_SP indent { $$ = $3 + 1; }
     ;
 
 %%

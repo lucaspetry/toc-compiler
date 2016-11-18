@@ -62,7 +62,6 @@ class TreeNode {
         void setType(Data::Type type);
         void setSymbolTable(SymbolTable table);
         Data::Type dataType() const;
-        std::string toString(Data::Type type) const;
 
     protected:
         Data::Type type;

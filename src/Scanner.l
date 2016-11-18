@@ -53,6 +53,6 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "="                 {return T_ASSIGN;}
 \n                  {return T_NL;} /* New line */
 
-.                   {ERROR_LOGGER->log(ErrorLogger::LEXICAL, "Unknown symbol " + std::string(yytext));}
+[^0-9\.a-zA-Z_'+''-''*''/',''='#\\\"\t\n \[\]\(\)\{\}]+                   {ERROR_LOGGER->log(ErrorLogger::LEXICAL, "Unknown symbol " + std::string(yytext) + ".");}
 
 %%

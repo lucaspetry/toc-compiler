@@ -1,3 +1,0 @@
-# Metodo de exemplo
-int uva()
-  flt uva = 1

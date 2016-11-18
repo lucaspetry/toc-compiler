@@ -1,2 +1,1 @@
-[Line 2] Syntax error : Unknown symbol Continuando.
-[Line 2] Syntax error : Unknown symbol exemplo.
+[Line 2] Semantic error: Main function toc() not found.

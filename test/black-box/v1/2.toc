@@ -1,4 +1,0 @@
-# Exemplo de objetos em TOC
-obj Arvore(int galhos)
-  prv int Arvore = galhos
-  pub int frutas = 0

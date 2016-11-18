@@ -18,7 +18,7 @@ std::string CodeBlock::printInOrder() const {
         output += this->printIndentation();
         output += myTreenode->printInOrder();
         if(myTreenode->classType()!= TreeNode::VARIABLE)
-          output += "\n";
+            output += "\n";
     }
     return output;
 }
@@ -36,9 +36,9 @@ void CodeBlock::insertLine(TreeNode* line) {
 }
 
 std::string CodeBlock::printIndentation() const {
-  std::string output = "";
-  for(int a = 0; a <= this->indentation; a++){
-    output += "  ";
-  }
-  return output;
+    std::string output = "";
+    for(int i = 1; i <= this->indentation; i++){
+        output += "  ";
+    }
+    return output;
 }
