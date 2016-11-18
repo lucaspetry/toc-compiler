@@ -141,6 +141,8 @@ llvm::Value* PrintFunction::generateCode() {
     llvm::Function *printFunction = IR::Module->getFunction("printf");
     std::vector<llvm::Value*> args;
     args.push_back(this->body->getLine(0)->generateCode());
+    // OURO ABAIXO
+    // IR::Builder->CreateGlobalString(llvm::StringRef(strPrint), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */)
     return IR::Builder->CreateCall(printFunction, args, "printfCall");
 }
 
