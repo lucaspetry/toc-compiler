@@ -183,5 +183,16 @@ llvm::Value* VariableDeclaration::generateCode() {
 }
 
 llvm::Value* Array::generateCode(){
-  return NULL;
+  // http://stackoverflow.com/questions/35228471/how-to-create-llvm-array-type-using-allocainst
+  // llvm::Type* I;
+  // switch (this->type) {
+  //     I = llvm::IntegerType::getInt32Ty(IR::Context); // cria um inteiro de qualquer forma
+  //     break;
+  // }
+  // int num = ((Integer*)this->size)->getValue();
+  // llvm::ArrayType* arrayType = llvm::ArrayType::get(I, 0);
+  //
+  // llvm::AllocaInst* arr_alloc = new llvm::AllocaInst(arrayType, "name");
+  //
+  // return arr_alloc;
 }
