@@ -14,6 +14,7 @@
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
 
+
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
     static llvm::BasicBlock* TocFunction; // Criado no CodeGenerator.

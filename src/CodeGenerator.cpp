@@ -80,9 +80,14 @@ void SyntaxTree::generateCode() {
 
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
+      std::cout << "1" << std::endl;
         Variable* lvar = dynamic_cast<Variable *>(left); // TODO pode ser VariableDeclaration
+        std::cout << "2" << std::endl;
         llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
+        std::cout << "3" << std::endl;
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
+          std::cout << "4" << std::endl;
+
         return newValue;
     } else {
         switch(this->operation) {
@@ -172,6 +177,25 @@ llvm::Value* TocFunction::generateCode() {
     IR::Builder->CreateRetVoid();
 
     return IR::TocFunction;
+}
+
+llvm::Value* TypeCasting::generateCode(){
+  switch(this->left){
+      case Data::INT:
+          if (next->dataType() == Data::FLT){
+            llvm::CastInst* float_conv = new llvm::FPToSIInst(next->generateCode(), llvm::IntegerType::getInt32Ty(IR::Context), "conv");
+                return float_conv;
+          }
+        break;
+      case Data::FLT:
+        break;
+      case Data::STR:
+        break;
+      case Data::BOO:
+        break;
+      default: return NULL;
+  }
+  return NULL;//TODO
 }
 
 llvm::Value* Variable::generateCode() {

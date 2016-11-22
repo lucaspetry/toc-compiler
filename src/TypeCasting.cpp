@@ -20,10 +20,6 @@ std::string TypeCasting::printInOrder() const {
   return output;
 }
 
-llvm::Value* TypeCasting::generateCode(){
-  return NULL;//TODO
-}
-
 std::string TypeCasting::typeToString(Data::Type type) const{
     switch(type) {
         case Data::INT:
