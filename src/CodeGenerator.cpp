@@ -182,12 +182,12 @@ llvm::Value* TocFunction::generateCode() {
 llvm::Value* TypeCasting::generateCode(){
   switch(this->left){
       case Data::INT:
-          if (next->dataType() == Data::FLT){
-            llvm::CastInst* float_conv = new llvm::FPToSIInst(next->generateCode(), llvm::IntegerType::getInt32Ty(IR::Context), "conv");
-                return float_conv;
-          }
+          if (next->dataType() == Data::FLT)
+            return new llvm::FPToSIInst(next->generateCode(), llvm::IntegerType::getInt32Ty(IR::Context), "conv");
         break;
       case Data::FLT:
+          if (next->dataType() == Data::INT)
+            return new llvm::SIToFPInst(next->generateCode(), llvm::Type::getFloatTy(IR::Context), "conv");
         break;
       case Data::STR:
         break;

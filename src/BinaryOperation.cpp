@@ -10,6 +10,9 @@ BinaryOperation::BinaryOperation(TreeNode* left, BinaryOperation::Type operation
       setType(left->dataType());
     else
       setType(right->dataType());
+
+    if(operation == BinaryOperation::ASSIGN)
+      setType(left->dataType());
 }
 
 BinaryOperation::~BinaryOperation() {
