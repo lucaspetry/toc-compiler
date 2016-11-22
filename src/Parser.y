@@ -62,7 +62,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global line declaration expression attribuition multiple_attribution
+%type <node> global line declaration expression attribuition multiple_attribution test
 %type <codeBlock> main_scope multiple_declaration
 %type <integer> indent sp type op_binary
 
@@ -176,6 +176,18 @@ multiple_attribution:
 
 // Expressão
 expression:
+    /*T_TRUE {$$ = new Boolean(true); }| T_FALSE {$$ = new Boolean(false); }
+    | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = new String($1); }
+    | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
+    | T_ID {$$ = SEMANTIC.useVariable($1); }
+    | T_MINUS expression %prec U_MINUS { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
+    | T_NOT sp expression { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
+    | T_OPAR expression T_CPAR { $$ = $2; }*/
+    test {$$ = $1;} // teste dica do professor, antes 36 conflitos de reduce/reduce, agora 24
+    | expression sp op_binary sp test {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5); }
+    ;
+
+test:
     T_TRUE {$$ = new Boolean(true); }| T_FALSE {$$ = new Boolean(false); }
     | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = new String($1); }
     | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
@@ -183,7 +195,6 @@ expression:
     | T_MINUS expression %prec U_MINUS { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
     | T_NOT sp expression { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
     | T_OPAR expression T_CPAR { $$ = $2; }
-    | expression sp op_binary sp expression {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5); }
     ;
 
 //Operaçoes binárias
