@@ -20,26 +20,82 @@
 extern ErrorLogger* ERROR_LOGGER;
 
 /**
-  Class SemanticAnalyzer
-**/
-
+ * Analisador semântico
+ */
 class SemanticAnalyzer {
 
     public:
+        /**
+         * Construir o analisador semântico 
+         */
         SemanticAnalyzer();
+    
+        /**
+         * Destruir o analisador semântico
+         */
         virtual ~SemanticAnalyzer();
 
+        /**
+         * Criar um novo escopo na tabela de símbolos
+         */
         void newScope();
+    
+        /**
+         * Retornar para o escopo anterior ao atual da tabela
+         */
         void returnScope();
-        void setType(Data::Type tipo);
+    
+        /**
+         * Atribuir um tipo a todos os tipos desconhecidos
+         * @param type tipo a ser atribuído
+         */
+        void setUnknownTypes(Data::Type type);
+    
+        /**
+         * Analisar...
+         * @param op 
+         */
         void analyzeCasting(BinaryOperation* op);
+    
+        /**
+         * Analisar...
+         * @param op 
+         */
         void analyzeRelationalOperationCasting(BinaryOperation* op);
 
+        /**
+         * Declarar uma variável
+         * @param varId 
+         * @param dataType 
+         * @param size 
+         * @return nodo correspondente à declaração
+         */
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
+    
+        /**
+         * Atribuir um valor a uma variável
+         * @param varId 
+         * @param index 
+         * @return 
+         */
         TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);
+    
+        /**
+         * Declarar e atribuir um valor a uma variável
+         * @param varId 
+         * @param dataType 
+         * @param size 
+         * @return nodo correspondente à declaração
+         */
         TreeNode* declareAssignVariable(std::string id, Data::Type dataType, int size = 0);
+    
+        /**
+         * Usar uma variável
+         * @param varId 
+         * @param index  
+         * @return nodo correspondente à variável
+         */
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
-
 
     private:
         SymbolTable symbolTable;

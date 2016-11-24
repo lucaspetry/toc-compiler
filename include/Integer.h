@@ -5,9 +5,8 @@
 #include "TreeNode.h"
 
 /**
-  Class Integer
-**/
-
+ * Valor inteiro 
+ */
 class Integer : public TreeNode {
 
     public:

@@ -8,9 +8,8 @@
 #include <ctype.h>
 
 /**
-  Class String
-**/
-
+ * Valor textual 
+ */
 class String : public TreeNode {
 
     public:

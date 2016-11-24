@@ -2,7 +2,7 @@
 #define LLVM_H_
 
 /**
- * Arquivos de geração de código intermediário (LLVM).
+ * Arquivos de geração de código intermediário (LLVM)
  */
 #include "llvm/IR/DerivedTypes.h"                   // for types
 #include "llvm/IR/IRBuilder.h"                      // for Builder
@@ -14,7 +14,9 @@
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/MCJIT.h"
 
-
+/**
+ * Variáveis de geração de código intermediário (LLVM)
+ */
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
     static llvm::BasicBlock* TocFunction; // Criado no CodeGenerator.

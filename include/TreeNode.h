@@ -10,7 +10,7 @@ class SemanticAnalyzer;
 class SyntaxTree;
 
 /**
- * Namespace de dados.
+ * Tipos de dados.
  */
 namespace Data {
     enum Type {
@@ -26,15 +26,17 @@ namespace Data {
 }
 
 /**
-  Class TreeNode
-**/
-
+ * Nodo da árvore sintática 
+ */
 class TreeNode {
 
     friend class BinaryOperation;
     friend class SymbolTable;
 
     public:
+        /**
+         * Tipos de nodos 
+         */
         enum ClassType {
             ARRAY,
             BINARY_OPERATION,

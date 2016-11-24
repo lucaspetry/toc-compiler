@@ -18,9 +18,8 @@ OBJS_TOC += $(wildcard $(OBJS_DIR)/*.o)
 OBJS_TOC := $(filter-out $(OBJS_DIR)/Main.o, $(OBJS_TOC))
 
 %.o: %.cpp
-	@echo 'Building file: $<'
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -O0 -Wall -c -o "$@" "$<" $(LLVM)
-	@echo ' '
+	@echo 'Building file: $< ($@)'
+	@$(CC) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) -O0 -Wall -c -o "$@" "$<" $(LLVM)
 
 gtest: ./$(GTEST_DIR)/gtest-all.o
 

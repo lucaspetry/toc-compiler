@@ -6,7 +6,7 @@
 class Scope;
 
 /**
- * Símbolo gerado na análise sintática.
+ * Símbolo gerado na análise sintática
  */
 class Symbol {
 
@@ -14,7 +14,7 @@ class Symbol {
 
     public:
         /**
-         * Tipo do identificador representado pelo símbolo.
+         * Tipo do identificador representado pelo símbolo
          */
         enum IdentifierType {
             UNKNOWN,
@@ -23,12 +23,12 @@ class Symbol {
         };
 
         /**
-         * Construir um símbolo padrão.
+         * Construir um símbolo padrão
          */
         Symbol();
 
         /**
-         * Construir um símbolo.
+         * Construir um símbolo
          * @param dataType
          * @param idType
          * @param initialized
@@ -37,37 +37,37 @@ class Symbol {
         Symbol(Data::Type dataType, IdentifierType idType, bool initialized, TreeNode* data = NULL);
 
         /**
-         * Destruir o símbolo.
+         * Destruir o símbolo
          */
         virtual ~Symbol();
 
         /**
-         * Obter o dado correspondente ao símbolo.
-         * @return nodo da árvore sintática correspondente.
+         * Obter o dado correspondente ao símbolo
+         * @return nodo da árvore sintática correspondente
          */
         const TreeNode* getData() const;
 
         /**
-         * Obter o tipo de dado do símbolo.
-         * @return tipo de dado do símbolo.
+         * Obter o tipo de dado do símbolo
+         * @return tipo de dado do símbolo
          */
         Data::Type getDataType() const;
 
         /**
-         * Obter o tipo do identificador do símbolo.
-         * @return tipo do identificador do símbolo.
+         * Obter o tipo do identificador do símbolo
+         * @return tipo do identificador do símbolo
          */
         IdentifierType getType() const;
 
         /**
-         * Verificar se o símbolo foi inicializado.
-         * @return true se o símbolo já foi inicializado.
+         * Verificar se o símbolo foi inicializado
+         * @return true se o símbolo já foi inicializado
          */
         bool isInitialized() const;
 
         /**
-         * Definir o tipo de dado.
-         * @param type tipo de dado do símbolo.
+         * Definir o tipo de dado
+         * @param type tipo de dado do símbolo
          */
         void setDataType(Data::Type type);
 

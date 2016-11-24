@@ -5,9 +5,8 @@
 #include "TreeNode.h"
 
 /**
-  Class Comment 
-**/
-
+ * Comentário 
+ */
 class Comment : public TreeNode {
 
     public:

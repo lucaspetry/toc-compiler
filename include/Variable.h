@@ -6,9 +6,8 @@
 #include "SymbolTable.h"
 
 /**
-  Class Variable
-**/
-
+ * Variável 
+ */
 class Variable : public TreeNode {
 
     public:

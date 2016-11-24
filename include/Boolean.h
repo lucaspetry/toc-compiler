@@ -4,9 +4,8 @@
 #include "TreeNode.h"
 
 /**
-  Class Boolean 
-**/
-
+ * Valor booleano 
+ */
 class Boolean : public TreeNode {
 
     public:

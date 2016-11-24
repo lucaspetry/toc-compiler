@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     
     CodeGenerator codeGen;
     codeGen.setProgramTitle("TOC Program");
-    codeGen.generateExecutableCode(SYNTAX_TREE);
+    codeGen.generateExecuteCode(SYNTAX_TREE);
     
 #else // Ou imprime a árvore sintática
     

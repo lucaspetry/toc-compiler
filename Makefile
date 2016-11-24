@@ -83,7 +83,7 @@ test-black-box: FORCE
 	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
-test-unit: tmp $(OBJS)
+test-unit: tmp parser scanner $(OBJS)
 	@echo "${GREEN}Executing tests...${WHITE}"
 	@cd test && $(MAKE) unit
 	@echo "${GREEN}Executing tests... ${LIGHT_GREEN}Done!${WHITE}"

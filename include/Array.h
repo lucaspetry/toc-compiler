@@ -5,9 +5,8 @@
 #include "TreeNode.h"
 
 /**
-  Class Array 
-**/
-
+ * Array 
+ */
 class Array : public TreeNode {
 
     public:

@@ -4,19 +4,21 @@
 #include <iostream>
 #include <string>
 
-/**
-  Class ErrorLogger
-**/
-
 class ErrorLogger;
 
 extern ErrorLogger* ERROR_LOGGER;
 extern int yylineno;
 void yyerror(const char* s, ...);
 
+/**
+ * Logger de erros 
+ */
 class ErrorLogger {
 
     public:
+        /**
+         * Tipos de erros 
+         */
         enum Type {
             LEXICAL = 0,
             SEMANTIC = 1,
@@ -24,12 +26,31 @@ class ErrorLogger {
             WARNING = 3
         };
 
+        /**
+         * Construir um logger de erros 
+         */
         ErrorLogger();
+    
+        /**
+         * Destruir o logger de erros 
+         */
         virtual ~ErrorLogger();
+    
+        /**
+         * Registrar um erro
+         * @param type tipo do erro
+         * @param message mensagem de erro
+         */
         void log(ErrorLogger::Type type, std::string message = "Unknown error.");
 
     private:
+        /**
+         * Converter o tipo do erro para texto
+         * @param type tipo de erro
+         * @return texto correspondente ao tipo
+         */
         std::string typeToString(ErrorLogger::Type type) const;
+    
         int errorCount[4];
 
 };

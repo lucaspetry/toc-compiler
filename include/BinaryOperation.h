@@ -5,9 +5,8 @@
 #include "Variable.h"
 
 /**
-  Class BinaryOperation
-**/
-
+ * Operação binária 
+ */
 class BinaryOperation : public TreeNode {
 
   friend class SemanticAnalyzer;

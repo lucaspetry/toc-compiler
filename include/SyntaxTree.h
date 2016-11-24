@@ -8,10 +8,8 @@
 #include <vector>
 
 /**
-  Class SyntaxTree
-**/
-
-
+ * Árvore sintática 
+ */
 class SyntaxTree {
 
     public:

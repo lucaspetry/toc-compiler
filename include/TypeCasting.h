@@ -5,9 +5,8 @@
 #include "SymbolTable.h"
 
 /**
-  Class TypeCasting
-**/
-
+ * Conversão de tipos 
+ */
 class TypeCasting : public TreeNode {
 
     public:

@@ -6,9 +6,8 @@
 #include "CodeBlock.h"
 
 /**
-  Class Function
-**/
-
+ * Função 
+ */
 class Function : public TreeNode {
 
     public:

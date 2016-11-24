@@ -4,9 +4,8 @@
 #include "TreeNode.h"
 
 /**
-  Class VariableDeclaration
-**/
-
+ * Declaração de variável 
+ */
 class VariableDeclaration : public TreeNode {
 
     public:

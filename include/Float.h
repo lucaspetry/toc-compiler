@@ -4,9 +4,8 @@
 #include "TreeNode.h"
 
 /**
-  Class Float 
-**/
-
+ * Valor de ponto flutuante 
+ */
 class Float : public TreeNode {
 
     public:

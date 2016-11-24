@@ -7,16 +7,32 @@
 #include <string>
 
 /**
-  Class CodeGenerator 
-**/
-
+ * Gerador de código intermediário (LLVM)
+ */
 class CodeGenerator {
 
     public:
+        /**
+         * Construir um gerador de código intermediário 
+         */
         CodeGenerator();
+    
+        /**
+         * Destruir o gerador de código intermediário 
+         */
         virtual ~CodeGenerator();
+    
+        /**
+         * Definir o título do programa
+         * @param title título
+         */
         void setProgramTitle(std::string title);
-        void generateExecutableCode(SyntaxTree* const syntaxTree) const;
+    
+        /**
+         * Gerar o código intermediário e executar-lo
+         * @param syntaxTree árvore sintática para a qual será gerado o programa
+         */
+        void generateExecuteCode(SyntaxTree* const syntaxTree) const;
 
     private:
         std::string programTitle;

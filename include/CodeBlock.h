@@ -6,9 +6,8 @@
 #include "SemanticAnalyzer.h"
 
 /**
-  Class CodeBlock 
-**/
-
+ * Bloco de código 
+ */
 class CodeBlock : public TreeNode {
 
     public:

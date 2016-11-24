@@ -4,6 +4,9 @@
 #include "TreeNode.h"
 #include "Variable.h"
 
+/**
+ * Operação unária 
+ */
 class UnaryOperation : public TreeNode {
 
     public:

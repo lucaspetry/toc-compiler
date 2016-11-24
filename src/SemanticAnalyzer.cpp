@@ -15,6 +15,13 @@ void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
 }
 
+void SemanticAnalyzer::setUnknownTypes(Data::Type type){
+// for(std::map<std::string, Symbol>::iterator it = this->symbolTable.entryList.begin(); it != this->symbolTable.entryList.end(); ++it) {
+//     if (it->second.getDataType() == Data::UNKNOWN)
+// }
+//         this->symbolTable.addSymbol(it->first, Symbol(tipo, Symbol::VARIABLE, false));
+}
+
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   TreeNode* left = binaryOp->left;
   TreeNode* right = binaryOp->right;
@@ -62,7 +69,7 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
   else {
       // sempre que a declaração uma variavel tipada, busca pelas não tipadas na tabela para atualização
       if(dataType != Data::UNKNOWN)
-        setType(dataType);
+        setUnknownTypes(dataType);
       // sempre que size é maior do que zero, trata-se de uma declaração de array
       if(size > 0){
         this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, new Integer(size))); // Adds variable to symbol table and save array size
@@ -128,11 +135,4 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   }
 
   return new Variable(id, this->symbolTable.getSymbol(id).getDataType());
-}
-
-void SemanticAnalyzer::setType(Data::Type type){
-// for(std::map<std::string, Symbol>::iterator it = this->symbolTable.entryList.begin(); it != this->symbolTable.entryList.end(); ++it) {
-//     if (it->second.getDataType() == Data::UNKNOWN)
-// }
-//         this->symbolTable.addSymbol(it->first, Symbol(tipo, Symbol::VARIABLE, false));
 }

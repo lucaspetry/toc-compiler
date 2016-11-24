@@ -4,9 +4,8 @@
 #include "Function.h"
 
 /**
-  Class TocFunction
-**/
-
+ * Função TOC (função principal do programa) 
+ */
 class TocFunction : public Function {
 
     public:

@@ -27,7 +27,7 @@ void CodeGenerator::setProgramTitle(std::string title) {
     this->programTitle = title;
 }
 
-void CodeGenerator::generateExecutableCode(SyntaxTree* const syntaxTree) const {
+void CodeGenerator::generateExecuteCode(SyntaxTree* const syntaxTree) const {
     std::unique_ptr<llvm::Module> owner = llvm::make_unique<llvm::Module>(this->programTitle, IR::Context);
     IR::Module = owner.get();
 
