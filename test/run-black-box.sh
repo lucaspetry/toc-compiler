@@ -27,6 +27,7 @@ WHITE='\e[0;37m';       B_WHITE='\e[1;37m';
 HEAD_INPUT="${WHITE} [  Input   ]"
 HEAD_RUN="${GREEN} [   Run    ]"
 HEAD_BAD_RUN="${RED} [   Run    ]"
+HEAD_NO_RUN="${YELLOW} [   Run    ]"
 HEAD_RESULT="${B_GREEN} [  Result  ]"
 HEAD_BAD_RESULT="${RED} [  Result  ]"
 HEAD_EXPECTED="${WHITE} [ Expected ]"
@@ -84,7 +85,7 @@ do
 
     else
         TESTS_NOT_RUN=$((TESTS_NOT_RUN+1))
-        echo -e "$HEAD_BAD_RUN No output file ${B_RED}$OUTPUT_FILE${RED} was found!"
+        echo -e "$HEAD_NO_RUN No output file ${B_YELLOW}$OUTPUT_FILE${YELLOW} was found!"
     fi
 
     if [[ -f $OUTPUT_FILE2 ]]
@@ -115,7 +116,7 @@ do
 
     else
         TESTS_NOT_RUN=$((TESTS_NOT_RUN+1))
-        echo -e "$HEAD_BAD_RUN No output file ${B_RED}$OUTPUT_FILE2${RED} was found!"
+        echo -e "$HEAD_NO_RUN No output file ${B_YELLOW}$OUTPUT_FILE2${YELLOW} was found!"
     fi
 
     echo -e ""
