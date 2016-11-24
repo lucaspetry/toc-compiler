@@ -11,34 +11,11 @@ GTEST_DIR = gtest
 TEST_SRC_DIR = unit
 
 SRCS += $(wildcard $(TEST_SRC_DIR)/*.cpp)
-SRCS += ../src/Array.cpp \
-../src/BinaryOperation.cpp \
-../src/Boolean.cpp \
-../src/CodeBlock.cpp \
-../src/CodeGenerator.cpp \
-../src/Comment.cpp \
-../src/ErrorLogger.cpp \
-../src/Float.cpp \
-../src/Function.cpp \
-../src/Integer.cpp \
-../src/PrintFunction.cpp \
-../src/Scope.cpp \
-../src/SemanticAnalyzer.cpp \
-../src/String.cpp \
-../src/Symbol.cpp \
-../src/SymbolTable.cpp \
-../src/SyntaxTree.cpp \
-../src/TocAnalyzer.cpp \
-../src/TocFunction.cpp \
-../src/TreeNode.cpp \
-../src/TypeCasting.cpp \
-../src/UnaryOperation.cpp \
-../src/Variable.cpp \
-../src/VariableDeclaration.cpp \
-../tmp/Parser.cpp \
-../tmp/Scanner.cpp \
-
 OBJS += $(SRCS:.cpp=.o)
+
+OBJS_DIR =  ../tmp
+OBJS_TOC += $(wildcard $(OBJS_DIR)/*.o)
+OBJS_TOC := $(filter-out $(OBJS_DIR)/Main.o, $(OBJS_TOC))
 
 %.o: %.cpp
 	@echo 'Building file: $<'
@@ -50,10 +27,9 @@ gtest: ./$(GTEST_DIR)/gtest-all.o
 black-box: FORCE
 	@bash ./$(BLACK_BOX_SCRIPT)
 
-unit: gtest $(OBJS)
-	$(CC) $(CPPFLAGS) $(CXXFLAGS) -o $(UNIT_EXECUTABLE) $(OBJS) ./$(GTEST_DIR)/gtest-all.o $(LLVM)
+unit: gtest $(OBJS) FORCE
+	$(CC) $(CPPFLAGS) $(CXXFLAGS) -o $(UNIT_EXECUTABLE) $(OBJS) $(OBJS_TOC) ./$(GTEST_DIR)/gtest-all.o $(LLVM)
 	@echo ' '
-	-@rm -rf ../src/*.o
 	@./$(UNIT_EXECUTABLE)
 
 clean:
