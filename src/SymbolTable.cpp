@@ -103,6 +103,10 @@ void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
     currentScope->setSymbolData(id, data);
 }
 
+void SymbolTable::setUnknownTypes(Data::Type type) {
+    currentScope->setUnknownTypes(type);
+}
+
 llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
     if(this->existsSymbol(id))
         return this->currentScope->getVariableAllocation(id);

@@ -1,6 +1,1 @@
-[Line 3] Warning : Variable Abacaxi is uppercase. TOC recommends that variable, function and object’s names initiate with a lowercase character.
-# Funcao principal do programa
-void toc()
-  int Abacaxi
-  int banana, abobora
-  abobora = 3
+[Line 3] Warning: Variable Abacaxi initiates with an uppercase character. TOC recommends that variable's name initiates with a lowercase character.

@@ -50,8 +50,9 @@ class SemanticAnalyzer {
         /**
          * Atribuir um tipo a todos os tipos desconhecidos
          * @param type tipo a ser atribuído
+         * @param codeBlock bloco de código a ser corrigido
          */
-        void setUnknownTypes(Data::Type type);
+        void setUnknownTypes(Data::Type type, CodeBlock* codeBlock);
     
         /**
          * Analisar o programa (última função executada na análise sintática)
@@ -69,6 +70,13 @@ class SemanticAnalyzer {
          * @param op 
          */
         void analyzeRelationalOperationCasting(BinaryOperation* op);
+    
+        /**
+         * Verificar o uso de um identificador.
+         * @param id identificador
+         * @return true se o identificador pode ser usado
+         */
+        bool checkIdentifier(std::string id) const;
 
         /**
          * Declarar uma variável

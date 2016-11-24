@@ -1,3 +1,4 @@
 # funcao principal do programa
+#         funcao principal do programa
 void toc()
   # Codigo da funcao principal

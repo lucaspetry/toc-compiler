@@ -23,6 +23,7 @@ HEADER_FILES += $(wildcard $(HEADERS_DIR)/*.h)
 OBJS += $(patsubst src/%, tmp/%, $(SRC_FILES:.cpp=.o))
 OBJS += $(PARSER).o \
 $(SCANNER).o
+OBJS := $(filter-out tmp/Main.o, $(OBJS))
 
 # Colors
 GREEN=\033[0;32m
@@ -32,24 +33,27 @@ WHITE=\033[0;37m
 $(EXECUTABLE): tmp parser scanner $(OBJS)
 	@echo "${GREEN}Creating executable...${WHITE}"
 ifeq ($(TYPE)$(DUMP), LLVM1)
-	${CC} -o ${EXECUTABLE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
 else
 ifeq ($(TYPE), LLVM)
-	${CC} -o ${EXECUTABLE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
 else
-	${CC} -o ${EXECUTABLE_TREE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
+	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
 endif
 endif
 	@echo "${GREEN}Creating executable... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
 superb: tmp parser scanner $(OBJS)
+	@echo "${GREEN}Creating executable...${WHITE}"
 ifeq ($(DUMP), 1)
-	${CC} -o ${EXECUTABLE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
 else
-	${CC} -o ${EXECUTABLE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
 endif
-	${CC} -o ${EXECUTABLE_TREE} $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
+	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
+	@echo "${GREEN}Creating executable... ${LIGHT_GREEN}Done!${WHITE}"
+	@echo ''
 
 tmp/%.o: src/%.cpp
 	@echo 'Building file: $< ($@)'

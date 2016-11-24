@@ -27,8 +27,8 @@ void TocAnalyzer::analyzeComment(Comment* comment){
 
 void TocAnalyzer::analyzeVariable(std::string id){
     if(isupper(id.at(0)))
-        ERROR_LOGGER->log(ErrorLogger::WARNING, "Variable " + id + " initiates with a uppercase."
-            "TOC recommends that variable, function and object’s names initiate with a lowercase character.");
+        ERROR_LOGGER->log(ErrorLogger::WARNING, "Variable " + id + " initiates with an uppercase character. "
+            "TOC recommends that variable's name initiates with a lowercase character.");
 }
 
 void TocAnalyzer::analyzeSpaces(int n_args, ...) {
@@ -41,7 +41,7 @@ void TocAnalyzer::analyzeSpaces(int n_args, ...) {
                 break;
             default:
                 ERROR_LOGGER->log(ErrorLogger::WARNING,
-                    "TOC recommends that you leave exactly one space in between operands and/or operators.");
+                    "TOC recommends that you leave exactly one space in between operands and/or operators, and after commas.");
                 i = n_args;
                 break;
         }

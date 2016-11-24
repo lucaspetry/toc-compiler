@@ -45,7 +45,7 @@ class Symbol {
          * Obter o dado correspondente ao símbolo
          * @return nodo da árvore sintática correspondente
          */
-        const TreeNode* getData() const;
+        TreeNode* getData();
 
         /**
          * Obter o tipo de dado do símbolo

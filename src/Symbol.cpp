@@ -16,7 +16,7 @@ Symbol::Symbol(Data::Type dataType, IdentifierType idType, bool initialized, Tre
 Symbol::~Symbol() {
 }
 
-const TreeNode* Symbol::getData() const {
+TreeNode* Symbol::getData() {
     return this->data;
 }
 

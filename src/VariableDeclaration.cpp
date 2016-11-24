@@ -13,11 +13,7 @@ TreeNode::ClassType VariableDeclaration::classType() const {
 }
 
 std::string VariableDeclaration::printInOrder() const {
-    std::string output = "";
-    if(this->type != Data::UNKNOWN){
-      output += toString(this->type);
-      output += " ";
-    }
+    std::string output = toString(this->type) + " ";
     output += next->printInOrder();
     return output;
 }

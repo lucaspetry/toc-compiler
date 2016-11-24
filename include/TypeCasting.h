@@ -2,7 +2,6 @@
 #define TYPECASTING_H_
 
 #include "TreeNode.h"
-#include "SymbolTable.h"
 
 /**
  * Conversão de tipos 

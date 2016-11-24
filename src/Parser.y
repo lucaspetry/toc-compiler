@@ -16,9 +16,10 @@
     #include "Boolean.h"
     #include "UnaryOperation.h"
 
-    SemanticAnalyzer SEMANTIC;
-    TocAnalyzer TOC;
-    SyntaxTree* SYNTAX_TREE;
+    SemanticAnalyzer SEMANTIC;  // Analisador semântico
+    TocAnalyzer TOC;            // Analisador TOC
+    SyntaxTree* SYNTAX_TREE;    // Árvore sintática
+    int CURRENT_INDENT = 0;     // Indentação atual
 
     extern int yylex();
     extern void yyerror(const char* s, ...);
@@ -63,7 +64,7 @@
  */
 %type <syntaxTree> program
 %type <node> global line declaration expression attribuition multiple_attribution test
-%type <codeBlock> main_scope multiple_declaration
+%type <codeBlock> new_scp end_scp main_scope multiple_declaration
 %type <integer> indent sp type op_binary
 
 /*
@@ -101,16 +102,24 @@ program:
     | global T_NL program { $$ = $3; if($1 != NULL) $3->insertLine($1); }
     | error T_NL { yyerrok; $$ = NULL; }
     ;
+    
+// Criar novo escopo
+new_scp: { SEMANTIC.newScope(); CURRENT_INDENT++; }
+    ;
+    
+// Terminar escopo
+end_scp: { SEMANTIC.returnScope(); CURRENT_INDENT--; }
+    ;
 
 // Escopo global
 global:
     T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = SEMANTIC.declareFunction("toc", NULL, $8, NULL); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL new_scp main_scope end_scp { $$ = SEMANTIC.declareFunction("toc", NULL, $9, NULL); }
     ;
 
 // Escopo principal (função toc())
 main_scope:
-    indent line { $$ = new CodeBlock(1); if($2 != NULL) $$->insertLine($2); }
+    indent line { $$ = new CodeBlock(CURRENT_INDENT); if($2 != NULL) $$->insertLine($2); }
     | indent line T_NL main_scope { $$ = $4; if($2 != NULL) $$->insertLine($2); }
     ;
 
@@ -128,8 +137,9 @@ declaration:
     type sp T_ID { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1);
                     TOC.analyzeVariable($3);
                     TOC.analyzeSpaces(1, $2);}
-    | type sp T_ID multiple_declaration { $$ = new BinaryOperation(SEMANTIC.declareVariable($3, (Data::Type)$1), BinaryOperation::COMMA, $4);
-                                            TOC.analyzeVariable($3); }
+    | type sp T_ID multiple_declaration { $$ = $4; $4->insertLine(SEMANTIC.declareVariable($3, (Data::Type)$1));
+                                          SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
+                                          TOC.analyzeVariable($3); }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
                                                 SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                                 TOC.analyzeSpaces(1, $2);
@@ -137,7 +147,8 @@ declaration:
     // array
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
                                                   TOC.analyzeVariable($3); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration {$$ = new BinaryOperation(SEMANTIC.declareVariable($3, (Data::Type)$1, $5), BinaryOperation::COMMA, $7);
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLine(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
+                                                                      SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $5), BinaryOperation::ASSIGN, $11);
                                                                                                         TOC.analyzeVariable($3); }
@@ -145,14 +156,14 @@ declaration:
 
 // Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID { $$ = new CodeBlock(0);
+    T_COMMA sp T_ID { $$ = new CodeBlock(CURRENT_INDENT);
                       $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                       TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID multiple_declaration {$$ = $4;
                                             $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                                             TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
    // array
-    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(0);
+    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(CURRENT_INDENT);
                                                     $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
                                                     TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7;

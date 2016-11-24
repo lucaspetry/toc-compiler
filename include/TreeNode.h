@@ -3,27 +3,12 @@
 
 #include "LLVM.h"
 #include "SymbolTable.h"
+#include "Data.h"
 #include <string>
 #include <vector>
 
 class SemanticAnalyzer;
 class SyntaxTree;
-
-/**
- * Tipos de dados.
- */
-namespace Data {
-    enum Type {
-        UNKNOWN = -1,
-        BOO = 1,
-        FLT = 3,
-        INT = 2,
-        STR = 4,
-        VOID = 5
-    };
-
-    std::string toString(Data::Type type);
-}
 
 /**
  * Nodo da árvore sintática 

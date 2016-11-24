@@ -14,11 +14,10 @@ TreeNode::ClassType CodeBlock::classType() const {
 std::string CodeBlock::printInOrder() const {
     std::string output = "";
 
-    for(TreeNode* myTreenode: this->lines){
+    for(TreeNode* node : this->lines){
         output += this->printIndentation();
-        output += myTreenode->printInOrder();
-        if(myTreenode->classType()!= TreeNode::VARIABLE)
-            output += "\n";
+        output += node->printInOrder();
+        output += "\n";
     }
     return output;
 }

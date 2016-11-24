@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "SyntaxTree.h"
+#include "Array.h"
 #include "BinaryOperation.h"
 #include "Boolean.h"
 #include "Comment.h"
@@ -11,6 +12,7 @@
 #include "PrintFunction.h"
 #include "String.h"
 #include "TocFunction.h"
+#include "TypeCasting.h"
 #include "Variable.h"
 #include "VariableDeclaration.h"
 #include "UnaryOperation.h"

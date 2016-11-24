@@ -2,6 +2,7 @@
 #define SYMBOLTABLE_H_
 
 #include "LLVM.h"
+#include "Data.h"
 #include <string>
 
 class Symbol;
@@ -91,6 +92,12 @@ class SymbolTable {
          * @param data nodo da árvore sintática correspondente ao símbolo
          */
         void setSymbolData(const std::string id, TreeNode* data);
+    
+        /**
+         * Atribuir um tipo a todos os tipos desconhecidos
+         * @param type tipo a ser atribuído
+         */
+        void setUnknownTypes(Data::Type type);
     
         /**
          * Obter a alocação de uma variável

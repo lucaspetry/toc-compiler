@@ -15,7 +15,6 @@ OBJS += $(SRCS:.cpp=.o)
 
 OBJS_DIR =  ../tmp
 OBJS_TOC += $(wildcard $(OBJS_DIR)/*.o)
-OBJS_TOC := $(filter-out $(OBJS_DIR)/Main.o, $(OBJS_TOC))
 
 %.o: %.cpp
 	@echo 'Building file: $< ($@)'

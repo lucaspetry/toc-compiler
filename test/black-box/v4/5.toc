@@ -1,4 +1,4 @@
 # Funcao principal do programa
 void toc()
   int banana,abobora
-  abobora=3
+  banana=3

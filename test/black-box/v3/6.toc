@@ -1,3 +1,4 @@
 # Funcao principal do programa
 void toc()
-  int Abacaxi = 8
+  int a = 9
+  boo a = 10

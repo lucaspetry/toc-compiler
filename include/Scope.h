@@ -94,6 +94,12 @@ class Scope {
         void setSymbolData(const std::string id, TreeNode* data);
 
         /**
+         * Atribuir um tipo a todos os tipos desconhecidos
+         * @param type tipo a ser atribuído
+         */
+        void setUnknownTypes(Data::Type type);
+    
+        /**
          * Obter a alocação de uma variável
          * @param id identificador da variável
          * @return alocação da variável

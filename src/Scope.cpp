@@ -1,5 +1,5 @@
 #include "Scope.h"
-#include <iostream>
+
 Scope::Scope(Scope* parent) {
   this->parent = parent;
 }
@@ -57,6 +57,23 @@ void Scope::setSymbolData(const std::string id, TreeNode* data) {
     }
 
     entryList[id].data = data;
+}
+
+void Scope::setUnknownTypes(Data::Type type) {
+    std::map<std::string, Symbol> newEntryList;
+    std::map<std::string, Symbol>::iterator it;
+        
+    for(it = entryList.begin(); it != entryList.end(); ++it) {
+        Symbol s = it->second;
+        
+        if (s.getDataType() == Data::UNKNOWN) {
+            s.dataType = type;
+        }
+        
+        newEntryList[it->first] = s;
+    }
+    
+    this->entryList = newEntryList;
 }
 
 llvm::Value* Scope::getVariableAllocation(std::string id) {
