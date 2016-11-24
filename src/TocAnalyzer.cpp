@@ -6,6 +6,25 @@ TocAnalyzer::TocAnalyzer() {
 TocAnalyzer::~TocAnalyzer() {
 }
 
+void TocAnalyzer::analyzeProgram() {
+    // TODO
+}
+
+void TocAnalyzer::analyzeComment(Comment* comment){
+    std::string value = comment->getValue();
+    
+    // Encontra a primeira letra do comentário
+    for(int i = 0; i < value.size(); i++) {
+        if(isalpha(value.at(i))) { // Verifica se é letra do alfabeto
+            
+            if(!isupper(value.at(i))) // Se não for maiúscula, gera erro
+                ERROR_LOGGER->log(ErrorLogger::WARNING, "TOC recommends that comments initiate with an uppercase character.");
+            
+            break;
+        }
+    }
+}
+
 void TocAnalyzer::analyzeVariable(std::string id){
     if(isupper(id.at(0)))
         ERROR_LOGGER->log(ErrorLogger::WARNING, "Variable " + id + " initiates with a uppercase."

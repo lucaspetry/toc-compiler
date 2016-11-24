@@ -22,6 +22,15 @@ void SemanticAnalyzer::setUnknownTypes(Data::Type type){
 //         this->symbolTable.addSymbol(it->first, Symbol(tipo, Symbol::VARIABLE, false));
 }
 
+void SemanticAnalyzer::analyzeProgram() {
+    // Verifica a existência da função toc()
+    Symbol tocFunction = this->symbolTable.getSymbol("toc");
+    
+    if(tocFunction.getType() != Symbol::FUNCTION
+       || tocFunction.getDataType() != Data::VOID)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Main function toc() not found.");
+}
+
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   TreeNode* left = binaryOp->left;
   TreeNode* right = binaryOp->right;
@@ -84,6 +93,22 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     }
   // não se deve chegar nesse ponto
   return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) {
+    if(this->symbolTable.existsSymbol(id, false))
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
+    else {
+        // Se é a função toc, cria a mesma
+        if(!id.compare("toc")) {
+            TocFunction* tocFunction = new TocFunction(body);
+            this->symbolTable.addSymbol(id, Symbol(Data::VOID, Symbol::FUNCTION, true, tocFunction));
+            return tocFunction;
+        }
+        
+        // Outra função qualquer
+        // TODO
+    }
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {

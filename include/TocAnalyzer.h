@@ -2,6 +2,7 @@
 #define TOCANALYZER_H_
 
 #include "ErrorLogger.h"
+#include "Comment.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <string>
@@ -23,6 +24,17 @@ class TocAnalyzer {
          * Destruir o analisador TOC 
          */
         virtual ~TocAnalyzer();
+    
+        /**
+         * Analisar o programa (última função executada na análise sintática)
+         */
+        void analyzeProgram();
+    
+        /**
+         * Analisar um comentário
+         * @param comment comentário
+         */
+        void analyzeComment(Comment* comment);
     
         /**
          * Analisar uma variável

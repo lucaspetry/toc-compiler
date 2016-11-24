@@ -15,6 +15,7 @@ class Comment : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string getValue() const;
 
     private:
       std::string comment;

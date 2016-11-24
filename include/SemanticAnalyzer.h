@@ -2,6 +2,8 @@
 #define SEMANTICANALYZER_H_
 
 #include "ErrorLogger.h"
+#include "CodeBlock.h"
+#include "TocFunction.h"
 #include "SymbolTable.h"
 #include "Array.h"
 #include "Integer.h"
@@ -52,6 +54,11 @@ class SemanticAnalyzer {
         void setUnknownTypes(Data::Type type);
     
         /**
+         * Analisar o programa (última função executada na análise sintática)
+         */
+        void analyzeProgram();
+    
+        /**
          * Analisar...
          * @param op 
          */
@@ -71,6 +78,16 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração
          */
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
+    
+        /**
+         * Declarar uma função
+         * @param id identificador da função 
+         * @param params parâmetros da função
+         * @param body corpo da função
+         * @param ret retorno da função
+         * @return nodo correspondente à declaração da função
+         */
+        TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret);
     
         /**
          * Atribuir um valor a uma variável

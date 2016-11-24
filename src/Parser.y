@@ -91,7 +91,8 @@
 
 // Início do parsing
 start:
-    program { /** TOC.analyzeProgram() */ }
+    program { SEMANTIC.analyzeProgram();
+              TOC.analyzeProgram(); }
     ;
 
 // Programa
@@ -103,8 +104,8 @@ program:
 
 // Escopo global
 global:
-    T_COMMENT { $$ = new Comment($1); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = new TocFunction($8); }
+    T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL main_scope { $$ = SEMANTIC.declareFunction("toc", NULL, $8, NULL); }
     ;
 
 // Escopo principal (função toc())
@@ -118,7 +119,7 @@ line:
     { $$ = NULL; }
     | declaration {$$ = $1; }
     | attribuition {$$ = $1; }
-    | T_COMMENT {$$ = new Comment($1); }
+    | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
     ;
 
