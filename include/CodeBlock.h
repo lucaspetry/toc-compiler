@@ -5,9 +5,11 @@
 #include "TreeNode.h"
 
 /**
- * Bloco de código 
+ * Bloco de código
  */
 class CodeBlock : public TreeNode {
+
+    friend class SyntaxTree;
 
     public:
         CodeBlock(int indentation);

@@ -19,8 +19,10 @@
     SemanticAnalyzer SEMANTIC;  // Analisador semântico
     TocAnalyzer TOC;            // Analisador TOC
     SyntaxTree* SYNTAX_TREE;    // Árvore sintática
-    int CURRENT_INDENT = 0;     // Indentação atual
 
+    extern int CR_INDENT;
+    extern int CR_NODE;
+    extern int CR_CBLOCK;
     extern int yylex();
     extern void yyerror(const char* s, ...);
 %}
@@ -63,9 +65,9 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> global line declaration expression attribuition multiple_attribution expression_two
-%type <codeBlock> new_scp end_scp main_scope multiple_declaration
-%type <integer> indent sp type op_binary
+%type <node> line declaration expression attribuition multiple_attribution expression_two
+%type <codeBlock> lines multiple_declaration
+%type <integer> indent idtest sp type op_binary
 
 /*
  * Precedência de operadores.
@@ -99,29 +101,13 @@ start:
 
 // Programa
 program:
-    global {SYNTAX_TREE = new SyntaxTree(); $$ = SYNTAX_TREE; if($1 != NULL) $$->insertLine($1); }
-    | global T_NL program { $$ = $3; if($1 != NULL) $3->insertLine($1); }
+    lines { SYNTAX_TREE = new SyntaxTree($1); }
+    ;
+
+lines:
+    idtest line %prec LINE { $$ = new CodeBlock($1); if($2 != NULL) $$->insertLine($2); }
+    | idtest line T_NL lines { $$ = $4; if($2 != NULL) $$->insertLine($2); }
     | error T_NL { yyerrok; $$ = NULL; }
-    ;
-
-// Criar novo escopo
-new_scp: { SEMANTIC.newScope(); CURRENT_INDENT++; }
-    ;
-
-// Terminar escopo
-end_scp: { SEMANTIC.returnScope(); CURRENT_INDENT--; }
-    ;
-
-// Escopo global
-global:
-    T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp T_NL new_scp main_scope end_scp { $$ = SEMANTIC.declareFunction("toc", NULL, $9, NULL); }
-    ;
-
-// Escopo principal (função toc())
-main_scope:
-    indent line %prec LINE { $$ = new CodeBlock(CURRENT_INDENT); if($2 != NULL) $$->insertLine($2); }
-    | indent line T_NL main_scope { $$ = $4; if($2 != NULL) $$->insertLine($2); }
     ;
 
 // Linha de código
@@ -131,6 +117,7 @@ line:
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, $8, NULL); }
     ;
 
 // Declaração de variáveis
@@ -157,14 +144,14 @@ declaration:
 
 // Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID { $$ = new CodeBlock(CURRENT_INDENT);
+    T_COMMA sp T_ID { $$ = new CodeBlock(CR_INDENT);
                       $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                       TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID multiple_declaration {$$ = $4;
                                             $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                                             TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
    // array
-    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(CURRENT_INDENT);
+    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(CR_INDENT);
                                                     $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
                                                     TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7;
@@ -232,6 +219,15 @@ type:
 sp:
     { $$ = 0; }
     | T_SP sp { $$ = $2 + 1; }
+    ;
+
+idtest:
+    indent {   if($1 > CR_INDENT) {
+                   SEMANTIC.newScope(); CR_INDENT++;
+               } else if($1 < CR_INDENT) {
+                   SEMANTIC.returnScope(); CR_INDENT--;
+               }
+           }
     ;
 
 // Indentação (2 espaços)

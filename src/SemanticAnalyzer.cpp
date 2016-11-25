@@ -15,9 +15,13 @@ void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
 }
 
+void SemanticAnalyzer::pushLineScope(TreeNode* node) {
+
+}
+
 void SemanticAnalyzer::setUnknownTypes(Data::Type type, CodeBlock* codeBlock){
     this->symbolTable.setUnknownTypes(type);
-    
+
     for(int i = 0; i < codeBlock->numberOfLines(); i++)
         codeBlock->getLine(i)->setType(type);
 }
@@ -25,7 +29,7 @@ void SemanticAnalyzer::setUnknownTypes(Data::Type type, CodeBlock* codeBlock){
 void SemanticAnalyzer::analyzeProgram() {
     // Verifica a existência da função toc()
     Symbol tocFunction = this->symbolTable.getSymbol("toc");
-    
+
     if(tocFunction.getType() != Symbol::FUNCTION
        || tocFunction.getDataType() != Data::VOID)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Main function toc() not found.");
@@ -77,7 +81,7 @@ bool SemanticAnalyzer::checkIdentifier(std::string id) const {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
         return false;
     }
-    
+
     return true;
 }
 
@@ -95,7 +99,7 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
             return variable;
         }
     }
-    
+
     return NULL;
 }
 
@@ -107,11 +111,11 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
             this->symbolTable.addSymbol(id, Symbol(Data::VOID, Symbol::FUNCTION, true, tocFunction));
             return tocFunction;
         }
-        
+
         // Outra função qualquer
         // TODO
     }
-    
+
     return NULL;
 }
 
@@ -140,7 +144,7 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
         this->symbolTable.setInitializedSymbol(id);
         return new VariableDeclaration(dataType, new Variable(id, dataType));
     }
-    
+
   return NULL;
 }
 
