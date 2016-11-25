@@ -73,15 +73,16 @@
  * (left, right, nonassoc)
  */
 
+%left T_NOT T_AND T_OR
+%left T_GREATER T_GREATER_E T_LOWER T_LOWER_E T_EQUAL T_DIFF
 
- %left T_NOT T_AND T_OR
- %left T_GREATER T_GREATER_E T_LOWER T_LOWER_E T_EQUAL T_DIFF
+%left T_PLUS T_MINUS
+%left T_TIMES T_DIVIDE
+%left T_MOD
 
- %left T_PLUS T_MINUS
- %left T_TIMES T_DIVIDE
- %left T_MOD
-
- %nonassoc U_MINUS error
+%nonassoc U_MINUS error
+%nonassoc LINE
+%nonassoc T_NL T_SP
 
 /*
  * Símbolo inicial da gramática.
@@ -119,7 +120,7 @@ global:
 
 // Escopo principal (função toc())
 main_scope:
-    indent line { $$ = new CodeBlock(CURRENT_INDENT); if($2 != NULL) $$->insertLine($2); }
+    indent line %prec LINE { $$ = new CodeBlock(CURRENT_INDENT); if($2 != NULL) $$->insertLine($2); }
     | indent line T_NL main_scope { $$ = $4; if($2 != NULL) $$->insertLine($2); }
     ;
 
