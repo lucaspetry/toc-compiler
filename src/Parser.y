@@ -105,8 +105,8 @@ program:
     ;
 
 lines:
-    idtest line %prec LINE { $$ = new CodeBlock($1); if($2 != NULL) $$->insertLine($2); }
-    | idtest line T_NL lines { $$ = $4; if($2 != NULL) $$->insertLine($2); }
+    idtest line %prec LINE { if($2 != NULL) SEMANTIC->pushLineScope($2); }
+    | idtest line T_NL lines { if($2 != NULL) SEMANTIC->pushLineScope($2); }
     | error T_NL { yyerrok; $$ = NULL; }
     ;
 
