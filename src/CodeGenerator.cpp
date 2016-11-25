@@ -16,6 +16,7 @@
 #include "Variable.h"
 #include "VariableDeclaration.h"
 #include "UnaryOperation.h"
+#include "Loop.h"
 
 CodeGenerator::CodeGenerator() {
     this->showDump = false;
@@ -87,12 +88,12 @@ void SyntaxTree::generateCode() {
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable*>(left);
-        
+
         if(left->classType() == TreeNode::VARIABLE_DECLARATION)
             lvar = dynamic_cast<Variable*>((dynamic_cast<VariableDeclaration*>(left))->getNext());
-        
+
         // TODO array?
-        
+
         llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
 
@@ -227,4 +228,9 @@ llvm::Value* Array::generateCode(){
   // llvm::AllocaInst* arr_alloc = new llvm::AllocaInst(arrayType, "name");
   //
   // return arr_alloc;
+  return NULL;
+}
+
+llvm::Value* Loop::generateCode(){
+  return NULL;
 }

@@ -15,6 +15,7 @@
     #include "Float.h"
     #include "Boolean.h"
     #include "UnaryOperation.h"
+    #include "Loop.h"
 
     SemanticAnalyzer SEMANTIC;  // Analisador semântico
     TocAnalyzer TOC;            // Analisador TOC
@@ -53,10 +54,11 @@
 %token <integer> T_BOO T_FLT T_INT T_STR T_NUM
 %token <decimal> T_DEC
 %token <string> T_COMMENT T_ID T_TEXT
-%token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA
+%token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA T_SCOLON
 %token T_TRUE T_FALSE
 %token T_TAB T_SP T_NL
 %token T_TOC T_VOID T_PRINT
+%token T_FOR
 
 /*
  * Símbolos não-terminais da gramática e seus respectivos tipos.
@@ -131,6 +133,9 @@ line:
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
+    // for(declaration, expression, attribuition)
+    | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = new Loop($3, $6, $9, NULL);
+                                                                                            TOC.analyzeSpaces(2, $5, $8);}
     ;
 
 // Declaração de variáveis

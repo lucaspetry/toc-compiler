@@ -32,6 +32,8 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
 
+"for"               {return T_FOR;}
+
 "+"                 {return T_PLUS;}
 "-"                 {return T_MINUS;}
 \*                  {return T_TIMES;}
@@ -61,6 +63,7 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "{"                 {return T_OBRACE;}
 "}"                 {return T_CBRACE;}
 ","                 {return T_COMMA;}
+";"                 {return T_SCOLON;}
 "="                 {return T_ASSIGN;}
 \n                  {return T_NL;} /* New line */
 
