@@ -16,6 +16,7 @@
 #include "Variable.h"
 #include "VariableDeclaration.h"
 #include "UnaryOperation.h"
+#include "Conditional.h"
 
 CodeGenerator::CodeGenerator() {
     this->showDump = false;
@@ -87,12 +88,12 @@ void SyntaxTree::generateCode() {
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable*>(left);
-        
+
         if(left->classType() == TreeNode::VARIABLE_DECLARATION)
             lvar = dynamic_cast<Variable*>((dynamic_cast<VariableDeclaration*>(left))->getNext());
-        
+
         // TODO array?
-        
+
         llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
 
@@ -208,6 +209,10 @@ llvm::Value* TypeCasting::generateCode(){
 
 llvm::Value* Variable::generateCode() {
     return this->symbolTable.getVariableAllocation(id);
+}
+
+llvm::Value* Conditional::generateCode(){
+    return NULL;//TODO
 }
 
 llvm::Value* VariableDeclaration::generateCode() {

@@ -11,7 +11,7 @@ class SemanticAnalyzer;
 class SyntaxTree;
 
 /**
- * Nodo da árvore sintática 
+ * Nodo da árvore sintática
  */
 class TreeNode {
 
@@ -20,7 +20,7 @@ class TreeNode {
 
     public:
         /**
-         * Tipos de nodos 
+         * Tipos de nodos
          */
         enum ClassType {
             ARRAY,
@@ -35,6 +35,7 @@ class TreeNode {
             STRING,
             TOC_FUNCTION,
             VARIABLE,
+            CONDITIONAL,
             VARIABLE_DECLARATION,
             TYPE_CASTING,
             UNARY_OPERATION,

@@ -55,6 +55,7 @@
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA
 %token T_TRUE T_FALSE
+%token T_IF T_ELSE
 %token T_TAB T_SP T_NL
 %token T_TOC T_VOID T_PRINT
 
@@ -64,7 +65,7 @@
  */
 %type <syntaxTree> program
 %type <node> global line declaration expression attribuition multiple_attribution expression_two
-%type <codeBlock> new_scp end_scp main_scope multiple_declaration
+%type <codeBlock> new_scp end_scp main_scope multiple_declaration else
 %type <integer> indent sp type op_binary
 
 /*
@@ -130,8 +131,16 @@ line:
     | declaration {$$ = $1; }
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
+    | T_IF T_OPAR expression T_CPAR T_NL else {$$ = NULL; }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
     ;
+
+//Ramo do else
+else:
+  {$$ = NULL;}
+  | T_ELSE T_NL {$$ = NULL;}
+  | T_ELSE T_IF T_OPAR expression T_CPAR T_NL else {$$ = NULL;}
+
 
 // Declaração de variáveis
 declaration:
