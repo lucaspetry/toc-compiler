@@ -18,7 +18,7 @@
 #include "UnaryOperation.h"
 
 CodeGenerator::CodeGenerator() {
-
+    this->showDump = false;
 }
 
 CodeGenerator::~CodeGenerator() {
@@ -27,6 +27,10 @@ CodeGenerator::~CodeGenerator() {
 
 void CodeGenerator::setProgramTitle(std::string title) {
     this->programTitle = title;
+}
+
+void CodeGenerator::setDump(bool showDump) {
+    this->showDump = showDump;
 }
 
 void CodeGenerator::generateExecuteCode(SyntaxTree* const syntaxTree) const {
@@ -46,12 +50,12 @@ void CodeGenerator::generateExecuteCode(SyntaxTree* const syntaxTree) const {
     llvm::verifyFunction(*IR::MainFunction);
 
     // Imprime o código gerado
-#ifdef LLVM_DUMP
-    std::cout << "###########  LLVM Intermediate Representation  ###########\n\n";
-    IR::Module->dump();
-    std::cout << "\n";
-    std::cout << "##################  LLVM Code Execution  #################\n\n";
-#endif
+    if(this->showDump) {
+        std::cout << "###########  LLVM Intermediate Representation  ###########\n\n";
+        IR::Module->dump();
+        std::cout << "\n";
+        std::cout << "##################  LLVM Code Execution  #################\n\n";
+    }
 
     // Executa o código intermediário com o LLVM
     std::string Error;
@@ -82,13 +86,15 @@ void SyntaxTree::generateCode() {
 
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
-      std::cout << "1" << std::endl;
-        Variable* lvar = dynamic_cast<Variable *>(left); // TODO pode ser VariableDeclaration
-        std::cout << "2" << std::endl;
+        Variable* lvar = dynamic_cast<Variable*>(left);
+        
+        if(left->classType() == TreeNode::VARIABLE_DECLARATION)
+            lvar = dynamic_cast<Variable*>((dynamic_cast<VariableDeclaration*>(left))->getNext());
+        
+        // TODO array?
+        
         llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
-        std::cout << "3" << std::endl;
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
-          std::cout << "4" << std::endl;
 
         return newValue;
     } else {

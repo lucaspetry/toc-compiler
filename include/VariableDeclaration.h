@@ -14,6 +14,7 @@ class VariableDeclaration : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        TreeNode* getNext();
 
     private:
         TreeNode* next;

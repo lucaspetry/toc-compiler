@@ -29,6 +29,12 @@ class CodeGenerator {
         void setProgramTitle(std::string title);
     
         /**
+         * Definir se o dump é exibido
+         * @param showDump true se o dump deve ser mostrado
+         */
+        void setDump(bool showDump);
+    
+        /**
          * Gerar o código intermediário e executar-lo
          * @param syntaxTree árvore sintática para a qual será gerado o programa
          */
@@ -36,6 +42,7 @@ class CodeGenerator {
 
     private:
         std::string programTitle;
+        bool showDump;
 
 };
 

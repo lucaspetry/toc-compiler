@@ -17,3 +17,7 @@ std::string VariableDeclaration::printInOrder() const {
     output += next->printInOrder();
     return output;
 }
+
+TreeNode* VariableDeclaration::getNext() {
+    return this->next;
+}
