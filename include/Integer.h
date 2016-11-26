@@ -1,8 +1,8 @@
 #ifndef INTEGER_H_
 #define INTEGER_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
  * Valor inteiro

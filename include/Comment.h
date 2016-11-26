@@ -1,8 +1,8 @@
 #ifndef COMMENT_H_
 #define COMMENT_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
  * Comentário

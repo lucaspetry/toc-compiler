@@ -1,8 +1,8 @@
 #ifndef CODEBLOCK_H_
 #define CODEBLOCK_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
  * Bloco de código

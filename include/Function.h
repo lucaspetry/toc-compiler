@@ -1,9 +1,9 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
-#include <string>
 #include "TreeNode.h"
 #include "CodeBlock.h"
+#include <string>
 
 /**
  * Função

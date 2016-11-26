@@ -13,11 +13,8 @@
 #include "String.h"
 #include "VariableDeclaration.h"
 #include "LLVM.h"
-#include <cmath>
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <string>
 #include <vector>
 
 extern ErrorLogger* ERROR_LOGGER;

@@ -1,9 +1,9 @@
 #ifndef VARIABLE_H_
 #define VARIABLE_H_
 
-#include <string>
 #include "TreeNode.h"
 #include "SymbolTable.h"
+#include <string>
 
 /**
  * Variável

@@ -2,10 +2,8 @@
 #define STRING_H_
 
 #include "TreeNode.h"
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <string>
 
 /**
  * Valor textual
