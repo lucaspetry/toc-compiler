@@ -64,7 +64,7 @@
 %type <syntaxTree> program
 %type <node> line declaration expression attribuition multiple_attribution expression_two
 %type <codeBlock> lines multiple_declaration
-%type <integer> indent idtest sp type op_binary
+%type <integer> indent sp type op_binary
 
 /*
  * Precedência de operadores.
@@ -102,8 +102,8 @@ program:
     ;
 
 lines:
-    idtest line %prec LINE { if($2 != NULL) SEMANTIC.pushLineScope($2); }
-    | lines T_NL idtest line { if($4 != NULL) SEMANTIC.pushLineScope($4); }
+    indent line %prec LINE { if($2 != NULL) SEMANTIC.pushLineScope($2); }
+    | lines T_NL indent line { if($4 != NULL) SEMANTIC.pushLineScope($4); }
     | error T_NL { yyerrok; $$ = NULL; }
     ;
 
@@ -212,25 +212,14 @@ type:
     | T_VOID {$$ = Data::VOID;}
     ;
 
+indent: // TODO Bug: Ainda será possível pular de 2 para 6 espaços, por exemplo
+    sp { SEMANTIC.setScope((float)$1/2); }
+    ;
+
 // Espaços
 sp:
     { $$ = 0; }
     | T_SP sp { $$ = $2 + 1; }
-    ;
-
-idtest: // TODO Bug: Ainda será possível pular de 2 para 6 espaços, por exemplo
-    indent {   if($1 > SEMANTIC.getCurrentIndentation()) {
-                   SEMANTIC.newScope();
-               } else if($1 < SEMANTIC.getCurrentIndentation()) {
-                   SEMANTIC.returnScope();
-               }
-           }
-    ;
-
-// Indentação (2 espaços)
-indent:
-    { $$ = 0; }
-    | T_SP T_SP indent { $$ = $3 + 1; }
     ;
 
 %%

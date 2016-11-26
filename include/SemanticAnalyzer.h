@@ -13,6 +13,7 @@
 #include "String.h"
 #include "VariableDeclaration.h"
 #include "LLVM.h"
+#include <cmath>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,12 @@ class SemanticAnalyzer {
         void returnScope();
 
         /**
+         * Definir o escopo atual
+         * @param indentation número de indentações
+         */
+        void setScope(float indentation);
+
+        /**
          * Adicionar nova linha de código ao escopo atual
          * @param line linha de código
          */
@@ -76,6 +83,11 @@ class SemanticAnalyzer {
          * Analisar o programa (última função executada na análise sintática)
          */
         void analyzeProgram();
+
+        /**
+         * Analisar a criação de um novo escopo
+         */
+        void analyzeScopeCreation();
 
         /**
          * Analisar...

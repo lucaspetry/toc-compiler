@@ -9,12 +9,35 @@ SemanticAnalyzer::~SemanticAnalyzer() {
 }
 
 void SemanticAnalyzer::newScope() {
+    this->analyzeScopeCreation();
     this->symbolTable.setCurrentStructure(this->currentStructure);
+    this->currentStructure = NULL;
     this->symbolTable.newScope();
 }
 
 void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
+}
+
+void SemanticAnalyzer::setScope(float indentation) {
+    int indINT = (int) indentation;
+
+    if(indINT != indentation) {
+        ERROR_LOGGER->log(ErrorLogger::SYNTAX, "INDENTATION 2 SPACES ERROR"); // TODO
+        return;
+    }
+
+    if(indINT - this->getCurrentIndentation() > 1)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "INDENTATION ERROR"); // TODO
+    else if(indINT > this->getCurrentIndentation()) {
+        this->newScope();
+    } else {
+        int ind = this->getCurrentIndentation();
+        while(indINT < ind) {
+            this->returnScope();
+            ind--;
+        }
+    }
 }
 
 void SemanticAnalyzer::pushLineScope(TreeNode* line) {
@@ -43,6 +66,11 @@ void SemanticAnalyzer::analyzeProgram() {
     if(tocFunction.getType() != Symbol::FUNCTION
        || tocFunction.getDataType() != Data::VOID)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Main function toc() not found.");
+}
+
+void SemanticAnalyzer::analyzeScopeCreation() {
+    if(this->currentStructure == NULL)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "INDENTATION ERROR"); // TODO
 }
 
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
