@@ -6,7 +6,7 @@
 #include "CodeBlock.h"
 
 /**
- * Função 
+ * Função
  */
 class Function : public TreeNode {
 
@@ -16,6 +16,7 @@ class Function : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     protected:
       std::string id;

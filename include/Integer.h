@@ -5,7 +5,7 @@
 #include "TreeNode.h"
 
 /**
- * Valor inteiro 
+ * Valor inteiro
  */
 class Integer : public TreeNode {
 
@@ -16,6 +16,7 @@ class Integer : public TreeNode {
         std::string printInOrder() const;
         int getValue();
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         int value;

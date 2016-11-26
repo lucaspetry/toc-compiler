@@ -4,7 +4,7 @@
 #include "Function.h"
 
 /**
- * Função de impressão na tela 
+ * Função de impressão na tela
  */
 class PrintFunction : public Function {
 

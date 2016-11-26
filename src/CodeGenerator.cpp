@@ -87,12 +87,12 @@ void SyntaxTree::generateCode() {
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable*>(left);
-        
+
         if(left->classType() == TreeNode::VARIABLE_DECLARATION)
             lvar = dynamic_cast<Variable*>((dynamic_cast<VariableDeclaration*>(left))->getNext());
-        
+
         // TODO array?
-        
+
         llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
 
@@ -188,7 +188,7 @@ llvm::Value* TocFunction::generateCode() {
 }
 
 llvm::Value* TypeCasting::generateCode(){
-  switch(this->left){
+  switch(this->type){
       case Data::INT:
           if (next->dataType() == Data::FLT)
             return new llvm::FPToSIInst(next->generateCode(), llvm::IntegerType::getInt32Ty(IR::Context), "conv");

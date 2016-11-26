@@ -7,11 +7,12 @@
 #include <string>
 #include <vector>
 
+class CodeBlock;
 class SemanticAnalyzer;
 class SyntaxTree;
 
 /**
- * Nodo da árvore sintática 
+ * Nodo da árvore sintática
  */
 class TreeNode {
 
@@ -20,7 +21,7 @@ class TreeNode {
 
     public:
         /**
-         * Tipos de nodos 
+         * Tipos de nodos
          */
         enum ClassType {
             ARRAY,
@@ -46,6 +47,7 @@ class TreeNode {
         virtual TreeNode::ClassType classType() const = 0;
         virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
+        virtual void setBody(CodeBlock* codeBlock) = 0;
         void setType(Data::Type type);
         void setSymbolTable(SymbolTable table);
         Data::Type dataType() const;

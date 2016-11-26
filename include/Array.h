@@ -5,7 +5,7 @@
 #include "TreeNode.h"
 
 /**
- * Array 
+ * Array
  */
 class Array : public TreeNode {
 
@@ -16,6 +16,7 @@ class Array : public TreeNode {
         std::string printInOrder() const;
         void setType(Data::Type type);
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
       std::string id;

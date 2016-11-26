@@ -6,7 +6,7 @@
 #include "SymbolTable.h"
 
 /**
- * Variável 
+ * Variável
  */
 class Variable : public TreeNode {
 
@@ -17,6 +17,7 @@ class Variable : public TreeNode {
         std::string getId() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         std::string id;

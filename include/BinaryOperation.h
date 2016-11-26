@@ -5,7 +5,7 @@
 #include "Variable.h"
 
 /**
- * Operação binária 
+ * Operação binária
  */
 class BinaryOperation : public TreeNode {
 
@@ -39,6 +39,7 @@ class BinaryOperation : public TreeNode {
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         Type operation;

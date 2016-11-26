@@ -1,1 +1,4 @@
-[Line 3] Warning: Variable Abacaxi initiates with an uppercase character. TOC recommends that variable's name initiates with a lowercase character.
+[Line 4] Warning: Variable Abacaxi initiates with an uppercase character. TOC recommends that variable's name initiates with a lowercase character.
+# Funcao principal do programa
+void toc()
+  int Abacaxi = 8

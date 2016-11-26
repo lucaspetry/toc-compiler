@@ -19,10 +19,6 @@
 #include <ctype.h>
 #include <vector>
 
-int CR_INDENT = 0; // Indentação atual
-TreeNode* CR_NODE = NULL; // Nodo atual
-CodeBlock* CR_CBLOCK = new CodeBlock(CR_INDENT); // Bloco de código atual
-
 extern ErrorLogger* ERROR_LOGGER;
 
 /**
@@ -52,10 +48,22 @@ class SemanticAnalyzer {
         void returnScope();
 
         /**
-         * Retornar para o escopo anterior ao atual da tabela
-         * @param node linha de código
+         * Adicionar nova linha de código ao escopo atual
+         * @param line linha de código
          */
-        void pushLineScope(TreeNode* node);
+        void pushLineScope(TreeNode* line);
+
+        /**
+         * Obter o bloco de código da estrutura atual
+         * @return bloco de código
+         */
+        CodeBlock* getCurrentBody();
+
+        /**
+         * Obter a indentação atual
+         * @return a indentação atual
+         */
+        int getCurrentIndentation();
 
         /**
          * Atribuir um tipo a todos os tipos desconhecidos
@@ -134,6 +142,8 @@ class SemanticAnalyzer {
 
     private:
         SymbolTable symbolTable;
+        TreeNode* currentStructure;
+
 };
 
 #endif

@@ -5,12 +5,13 @@
 #include "Data.h"
 #include <string>
 
+class CodeBlock;
 class Symbol;
 class Scope;
 class TreeNode;
 
 /**
- * Table de símbolos 
+ * Table de símbolos
  */
 class SymbolTable {
 
@@ -21,7 +22,7 @@ class SymbolTable {
          * Construir uma tabela de símbolos padrão
          */
         SymbolTable();
-    
+
         /**
          * Destruir a tabela de símbolos
          */
@@ -33,22 +34,48 @@ class SymbolTable {
          * @return nova tabela de símbolos
          */
         SymbolTable& operator=(const SymbolTable& table);
-    
+
         /**
          * Criar um novo escopo
          */
         void newScope();
-    
+
         /**
          * Retornar para o escopo anterior ao atual
          */
         void returnScope();
-    
+
+        /**
+         * Adicionar nova linha de código ao escopo atual
+         * @param line linha de código
+         */
+        void pushLineScope(TreeNode* line);
+
+        /**
+         * Obter o bloco de código atual
+         * @return bloco de código atual
+         */
+        CodeBlock* getCurrentCodeBlock();
+
+        /**
+         * Obter a estrutura (função, laço, etc) do escopo atual
+         * @return a estrutura
+         */
+        TreeNode* getCurrentStructure();
+
+        void setCurrentStructure(TreeNode* node);
+
+        /**
+         * Obter a indentação atual
+         * @return a indentação atual
+         */
+        int getCurrentIndentation();
+
         /**
          * Limpar todo o conteúdo da tabela de símbolos
          */
         void clear();
-    
+
         /**
          * Obter um símbolo da tabela
          * @param id identificador do símbolo
@@ -64,7 +91,7 @@ class SymbolTable {
          * @return true se o símbolo existe
          */
         bool existsSymbol(std::string id, bool checkParentScope = false) const;
-    
+
         /**
          * Verificar se um símbolo já foi inicializado
          * @param id identificador do símbolo
@@ -79,33 +106,33 @@ class SymbolTable {
          * @param newSymbol novo símbolo a ser adicionado
          */
         void addSymbol(const std::string id, Symbol newSymbol);
-    
+
         /**
          * Inicializar um símbolo da tabela
          * @param id identificador do símbolo
          */
         void setInitializedSymbol(const std::string id);
-    
+
         /**
          * Definir o dado correspondente ao símbolo
          * @param id identificador do símbolo
          * @param data nodo da árvore sintática correspondente ao símbolo
          */
         void setSymbolData(const std::string id, TreeNode* data);
-    
+
         /**
          * Atribuir um tipo a todos os tipos desconhecidos
          * @param type tipo a ser atribuído
          */
         void setUnknownTypes(Data::Type type);
-    
+
         /**
          * Obter a alocação de uma variável
          * @param id identificador da variável
          * @return alocação da variável
          */
         llvm::Value* getVariableAllocation(std::string id);
-    
+
         /**
          * Atualizar o valor alocado pelo LLVM para uma variável
          * @param id identificador da variável

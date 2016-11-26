@@ -1,8 +1,9 @@
 #include "SymbolTable.h"
+#include "CodeBlock.h"
 #include "Scope.h"
-#include <iostream>
 
 SymbolTable::SymbolTable() {
+    this->currentScope = NULL;
     this->newScope();
 }
 
@@ -20,7 +21,36 @@ void SymbolTable::newScope() {
 }
 
 void SymbolTable::returnScope() {
-    this->currentScope = this->currentScope->getParent();
+    Scope* parent = this->currentScope->getParent();
+
+    if(parent != NULL && parent->structure != NULL)
+        parent->structure->setBody(this->currentScope->code);
+
+    this->currentScope = parent;
+}
+
+void SymbolTable::pushLineScope(TreeNode* line) {
+    if(this->currentScope->code == NULL)
+        this->currentScope->code = new CodeBlock(this->currentScope->indentation);
+
+    this->currentScope->code->insertLineBack(line);
+}
+
+CodeBlock* SymbolTable::getCurrentCodeBlock() {
+    return this->currentScope->code;
+}
+
+TreeNode* SymbolTable::getCurrentStructure() {
+    return this->currentScope->structure;
+}
+
+void SymbolTable::setCurrentStructure(TreeNode* node) {
+    if(this->currentScope != NULL)
+        this->currentScope->structure = node;
+}
+
+int SymbolTable::getCurrentIndentation() {
+    return this->currentScope->indentation;
 }
 
 void SymbolTable::clear() {

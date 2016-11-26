@@ -1,15 +1,7 @@
 #include "String.h"
 
 String::String(std::string value) : TreeNode(Data::STR) {
-    if(value.at(0) == '\"')
-        this->value = value.substr(1, value.size());
-
-    if(this->value.at(this->value.size()-1) == '\"')
-        this->value = this->value.substr(0, this->value.size()-1);
-
-    while(this->value.find("\\n") != std::string::npos) {
-        this->value.replace(this->value.find("\\n"), 2, "\n");
-    }
+    this->value = value;
 }
 
 String::~String() {
@@ -20,11 +12,31 @@ TreeNode::ClassType String::classType() const {
 }
 
 std::string String::printInOrder() const {
-    return this->value;
+    std::string valuePrint = this->value;
+
+    while(valuePrint.find("\n") != std::string::npos)
+        valuePrint.replace(valuePrint.find("\n"), 1, "\\n");
+
+    return valuePrint;
+}
+
+void String::setBody(CodeBlock* codeBlock) {
 }
 
 std::string String::getValue() {
-    return this->value;
+    std::string value = this->value;
+
+    if(value.at(0) == '\"')
+        value = value.substr(1, value.size());
+
+    if(value.at(value.size()-1) == '\"')
+        value = value.substr(0, value.size()-1);
+
+    while(value.find("\\n") != std::string::npos) {
+        value.replace(value.find("\\n"), 2, "\n");
+    }
+
+    return value;
 }
 
 bool String::isBoolean(){

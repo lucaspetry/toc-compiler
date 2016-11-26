@@ -8,7 +8,7 @@
 #include <ctype.h>
 
 /**
- * Valor textual 
+ * Valor textual
  */
 class String : public TreeNode {
 
@@ -18,6 +18,7 @@ class String : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
         std::string getValue();
         bool isBoolean();
         bool isNumber();

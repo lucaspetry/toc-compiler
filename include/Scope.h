@@ -7,10 +7,13 @@
 #include <string>
 #include <vector>
 
+class CodeBlock;
+class TreeNode;
+
 typedef std::map<std::string, llvm::Value*> MemoryMap;
 
 /**
- * Escopo da tabela de símbolos 
+ * Escopo da tabela de símbolos
  */
 class Scope {
 
@@ -22,7 +25,7 @@ class Scope {
          * @param parent escopo pai
          */
         Scope(Scope* parent = 0);
-    
+
         /**
          * Destruir o escopo
          */
@@ -34,38 +37,38 @@ class Scope {
          * @return novo escopo
          */
         Scope& operator=(const Scope& scope);
-    
+
         /**
          * Limpar todo o conteúdo do escopo
          */
         void clear();
-    
+
         /**
          * Obter o pai do escopo
          * @return o escopo pai
          */
         Scope* getParent();
-    
+
         /**
          * Definir o escopo pai
          * @param parent escopo pai
          */
         void setParent(Scope* parent);
-    
+
         /**
          * Obter um símbolo do escopo
          * @param id identificador do símbolo
          * @return o símbolo encontrado
          */
         Symbol getSymbol(std::string id) const;
-    
+
         /**
          * Verificar se um símbolo existe
          * @param id identificador do símbolo
          * @return true se o símbolo existe
          */
         bool existsSymbol(std::string id) const;
-    
+
         /**
          * Verificar se um símbolo já foi inicializado
          * @param id identificador do símbolo
@@ -79,13 +82,13 @@ class Scope {
          * @param newSymbol novo símbolo a ser adicionado
          */
         void addSymbol(const std::string id, Symbol newSymbol);
-    
+
         /**
          * Inicializar um símbolo do escopo
          * @param id identificador do símbolo
          */
         void setInitializedSymbol(const std::string id);
-    
+
         /**
          * Definir o dado correspondente ao símbolo
          * @param id identificador do símbolo
@@ -98,14 +101,14 @@ class Scope {
          * @param type tipo a ser atribuído
          */
         void setUnknownTypes(Data::Type type);
-    
+
         /**
          * Obter a alocação de uma variável
          * @param id identificador da variável
          * @return alocação da variável
          */
         llvm::Value* getVariableAllocation(std::string id);
-    
+
         /**
          * Atualizar o valor alocado pelo LLVM para uma variável
          * @param id identificador da variável
@@ -117,6 +120,9 @@ class Scope {
         Scope* parent;
         std::map<std::string, Symbol> entryList;
         MemoryMap allocations;
+        int indentation;
+        CodeBlock* code;
+        TreeNode* structure;
 
 };
 

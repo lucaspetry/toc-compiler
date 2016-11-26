@@ -28,6 +28,9 @@ std::string Array::printInOrder() const {
     return output;
 }
 
+void Array::setBody(CodeBlock* codeBlock) {
+}
+
 void Array::setType(Data::Type type){
   this->type = type;
 }

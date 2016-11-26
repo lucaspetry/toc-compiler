@@ -18,3 +18,6 @@ std::string Variable::printInOrder() const {
 std::string Variable::getId() const {
     return id ;
 }
+
+void Variable::setBody(CodeBlock* codeBlock) {
+}

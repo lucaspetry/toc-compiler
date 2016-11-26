@@ -16,3 +16,6 @@ std::string Boolean::printInOrder() const {
         return "true";
     return "false";
 }
+
+void Boolean::setBody(CodeBlock* codeBlock) {
+}

@@ -4,7 +4,7 @@
 #include "TreeNode.h"
 
 /**
- * Declaração de variável 
+ * Declaração de variável
  */
 class VariableDeclaration : public TreeNode {
 
@@ -15,6 +15,7 @@ class VariableDeclaration : public TreeNode {
         std::string printInOrder() const;
         llvm::Value* generateCode();
         TreeNode* getNext();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         TreeNode* next;

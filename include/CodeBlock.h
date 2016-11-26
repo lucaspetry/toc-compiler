@@ -20,8 +20,10 @@ class CodeBlock : public TreeNode {
         std::string printIndentation() const;
         int numberOfLines() const;
         TreeNode* getLine(int lineNumber);
-        void insertLine(TreeNode* line);
+        void insertLineFront(TreeNode* line);
+        void insertLineBack(TreeNode* line);
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         std::vector<TreeNode*> lines;

@@ -5,7 +5,7 @@
 #include "TreeNode.h"
 
 /**
- * Comentário 
+ * Comentário
  */
 class Comment : public TreeNode {
 
@@ -16,6 +16,7 @@ class Comment : public TreeNode {
         std::string printInOrder() const;
         llvm::Value* generateCode();
         std::string getValue() const;
+        void setBody(CodeBlock* codeBlock);
 
     private:
       std::string comment;

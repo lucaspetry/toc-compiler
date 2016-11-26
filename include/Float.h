@@ -4,7 +4,7 @@
 #include "TreeNode.h"
 
 /**
- * Valor de ponto flutuante 
+ * Valor de ponto flutuante
  */
 class Float : public TreeNode {
 
@@ -14,6 +14,7 @@ class Float : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         float value;

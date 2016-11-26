@@ -21,3 +21,6 @@ std::string VariableDeclaration::printInOrder() const {
 TreeNode* VariableDeclaration::getNext() {
     return this->next;
 }
+
+void VariableDeclaration::setBody(CodeBlock* codeBlock) {
+}

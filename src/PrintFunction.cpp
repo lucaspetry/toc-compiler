@@ -2,7 +2,7 @@
 
 PrintFunction::PrintFunction(TreeNode* param) : Function("print", NULL, NULL, NULL) {
     CodeBlock* body = new CodeBlock(0);
-    body->insertLine(param);
+    body->insertLineFront(param);
     this->body = body;
 }
 
@@ -14,5 +14,5 @@ TreeNode::ClassType PrintFunction::classType() const {
 }
 
 std::string PrintFunction::printInOrder() const {
-    return "";
+    return "print " + this->body->printInOrder();
 }

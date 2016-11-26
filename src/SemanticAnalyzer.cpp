@@ -2,12 +2,14 @@
 #include "Symbol.h"
 
 SemanticAnalyzer::SemanticAnalyzer() {
+    this->currentStructure = NULL;
 }
 
 SemanticAnalyzer::~SemanticAnalyzer() {
 }
 
 void SemanticAnalyzer::newScope() {
+    this->symbolTable.setCurrentStructure(this->currentStructure);
     this->symbolTable.newScope();
 }
 
@@ -15,8 +17,16 @@ void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
 }
 
-void SemanticAnalyzer::pushLineScope(TreeNode* node) {
+void SemanticAnalyzer::pushLineScope(TreeNode* line) {
+    this->symbolTable.pushLineScope(line);
+}
 
+CodeBlock* SemanticAnalyzer::getCurrentBody() {
+    return this->symbolTable.getCurrentCodeBlock();
+}
+
+int SemanticAnalyzer::getCurrentIndentation() {
+    return this->symbolTable.getCurrentIndentation();
 }
 
 void SemanticAnalyzer::setUnknownTypes(Data::Type type, CodeBlock* codeBlock){
@@ -46,7 +56,7 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
       switch (left->dataType()) {
         case Data::BOO:
           if (((String*)right)->isBoolean()){
-            binaryOp->right = new TypeCasting(left->dataType(),right);
+            binaryOp->right = new TypeCasting(left->dataType(), right);
             right = binaryOp->right;
           } else {
             ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is not false or true.");
@@ -55,7 +65,7 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
         case Data::FLT:
         case Data::INT:
           if (((String*)right)->isNumber()) {
-            binaryOp->right = new TypeCasting(left->dataType(),right);
+            binaryOp->right = new TypeCasting(left->dataType(), right);
             right = binaryOp->right;
           } else {
             ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "String value is a number.");
@@ -109,6 +119,7 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
         if(!id.compare("toc")) {
             TocFunction* tocFunction = new TocFunction(body);
             this->symbolTable.addSymbol(id, Symbol(Data::VOID, Symbol::FUNCTION, true, tocFunction));
+            this->currentStructure = tocFunction;
             return tocFunction;
         }
 

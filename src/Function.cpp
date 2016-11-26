@@ -42,3 +42,7 @@ std::string Function::printInOrder() const {
 
     return output;
 }
+
+void Function::setBody(CodeBlock* codeBlock) {
+    this->body = codeBlock;
+}

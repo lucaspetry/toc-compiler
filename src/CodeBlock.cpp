@@ -15,11 +15,15 @@ std::string CodeBlock::printInOrder() const {
     std::string output = "";
 
     for(TreeNode* node : this->lines){
-        output += this->printIndentation();
+        if(node->classType() != TreeNode::CODE_BLOCK)
+            output += this->printIndentation();
         output += node->printInOrder();
         output += "\n";
     }
-    return output;
+    return output.substr(0, output.size()-1);
+}
+
+void CodeBlock::setBody(CodeBlock* codeBlock) {
 }
 
 int CodeBlock::numberOfLines() const {
@@ -30,8 +34,12 @@ TreeNode* CodeBlock::getLine(int lineNumber) {
     return this->lines[lineNumber];
 }
 
-void CodeBlock::insertLine(TreeNode* line) {
+void CodeBlock::insertLineFront(TreeNode* line) {
     this->lines.insert(this->lines.begin(), line);
+}
+
+void CodeBlock::insertLineBack(TreeNode* line) {
+    this->lines.insert(this->lines.end(), line);
 }
 
 std::string CodeBlock::printIndentation() const {

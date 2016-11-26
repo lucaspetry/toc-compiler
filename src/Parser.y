@@ -20,9 +20,6 @@
     TocAnalyzer TOC;            // Analisador TOC
     SyntaxTree* SYNTAX_TREE;    // Árvore sintática
 
-    extern int CR_INDENT;
-    extern int CR_NODE;
-    extern int CR_CBLOCK;
     extern int yylex();
     extern void yyerror(const char* s, ...);
 %}
@@ -101,12 +98,12 @@ start:
 
 // Programa
 program:
-    lines { SYNTAX_TREE = new SyntaxTree($1); }
+    lines { SYNTAX_TREE = new SyntaxTree(SEMANTIC.getCurrentBody()); }
     ;
 
 lines:
-    idtest line %prec LINE { if($2 != NULL) SEMANTIC->pushLineScope($2); }
-    | idtest line T_NL lines { if($2 != NULL) SEMANTIC->pushLineScope($2); }
+    idtest line %prec LINE { if($2 != NULL) SEMANTIC.pushLineScope($2); }
+    | lines T_NL idtest line { if($4 != NULL) SEMANTIC.pushLineScope($4); }
     | error T_NL { yyerrok; $$ = NULL; }
     ;
 
@@ -117,7 +114,7 @@ line:
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, $8, NULL); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
     ;
 
 // Declaração de variáveis
@@ -125,7 +122,7 @@ declaration:
     type sp T_ID { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1);
                     TOC.analyzeVariable($3);
                     TOC.analyzeSpaces(1, $2);}
-    | type sp T_ID multiple_declaration { $$ = $4; $4->insertLine(SEMANTIC.declareVariable($3, (Data::Type)$1));
+    | type sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
                                           SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
                                           TOC.analyzeVariable($3); }
     | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
@@ -135,7 +132,7 @@ declaration:
     // array
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
                                                   TOC.analyzeVariable($3); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLine(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $5), BinaryOperation::ASSIGN, $11);
@@ -144,18 +141,18 @@ declaration:
 
 // Multiplas declarações
 multiple_declaration:
-    T_COMMA sp T_ID { $$ = new CodeBlock(CR_INDENT);
-                      $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
+    T_COMMA sp T_ID { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
+                      $$->insertLineFront(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                       TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID multiple_declaration {$$ = $4;
-                                            $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN));
+                                            $$->insertLineFront(SEMANTIC.declareVariable($3, Data::UNKNOWN));
                                             TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
    // array
-    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(CR_INDENT);
-                                                    $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
+    | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
+                                                    $$->insertLineFront(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
                                                     TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     | T_COMMA sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7;
-                                                                        $$->insertLine(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
+                                                                        $$->insertLineFront(SEMANTIC.declareVariable($3, Data::UNKNOWN, $5));
                                                                         TOC.analyzeSpaces(1, $2); TOC.analyzeVariable($3); }
     ;
 
@@ -221,11 +218,11 @@ sp:
     | T_SP sp { $$ = $2 + 1; }
     ;
 
-idtest:
-    indent {   if($1 > CR_INDENT) {
-                   SEMANTIC.newScope(); CR_INDENT++;
-               } else if($1 < CR_INDENT) {
-                   SEMANTIC.returnScope(); CR_INDENT--;
+idtest: // TODO Bug: Ainda será possível pular de 2 para 6 espaços, por exemplo
+    indent {   if($1 > SEMANTIC.getCurrentIndentation()) {
+                   SEMANTIC.newScope();
+               } else if($1 < SEMANTIC.getCurrentIndentation()) {
+                   SEMANTIC.returnScope();
                }
            }
     ;

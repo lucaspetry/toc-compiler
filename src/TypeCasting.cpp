@@ -1,7 +1,7 @@
 #include "TypeCasting.h"
 
-TypeCasting::TypeCasting(Data::Type left, TreeNode* next) : TreeNode(left) {
-    this->left = left;
+TypeCasting::TypeCasting(Data::Type type, TreeNode* next) : TreeNode(type) {
+    this->type = type;
     this->next = next;
 }
 
@@ -13,22 +13,12 @@ TreeNode::ClassType TypeCasting::classType() const {
 }
 
 std::string TypeCasting::printInOrder() const {
-  std::string output = "(" + typeToString(this->left) + ") ";
+  std::string output = "(" + Data::toString(this->type) + ") ";
   if(next != NULL){
     output+= next->printInOrder();
   }
   return output;
 }
 
-std::string TypeCasting::typeToString(Data::Type type) const{
-    switch(type) {
-        case Data::INT:
-            return "int";
-        case Data::BOO:
-            return "boo";
-        case Data::FLT:
-            return "flt";
-        default:
-            return "unknown";
-    }
+void TypeCasting::setBody(CodeBlock* codeBlock) {
 }
