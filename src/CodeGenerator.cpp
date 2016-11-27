@@ -112,8 +112,19 @@ llvm::Value* BinaryOperation::generateCode() {
             lvar = dynamic_cast<Variable*>((dynamic_cast<VariableDeclaration*>(left))->getNext());
 
         // TODO array?
+        llvm::Value* newValue;
 
-        llvm::Value* newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
+        switch(this->dataType()) {
+            case Data::INT:
+                newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
+                break;
+            case Data::FLT:
+                newValue = IR::Builder->CreateFAdd(right->generateCode(), IR::ZeroFP, lvar->getId().c_str());
+                break;
+            default:
+                newValue = IR::Builder->CreateFAdd(right->generateCode(), IR::ZeroFP, lvar->getId().c_str());
+                break;
+        }
         this->symbolTable.updateVariableAllocation(lvar->getId(), newValue);
 
         return newValue;
@@ -124,7 +135,14 @@ llvm::Value* BinaryOperation::generateCode() {
             case BinaryOperation::MINUS:
                 return IR::Builder->CreateSub(left->generateCode(), right->generateCode(), "subtmp");
             case BinaryOperation::PLUS:
-                return IR::Builder->CreateAdd(left->generateCode(), right->generateCode(), "addtmp");
+                switch(this->dataType()) {
+                    case Data::INT:
+                        return IR::Builder->CreateAdd(left->generateCode(), right->generateCode(), "addtmp");
+                    case Data::FLT:
+                        return IR::Builder->CreateFAdd(left->generateCode(), right->generateCode(), "addtmp");
+                    default:
+                        return IR::Builder->CreateFAdd(left->generateCode(), right->generateCode(), "addtmp");
+                }
             case BinaryOperation::TIMES:
                 return IR::Builder->CreateMul(left->generateCode(), right->generateCode(), "multmp");
             default:
@@ -148,7 +166,7 @@ std::string UnaryOperation::toLLVMString() {
 llvm::Value* Boolean::generateCode() {
     // TODO não sei se isso está ok
     int equivalent = value ? 1 : 0;
-    return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, equivalent));
+    return llvm::ConstantInt::get(IR::Context, llvm::APInt(32, equivalent));
 }
 
 std::string Boolean::toLLVMString() {
@@ -192,7 +210,7 @@ std::string Function::toLLVMString() {
 }
 
 llvm::Value* Integer::generateCode() {
-    return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, value));
+    return llvm::ConstantInt::get(IR::Context, llvm::APInt(32, value));
 }
 
 std::string Integer::toLLVMString() {
@@ -204,9 +222,9 @@ llvm::Value* PrintFunction::generateCode() {
                                    llvm::FunctionType::get(llvm::IntegerType::getInt32Ty(IR::Context), llvm::PointerType::get(llvm::Type::getInt8Ty(IR::Context), 0), true));
     llvm::Function *printFunction = IR::Module->getFunction("printf");
     std::vector<llvm::Value*> args;
-    llvm::Value* argStr = IR::Builder->CreateGlobalString(
-        llvm::StringRef(this->body->getLine(0)->toLLVMString()), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */);
-    args.push_back(argStr);
+    //llvm::Value* argStr = IR::Builder->CreateGlobalString(
+    //    llvm::StringRef(this->body->getLine(0)->toLLVMString()), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */);
+    args.push_back(this->body->getLine(0)->generateCode());
     return IR::Builder->CreateCall(printFunction, args, "printfCall");
 }
 
@@ -217,14 +235,14 @@ std::string PrintFunction::toLLVMString() {
 llvm::Value* String::generateCode() {
     llvm::GlobalVariable* globalString = new llvm::GlobalVariable(
         /*Module=*/     *IR::Module,
-        /*Type=*/       llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), this->value.size()),
+        /*Type=*/       llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), this->valuePrint.size()),
         /*isConstant=*/ false,
         /*Linkage=*/    llvm::GlobalValue::PrivateLinkage,
         /*Initializer=*/0,
-        /*Name=*/       ".str");
+        /*Name=*/       "str");
     globalString->setAlignment(1);
 
-    llvm::Constant *arrayString = llvm::ConstantDataArray::getString(IR::Context, this->value.c_str(), true);
+    llvm::Constant *arrayString = llvm::ConstantDataArray::getString(IR::Context, this->valuePrint.c_str(), true);
     globalString->setInitializer(arrayString);
 
     return globalString;
@@ -252,37 +270,56 @@ std::string TocFunction::toLLVMString() {
 
 llvm::Value* TypeCasting::generateCode() {
     llvm::Value* code = next->generateCode();
+    llvm::Type* typeCast;
+    llvm::Twine intCast = llvm::Twine("intCast");
+    llvm::Twine fltCast = llvm::Twine("fltCast");
+    llvm::Twine strCast = llvm::Twine("strCast");
+    llvm::ConstantInt* intValue;
+    llvm::ConstantFP* floatValue;
 
-    if(next->dataType() == Data::STR) {
-        switch(this->type) {
-            case Data::INT:
-                return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, next->toLLVMString(), 16));
-            case Data::FLT:
-                //llvm::APFloat value;
-                //value.convertFromString(next->toLLVMString(), llvm::APFloat::rmNearestTiesToEven);
-                //return llvm::ConstantFP::get(IR::Context, value);
-            case Data::BOO:
-                // TODO
-            default:
-                return code;
-        }
-    }
-
-    switch(this->type) {
-        case Data::INT:
-            if (next->dataType() == Data::FLT)
-                return new llvm::FPToSIInst(code, llvm::IntegerType::getInt32Ty(IR::Context), "conv");
-            break;
-        case Data::FLT:
-            if (next->dataType() == Data::INT)
-                return new llvm::SIToFPInst(code, llvm::Type::getFloatTy(IR::Context), "conv");
-            break;
-        case Data::STR:
-            break;
+    switch(this->type) { // Tipo de destino
         case Data::BOO:
-            break;
+        case Data::INT:
+            typeCast = llvm::Type::getInt32Ty(IR::Context);
+
+            switch(next->dataType()) {
+                case Data::FLT:
+                    return IR::Builder->CreateFPToSI(code, typeCast, intCast);
+                case Data::STR:
+                    return code; // TODO
+                default:
+                    return code; // INT, BOO, VOID
+            }
+        case Data::FLT:
+            typeCast = llvm::Type::getPrimitiveType(IR::Context, llvm::Type::FloatTyID);
+
+            switch(next->dataType()) {
+                case Data::BOO:
+                case Data::INT:
+                    return IR::Builder->CreateSIToFP(code, typeCast, fltCast);
+                case Data::STR:
+                    return code; // TODO
+                default:
+                    return code; // FLOAT, VOID
+            }
+        case Data::STR:
+            typeCast = llvm::Type::getPrimitiveType(IR::Context, llvm::Type::ArrayTyID);
+
+            switch(next->dataType()) {
+                case Data::BOO:
+                case Data::INT:
+                    intValue = llvm::dyn_cast<llvm::ConstantInt>(code);
+                    return IR::Builder->CreateGlobalString(
+                        llvm::StringRef(std::to_string(intValue->getSExtValue())), strCast, 3 /* ADDRESS_SPACE_SHARED */);
+                case Data::FLT:
+                    floatValue = llvm::dyn_cast<llvm::ConstantFP>(code);
+                    return IR::Builder->CreateGlobalString(
+                        llvm::StringRef(std::to_string(floatValue->getValueAPF().convertToFloat())), strCast, 3 /* ADDRESS_SPACE_SHARED */);
+                default:
+                    return code; // STR, VOID
+            }
         default:
-            return NULL;
+            return code;
     }
 }
 
