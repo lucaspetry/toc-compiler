@@ -1,11 +1,11 @@
 #ifndef ARRAY_H_
 #define ARRAY_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
- * Array 
+ * Array
  */
 class Array : public TreeNode {
 
@@ -15,7 +15,9 @@ class Array : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         void setType(Data::Type type);
+        void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
       std::string id;

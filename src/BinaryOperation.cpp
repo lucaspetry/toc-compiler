@@ -42,6 +42,9 @@ std::string BinaryOperation::printInOrder() const {
   return output;
 }
 
+void BinaryOperation::setBody(CodeBlock* codeBlock) {
+}
+
 std::string BinaryOperation::operationToString(BinaryOperation::Type operation) const {
     switch(operation) {
         case COMMA:

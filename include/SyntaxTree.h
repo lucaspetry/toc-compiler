@@ -2,18 +2,20 @@
 #define SYNTAXTREE_H_
 
 #include "TreeNode.h"
+#include "CodeBlock.h"
 #include "LLVM.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 /**
- * Árvore sintática 
+ * Árvore sintática
  */
 class SyntaxTree {
 
     public:
         SyntaxTree();
+        SyntaxTree(CodeBlock* codeBlock);
         virtual ~SyntaxTree();
 
         void print();

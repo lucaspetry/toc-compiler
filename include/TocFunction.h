@@ -4,7 +4,7 @@
 #include "Function.h"
 
 /**
- * Função TOC (função principal do programa) 
+ * Função TOC (função principal do programa)
  */
 class TocFunction : public Function {
 
@@ -13,6 +13,7 @@ class TocFunction : public Function {
         virtual ~TocFunction();
         TreeNode::ClassType classType() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
 };
 

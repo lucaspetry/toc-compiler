@@ -3,6 +3,10 @@
 SyntaxTree::SyntaxTree() {
 }
 
+SyntaxTree::SyntaxTree(CodeBlock* codeBlock) {
+    this->lines = codeBlock->lines;
+}
+
 SyntaxTree::~SyntaxTree() {
 }
 

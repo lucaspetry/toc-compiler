@@ -4,7 +4,7 @@
 #include "TreeNode.h"
 
 /**
- * Valor booleano 
+ * Valor booleano
  */
 class Boolean : public TreeNode {
 
@@ -13,7 +13,9 @@ class Boolean : public TreeNode {
         virtual ~Boolean();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
         bool value;

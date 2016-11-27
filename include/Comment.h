@@ -1,11 +1,11 @@
 #ifndef COMMENT_H_
 #define COMMENT_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
- * Comentário 
+ * Comentário
  */
 class Comment : public TreeNode {
 
@@ -14,8 +14,10 @@ class Comment : public TreeNode {
         virtual ~Comment();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode();
         std::string getValue() const;
+        void setBody(CodeBlock* codeBlock);
+        llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
       std::string comment;

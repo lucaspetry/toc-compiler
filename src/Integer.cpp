@@ -18,3 +18,6 @@ TreeNode::ClassType Integer::classType() const {
 std::string Integer::printInOrder() const {
     return std::to_string(value);
 }
+
+void Integer::setBody(CodeBlock* codeBlock) {
+}

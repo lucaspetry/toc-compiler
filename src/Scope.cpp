@@ -1,13 +1,23 @@
 #include "Scope.h"
+#include "CodeBlock.h"
 
 Scope::Scope(Scope* parent) {
-  this->parent = parent;
+    this->parent = parent;
+    this->code = NULL;
+    this->structure = NULL;
+
+    if(parent == NULL)
+        this->indentation = 0;
+    else
+        this->indentation = parent->indentation + 1;
 }
 
 Scope& Scope::operator=(const Scope& scope) {
     this->entryList = scope.entryList;
     this->allocations = scope.allocations;
     this->parent = scope.parent;
+    this->indentation = scope.indentation;
+    this->code = scope.code;
     return *this;
 }
 
@@ -46,8 +56,11 @@ void Scope::addSymbol(std::string id, Symbol newSymbol) {
         allocations[id] = IR::Zero;
 }
 
-void Scope::setInitializedSymbol(std::string id) {
-    entryList[id].initialized = true;
+void Scope::setInitializedSymbol(std::string id, TreeNode* data) {
+    Symbol s = entryList[id];
+    s.initialized = true;
+    s.data = data;
+    entryList[id] = s;
 }
 
 void Scope::setSymbolData(const std::string id, TreeNode* data) {
@@ -62,17 +75,17 @@ void Scope::setSymbolData(const std::string id, TreeNode* data) {
 void Scope::setUnknownTypes(Data::Type type) {
     std::map<std::string, Symbol> newEntryList;
     std::map<std::string, Symbol>::iterator it;
-        
+
     for(it = entryList.begin(); it != entryList.end(); ++it) {
         Symbol s = it->second;
-        
+
         if (s.getDataType() == Data::UNKNOWN) {
             s.dataType = type;
         }
-        
+
         newEntryList[it->first] = s;
     }
-    
+
     this->entryList = newEntryList;
 }
 

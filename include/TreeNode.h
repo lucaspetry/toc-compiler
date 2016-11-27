@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+class CodeBlock;
 class SemanticAnalyzer;
 class SyntaxTree;
 
@@ -35,7 +36,8 @@ class TreeNode {
             STRING,
             TOC_FUNCTION,
             VARIABLE,
-            CONDITIONAL,
+            CONDITIONAL_IF,
+            CONDITIONAL_ELSE,
             VARIABLE_DECLARATION,
             TYPE_CASTING,
             UNARY_OPERATION,
@@ -45,11 +47,14 @@ class TreeNode {
         TreeNode(Data::Type type);
         virtual ~TreeNode();
         virtual TreeNode::ClassType classType() const = 0;
-        virtual llvm::Value* generateCode() = 0;
         virtual std::string printInOrder() const = 0;
+        virtual void setBody(CodeBlock* codeBlock) = 0;
         void setType(Data::Type type);
-        void setSymbolTable(SymbolTable table);
+        void setSymbolTable(SymbolTable& table);
         Data::Type dataType() const;
+
+        virtual llvm::Value* generateCode() = 0;
+        virtual std::string toLLVMString() = 0;
 
     protected:
         Data::Type type;

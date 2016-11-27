@@ -1,13 +1,15 @@
 #ifndef CODEBLOCK_H_
 #define CODEBLOCK_H_
 
-#include <string>
 #include "TreeNode.h"
+#include <string>
 
 /**
- * Bloco de código 
+ * Bloco de código
  */
 class CodeBlock : public TreeNode {
+
+    friend class SyntaxTree;
 
     public:
         CodeBlock(int indentation);
@@ -18,8 +20,11 @@ class CodeBlock : public TreeNode {
         std::string printIndentation() const;
         int numberOfLines() const;
         TreeNode* getLine(int lineNumber);
-        void insertLine(TreeNode* line);
+        void insertLineFront(TreeNode* line);
+        void insertLineBack(TreeNode* line);
+        void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
         std::vector<TreeNode*> lines;

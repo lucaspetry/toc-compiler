@@ -1,14 +1,18 @@
 #include "String.h"
 
 String::String(std::string value) : TreeNode(Data::STR) {
-    if(value.at(0) == '\"')
-        this->value = value.substr(1, value.size());
+    this->value = value;
 
-    if(this->value.at(this->value.size()-1) == '\"')
-        this->value = this->value.substr(0, this->value.size()-1);
+    this->valuePrint = this->value;
 
-    while(this->value.find("\\n") != std::string::npos) {
-        this->value.replace(this->value.find("\\n"), 2, "\n");
+    if(this->valuePrint.at(0) == '\"')
+        this->valuePrint = this->valuePrint.substr(1, this->valuePrint.size());
+
+    if(this->valuePrint.at(this->valuePrint.size()-1) == '\"')
+        this->valuePrint = this->valuePrint.substr(0, this->valuePrint.size()-1);
+
+    while(this->valuePrint.find("\\n") != std::string::npos) {
+        this->valuePrint.replace(this->valuePrint.find("\\n"), 2, "\n");
     }
 }
 
@@ -20,7 +24,15 @@ TreeNode::ClassType String::classType() const {
 }
 
 std::string String::printInOrder() const {
-    return this->value;
+    std::string valuePrint = this->value;
+
+    while(valuePrint.find("\n") != std::string::npos)
+        valuePrint.replace(valuePrint.find("\n"), 1, "\\n");
+
+    return valuePrint;
+}
+
+void String::setBody(CodeBlock* codeBlock) {
 }
 
 std::string String::getValue() {

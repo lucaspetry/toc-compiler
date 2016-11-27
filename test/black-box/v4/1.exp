@@ -6,4 +6,5 @@ void toc()
   abacate = 0
   boo figo
   boo goiaba
-  flt kiwi = 2
+  flt kiwi = 2.5
+  print kiwi

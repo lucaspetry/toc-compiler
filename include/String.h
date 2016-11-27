@@ -2,13 +2,11 @@
 #define STRING_H_
 
 #include "TreeNode.h"
-#include <string>
-#include <stdio.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <string>
 
 /**
- * Valor textual 
+ * Valor textual
  */
 class String : public TreeNode {
 
@@ -18,12 +16,15 @@ class String : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
+        void setBody(CodeBlock* codeBlock);
         std::string getValue();
         bool isBoolean();
         bool isNumber();
 
     private:
         std::string value;
+        std::string valuePrint;
 
 };
 

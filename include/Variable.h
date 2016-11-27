@@ -1,12 +1,12 @@
 #ifndef VARIABLE_H_
 #define VARIABLE_H_
 
-#include <string>
 #include "TreeNode.h"
 #include "SymbolTable.h"
+#include <string>
 
 /**
- * Variável 
+ * Variável
  */
 class Variable : public TreeNode {
 
@@ -17,6 +17,8 @@ class Variable : public TreeNode {
         std::string getId() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
+        void setBody(CodeBlock* codeBlock);
 
     private:
         std::string id;

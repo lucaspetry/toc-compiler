@@ -10,18 +10,20 @@
  */
 class Conditional : public TreeNode {
 
+  friend class SemanticAnalyzer;
     public:
-        Conditional(TreeNode* conditional, CodeBlock* body);
-        Conditional(TreeNode* conditional, CodeBlock* bodyIf, CodeBlock* bodyElse);
+        Conditional(TreeNode* conditional, CodeBlock* body, bool elsing);
         virtual ~Conditional();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        void setBody(CodeBlock* codeBlock);
+        std::string toLLVMString();
         llvm::Value* generateCode();
 
     private:
       TreeNode* condition;
-      CodeBlock* bodyIf;
-      CodeBlock* bodyElse;
+      CodeBlock* body;
+      bool elsing;
 
 };
 
