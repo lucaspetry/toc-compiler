@@ -20,22 +20,26 @@ std::string Loop::printInOrder() const {
     output += "for";
     output += "(";
 
-    if(this->test != NULL){
+    if(test != NULL){
+
       output += this->init->printInOrder();
       output += "; ";
-
       output += this->test->printInOrder();
       output += "; ";
-    }else{
-      output += this->init->printInOrder();
-      output += " ";
+      output += this->attribuition->printInOrder();
 
-      output += "in";
-      output += " ";
+    }else{
+
+      VariableDeclaration* vd = (VariableDeclaration*)this->init;
+      Variable* v = (Variable*) vd->getNext();
+      Array* a = (Array*) attribuition;
+
+      output += v->printInOrder();
+      output += " in ";
+      output += a->printInOrder();
 
     }
 
-    output += this->attribuition->printInOrder();
     output += ")";
 
     if(this->body != NULL){

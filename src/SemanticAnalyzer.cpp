@@ -183,13 +183,15 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0){
-            Array* array = new Array(id, dataType, new Integer(size));
-            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table
             this->symbolTable.setInitializedSymbol(id);
+            Array* array = new Array(id, dataType, new Integer(size));
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
             return array;
         }
+
         this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
         this->symbolTable.setInitializedSymbol(id, value);
+
         Variable* v = new Variable(id, dataType);
         VariableDeclaration* vD = new VariableDeclaration(dataType, v);
         v->setSymbolTable(this->symbolTable);
@@ -201,7 +203,17 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
 }
 
 TreeNode* SemanticAnalyzer::declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition) {
-  Loop* loop = new Loop(init, test, attribuition);
+  Loop* loop;
+
+  if(test == NULL){
+    Variable* v = (Variable*) attribuition;
+    std::string id = v->getId();
+    Array* array = (Array*)this->symbolTable.getSymbol(id, true).getData();
+    loop = new Loop(init, test, array);
+  }else{
+    loop = new Loop(init, test, attribuition);
+  }
+
   this->currentStructure = loop;
   return loop;
 }
@@ -226,7 +238,7 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
     return new Array(id, Data::UNKNOWN, index);
   }
 
-  Variable* v = new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+  Variable* v = new Variable(id, this->symbolTable.getSymbol(id, true).getDataType());
   v->setSymbolTable(this->symbolTable);
   return v;
 }

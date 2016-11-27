@@ -4,6 +4,9 @@
 #include <string>
 #include "TreeNode.h"
 #include "CodeBlock.h"
+#include "Variable.h"
+#include "VariableDeclaration.h"
+#include "Array.h"
 
 /**
  * Loop
