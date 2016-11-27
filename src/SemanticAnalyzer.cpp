@@ -113,6 +113,7 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   }
 }
 void SemanticAnalyzer::analyzeConditional(Conditional* op){
+    std::cout << op->condition->dataType() << std::endl;
     if(op->condition->dataType() != Data::BOO){
       TypeCasting* t = new TypeCasting(Data::BOO, op->condition);
       op->condition = t;
@@ -159,7 +160,7 @@ TreeNode* SemanticAnalyzer::declareCondition(CodeBlock* body, TreeNode* expr, bo
     Conditional* els = new Conditional(NULL,body,true);
     this->currentStructure = els;
     return els;
-  } else{
+  } else {
     Conditional* cond = new Conditional(expr,body,false);
     this->currentStructure = cond;
     return cond;
@@ -236,7 +237,7 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
     return new Array(id, Data::UNKNOWN, index);
   }
 
-  Variable* v = new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+  Variable* v = new Variable(id, this->symbolTable.getSymbol(id,true).getDataType());
   v->setSymbolTable(this->symbolTable);
   return v;
 }
