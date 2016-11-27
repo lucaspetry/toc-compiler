@@ -14,6 +14,7 @@ class PrintFunction : public Function {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
 };
 

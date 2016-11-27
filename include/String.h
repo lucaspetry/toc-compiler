@@ -16,6 +16,7 @@ class String : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
         void setBody(CodeBlock* codeBlock);
         std::string getValue();
         bool isBoolean();
@@ -23,6 +24,7 @@ class String : public TreeNode {
 
     private:
         std::string value;
+        std::string valuePrint;
 
 };
 

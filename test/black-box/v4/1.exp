@@ -7,3 +7,4 @@ void toc()
   boo figo
   boo goiaba
   flt kiwi = 2.5
+  print kiwi

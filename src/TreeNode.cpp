@@ -16,6 +16,6 @@ void TreeNode::setType(Data::Type type) {
     this->type = type;
 }
 
-void TreeNode::setSymbolTable(SymbolTable table){
+void TreeNode::setSymbolTable(SymbolTable& table) {
     this->symbolTable = table;
 }

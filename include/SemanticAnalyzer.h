@@ -130,7 +130,7 @@ class SemanticAnalyzer {
          * @param index
          * @return
          */
-        TreeNode* assignVariable(std::string varId, TreeNode* index = NULL);
+        TreeNode* assignVariable(std::string varId, TreeNode* value, TreeNode* index = NULL);
 
         /**
          * Declarar e atribuir um valor a uma variável
@@ -139,7 +139,7 @@ class SemanticAnalyzer {
          * @param size
          * @return nodo correspondente à declaração
          */
-        TreeNode* declareAssignVariable(std::string id, Data::Type dataType, int size = 0);
+        TreeNode* declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size = 0);
 
         /**
          * Usar uma variável
@@ -149,7 +149,7 @@ class SemanticAnalyzer {
          */
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
 
-    private:
+    public:
         SymbolTable symbolTable;
         TreeNode* currentStructure;
 

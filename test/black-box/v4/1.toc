@@ -4,3 +4,6 @@ void toc()
   abacate = 0
   boo figo, goiaba
   flt kiwi = 2.5
+  print "Kiwi: "
+  print kiwi
+  print "\n"

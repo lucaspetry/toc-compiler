@@ -38,8 +38,9 @@ class BinaryOperation : public TreeNode {
         std::string printInOrder() const;
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
-        llvm::Value* generateCode();
         void setBody(CodeBlock* codeBlock);
+        llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
         Type operation;

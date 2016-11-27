@@ -17,6 +17,7 @@ class Variable : public TreeNode {
         std::string getId() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
         void setBody(CodeBlock* codeBlock);
 
     private:

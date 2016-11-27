@@ -125,7 +125,8 @@ declaration:
     | type sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
                                           SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
                                           TOC.analyzeVariable($3); }
-    | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1), BinaryOperation::ASSIGN, $7);
+    | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
                                                 SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                                 TOC.analyzeSpaces(1, $2);
                                                 TOC.analyzeVariable($3); }
@@ -135,7 +136,8 @@ declaration:
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $5), BinaryOperation::ASSIGN, $11);
+    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                                                         TOC.analyzeVariable($3); }
     ;
 
@@ -158,23 +160,27 @@ multiple_declaration:
 
 // Atribuição
 attribuition:
-    T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.assignVariable($1), BinaryOperation::ASSIGN, $5);
+    T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.assignVariable($1, $5), BinaryOperation::ASSIGN, $5);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
                                      SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                      TOC.analyzeSpaces(2, $2, $4);}
     // array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, new Integer($3)), BinaryOperation::ASSIGN, $8); }
+    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
     expression {$$ = $1; }
-    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4); }
+    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Expressão
 expression:
     expression_two {$$ = $1; }
-    | expression sp op_binary sp expression_two {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5); }
+    | expression sp op_binary sp expression_two {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 expression_two:

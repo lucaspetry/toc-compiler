@@ -24,7 +24,7 @@ class Scope {
          * Construir um escopo
          * @param parent escopo pai
          */
-        Scope(Scope* parent = 0);
+        Scope(Scope* parent = NULL);
 
         /**
          * Destruir o escopo
@@ -87,7 +87,7 @@ class Scope {
          * Inicializar um símbolo do escopo
          * @param id identificador do símbolo
          */
-        void setInitializedSymbol(const std::string id);
+        void setInitializedSymbol(const std::string id, TreeNode* data = NULL);
 
         /**
          * Definir o dado correspondente ao símbolo

@@ -3,8 +3,6 @@
 #include "Scope.h"
 
 SymbolTable::SymbolTable() {
-    this->currentScope = NULL;
-    this->newScope();
 }
 
 SymbolTable::~SymbolTable() {
@@ -113,16 +111,16 @@ void SymbolTable::addSymbol(std::string id, Symbol newSymbol) {
     currentScope->addSymbol(id, newSymbol);
 }
 
-void SymbolTable::setInitializedSymbol(std::string id) {
+void SymbolTable::setInitializedSymbol(std::string id, TreeNode* data) {
     if(this->existsSymbol(id))
-        this->currentScope->setInitializedSymbol(id);
+        this->currentScope->setInitializedSymbol(id, data);
     else {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
 
             if(scopeIt->existsSymbol(id)) {
-                scopeIt->setInitializedSymbol(id);
+                scopeIt->setInitializedSymbol(id, data);
                 break;
             }
         }

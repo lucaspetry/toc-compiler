@@ -56,8 +56,11 @@ void Scope::addSymbol(std::string id, Symbol newSymbol) {
         allocations[id] = IR::Zero;
 }
 
-void Scope::setInitializedSymbol(std::string id) {
-    entryList[id].initialized = true;
+void Scope::setInitializedSymbol(std::string id, TreeNode* data) {
+    Symbol s = entryList[id];
+    s.initialized = true;
+    s.data = data;
+    entryList[id] = s;
 }
 
 void Scope::setSymbolData(const std::string id, TreeNode* data) {

@@ -13,8 +13,9 @@ class Boolean : public TreeNode {
         virtual ~Boolean();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode();
         void setBody(CodeBlock* codeBlock);
+        llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
         bool value;

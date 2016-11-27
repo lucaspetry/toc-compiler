@@ -3,6 +3,7 @@
 
 SemanticAnalyzer::SemanticAnalyzer() {
     this->currentStructure = NULL;
+    this->symbolTable.newScope();
 }
 
 SemanticAnalyzer::~SemanticAnalyzer() {
@@ -132,9 +133,12 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
         } else {
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
             // nova declaração de variável
-            VariableDeclaration *variable = new VariableDeclaration(dataType , new Variable(id, dataType));
-            variable->setSymbolTable(this->symbolTable);
-            return variable;
+
+            Variable* v = new Variable(id, dataType);
+            VariableDeclaration* vD = new VariableDeclaration(dataType, v);
+            v->setSymbolTable(this->symbolTable);
+            vD->setSymbolTable(this->symbolTable);
+            return vD;
         }
     }
 
@@ -158,7 +162,7 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
     return NULL;
 }
 
-TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
+TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, TreeNode* index) {
   if(!this->symbolTable.existsSymbol(id, true)) {
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
@@ -167,12 +171,14 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* index) {
       this->symbolTable.setInitializedSymbol(id);
       return new Array(id, this->symbolTable.getSymbol(id).getDataType(), index, new std::vector<TreeNode*>);
   }  else {
-      this->symbolTable.setInitializedSymbol(id);
-      return new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+      this->symbolTable.setInitializedSymbol(id, value);
+      Variable* v = new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+      v->setSymbolTable(this->symbolTable);
+      return v;
   }
 }
 
-TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, int size) {
+TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
     if(this->checkIdentifier(id)) {
         this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
         // sempre que size é maior do que zero, trata-se de uma declaração de array
@@ -180,8 +186,12 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
             this->symbolTable.setInitializedSymbol(id);
             return new Array(id, dataType, new Integer(size));
         }
-        this->symbolTable.setInitializedSymbol(id);
-        return new VariableDeclaration(dataType, new Variable(id, dataType));
+        this->symbolTable.setInitializedSymbol(id, value);
+        Variable* v = new Variable(id, dataType);
+        VariableDeclaration* vD = new VariableDeclaration(dataType, v);
+        v->setSymbolTable(this->symbolTable);
+        vD->setSymbolTable(this->symbolTable);
+        return vD;
     }
 
   return NULL;
@@ -204,5 +214,7 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
     return new Array(id, Data::UNKNOWN, index);
   }
 
-  return new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+  Variable* v = new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+  v->setSymbolTable(this->symbolTable);
+  return v;
 }

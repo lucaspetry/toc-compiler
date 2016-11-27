@@ -3,6 +3,7 @@
 
 #include "LLVM.h"
 #include "Data.h"
+#include <memory>
 #include <string>
 
 class CodeBlock;
@@ -15,6 +16,7 @@ class TreeNode;
  */
 class SymbolTable {
 
+        friend class TreeNode;
     friend class SemanticAnalyzer;
 
     public:
@@ -111,7 +113,7 @@ class SymbolTable {
          * Inicializar um símbolo da tabela
          * @param id identificador do símbolo
          */
-        void setInitializedSymbol(const std::string id);
+        void setInitializedSymbol(const std::string id, TreeNode* data = NULL);
 
         /**
          * Definir o dado correspondente ao símbolo

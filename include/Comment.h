@@ -14,9 +14,10 @@ class Comment : public TreeNode {
         virtual ~Comment();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        llvm::Value* generateCode();
         std::string getValue() const;
         void setBody(CodeBlock* codeBlock);
+        llvm::Value* generateCode();
+        std::string toLLVMString();
 
     private:
       std::string comment;
