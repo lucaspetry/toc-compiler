@@ -15,7 +15,6 @@
     #include "Float.h"
     #include "Boolean.h"
     #include "UnaryOperation.h"
-    #include "Loop.h"
 
     SemanticAnalyzer SEMANTIC;  // Analisador semântico
     TocAnalyzer TOC;            // Analisador TOC
@@ -117,7 +116,7 @@ line:
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
-    | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = new Loop($3, $6, $9, NULL);
+    | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
     ;
 
@@ -141,7 +140,7 @@ declaration:
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
-                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
+                                                                                                        $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                                                         TOC.analyzeVariable($3); }
     ;
 

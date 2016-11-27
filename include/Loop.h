@@ -3,6 +3,7 @@
 
 #include <string>
 #include "TreeNode.h"
+#include "CodeBlock.h"
 
 /**
  * Loop
@@ -10,7 +11,7 @@
 class Loop : public TreeNode {
 
     public:
-        Loop(TreeNode* init, TreeNode* test, TreeNode* attribuition, TreeNode* body);
+        Loop(TreeNode* init, TreeNode* test, TreeNode* attribuition);
         virtual ~Loop();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
@@ -22,7 +23,6 @@ class Loop : public TreeNode {
       TreeNode* init;
       TreeNode* test;
       TreeNode* attribuition;
-      TreeNode* body;
-
+      CodeBlock* body;
 };
 #endif

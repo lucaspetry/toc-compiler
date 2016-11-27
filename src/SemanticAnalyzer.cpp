@@ -9,6 +9,10 @@ SemanticAnalyzer::SemanticAnalyzer() {
 SemanticAnalyzer::~SemanticAnalyzer() {
 }
 
+void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binaryop) {
+
+}
+
 void SemanticAnalyzer::newScope() {
     this->analyzeScopeCreation();
     this->symbolTable.setCurrentStructure(this->currentStructure);
@@ -111,10 +115,6 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   }
 }
 
-void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binaryop) {
-
-}
-
 bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     if(this->symbolTable.existsSymbol(id, false)) {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
@@ -138,6 +138,7 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
             VariableDeclaration* vD = new VariableDeclaration(dataType, v);
             v->setSymbolTable(this->symbolTable);
             vD->setSymbolTable(this->symbolTable);
+
             return vD;
         }
     }
@@ -195,6 +196,12 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     }
 
   return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition) {
+  Loop* loop = new Loop(init, test, attribuition);
+  this->currentStructure = loop;
+  return loop;
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {

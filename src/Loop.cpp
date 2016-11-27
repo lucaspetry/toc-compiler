@@ -1,10 +1,9 @@
 #include "Loop.h"
 
-Loop::Loop(TreeNode* init, TreeNode* test, TreeNode* attribuition, TreeNode* body) : TreeNode(Data::UNKNOWN) {
+Loop::Loop(TreeNode* init, TreeNode* test, TreeNode* attribuition) : TreeNode(Data::UNKNOWN) {
     this->init = init;
     this->test = test;
     this->attribuition = attribuition;
-    this->body = body;
 }
 
 Loop::~Loop() {
@@ -30,11 +29,14 @@ std::string Loop::printInOrder() const {
     output += this->attribuition->printInOrder();
     output += ")";
 
-    if(this->body != NULL)
-      this->body->printInOrder();
+    if(this->body != NULL){
+      output += "\n";
+      output += this->body->printInOrder();
+    }
 
     return output;
 }
 
 void Loop::setBody(CodeBlock* codeBlock) {
+  this->body = codeBlock;
 }
