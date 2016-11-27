@@ -20,11 +20,20 @@ std::string Loop::printInOrder() const {
     output += "for";
     output += "(";
 
-    output += this->init->printInOrder();
-    output += "; ";
+    if(this->test != NULL){
+      output += this->init->printInOrder();
+      output += "; ";
 
-    output += this->test->printInOrder();
-    output += "; ";
+      output += this->test->printInOrder();
+      output += "; ";
+    }else{
+      output += this->init->printInOrder();
+      output += " ";
+
+      output += "in";
+      output += " ";
+
+    }
 
     output += this->attribuition->printInOrder();
     output += ")";

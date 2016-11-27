@@ -56,7 +56,7 @@
 %token T_TRUE T_FALSE
 %token T_TAB T_SP T_NL
 %token T_TOC T_VOID T_PRINT
-%token T_FOR
+%token T_FOR T_IN
 
 /*
  * Símbolos não-terminais da gramática e seus respectivos tipos.
@@ -118,6 +118,8 @@ line:
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
     | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
+    | T_FOR T_OPAR T_ID sp T_IN sp T_ID T_CPAR {$$ = SEMANTIC.declareLoop(SEMANTIC.declareAssignVariable($3, Data::UNKNOWN, NULL), NULL,
+                                                                            SEMANTIC.useVariable($7)); }
     ;
 
 // Declaração de variáveis

@@ -1,0 +1,4 @@
+void toc()
+  int a[2] = {1, 2}
+  for(c in a)
+    print c
