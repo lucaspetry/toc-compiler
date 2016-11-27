@@ -113,7 +113,7 @@ line:
     | declaration {$$ = $1; }
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
-    | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = new PrintFunction($3); }
+    | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
     ;
 

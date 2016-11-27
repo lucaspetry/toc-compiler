@@ -24,12 +24,7 @@ TreeNode::ClassType String::classType() const {
 }
 
 std::string String::printInOrder() const {
-    std::string valuePrint = this->value;
-
-    while(valuePrint.find("\n") != std::string::npos)
-        valuePrint.replace(valuePrint.find("\n"), 1, "\\n");
-
-    return valuePrint;
+    return this->value;
 }
 
 void String::setBody(CodeBlock* codeBlock) {

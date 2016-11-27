@@ -231,7 +231,7 @@ llvm::Value* String::generateCode() {
 }
 
 std::string String::toLLVMString() {
-    return std::string(this->valuePrint);
+    return this->valuePrint;
 }
 
 llvm::Value* TocFunction::generateCode() {
@@ -287,7 +287,15 @@ llvm::Value* TypeCasting::generateCode() {
 }
 
 std::string TypeCasting::toLLVMString() {
-    return "";
+    switch(next->classType()) {
+        case TreeNode::BOOLEAN:
+        case TreeNode::FLOAT:
+        case TreeNode::INTEGER:
+        case TreeNode::STRING:
+            return next->toLLVMString();
+        default:
+            return "";
+    }
 }
 
 llvm::Value* Variable::generateCode() {

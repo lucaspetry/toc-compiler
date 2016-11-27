@@ -125,6 +125,13 @@ class SemanticAnalyzer {
         TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret);
 
         /**
+         * Declarar uma chamada de print
+         * @param param parâmetro a ser impresso na tela
+         * @return nodo correspondente à declaração da função
+         */
+        TreeNode* declarePrint(TreeNode* param);
+
+        /**
          * Atribuir um valor a uma variável
          * @param varId
          * @param index

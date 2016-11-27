@@ -1,5 +1,6 @@
 #include "SemanticAnalyzer.h"
 #include "Symbol.h"
+#include "PrintFunction.h"
 
 SemanticAnalyzer::SemanticAnalyzer() {
     this->currentStructure = NULL;
@@ -160,6 +161,15 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
     }
 
     return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declarePrint(TreeNode* param) {
+    TreeNode* paramPrint = param;
+
+    if(param->dataType() != Data::STR)
+        paramPrint = new TypeCasting(Data::STR, paramPrint);
+
+    return new PrintFunction(paramPrint);
 }
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, TreeNode* index) {
