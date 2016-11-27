@@ -1,4 +1,3 @@
 # Funcao principal do programa$$$
-@@
 void toc()
   # Codigo da funcao principal

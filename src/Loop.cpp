@@ -35,3 +35,6 @@ std::string Loop::printInOrder() const {
 
     return output;
 }
+
+void Loop::setBody(CodeBlock* codeBlock) {
+}

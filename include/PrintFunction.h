@@ -4,7 +4,7 @@
 #include "Function.h"
 
 /**
- * Função de impressão na tela 
+ * Função de impressão na tela
  */
 class PrintFunction : public Function {
 
@@ -14,6 +14,7 @@ class PrintFunction : public Function {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
 };
 

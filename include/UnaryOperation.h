@@ -5,7 +5,7 @@
 #include "Variable.h"
 
 /**
- * Operação unária 
+ * Operação unária
  */
 class UnaryOperation : public TreeNode {
 
@@ -20,6 +20,8 @@ class UnaryOperation : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        std::string toLLVMString();
+        void setBody(CodeBlock* codeBlock);
         std::string operationToString(UnaryOperation::Type operation) const;
 
     private:

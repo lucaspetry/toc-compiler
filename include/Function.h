@@ -1,12 +1,12 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
-#include <string>
 #include "TreeNode.h"
 #include "CodeBlock.h"
+#include <string>
 
 /**
- * Função 
+ * Função
  */
 class Function : public TreeNode {
 
@@ -15,7 +15,9 @@ class Function : public TreeNode {
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
+        std::string toLLVMString();
 
     protected:
       std::string id;

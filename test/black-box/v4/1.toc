@@ -3,4 +3,7 @@ void toc()
   int abacate, banana, caqui
   abacate = 0
   boo figo, goiaba
-  flt kiwi = 2
+  flt kiwi = 2.5
+  print "Kiwi: "
+  print kiwi
+  print "\n"

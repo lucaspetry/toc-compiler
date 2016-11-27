@@ -18,6 +18,9 @@ std::string UnaryOperation::printInOrder() const {
     return output + right->printInOrder();
 }
 
+void UnaryOperation::setBody(CodeBlock* codeBlock) {
+}
+
 std::string UnaryOperation::operationToString(UnaryOperation::Type operation) const{
     switch(operation) {
         case MINUS:

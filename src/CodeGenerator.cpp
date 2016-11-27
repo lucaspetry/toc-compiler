@@ -11,6 +11,7 @@
 #include "Integer.h"
 #include "PrintFunction.h"
 #include "String.h"
+#include "Symbol.h"
 #include "TocFunction.h"
 #include "TypeCasting.h"
 #include "Variable.h"
@@ -85,6 +86,10 @@ void SyntaxTree::generateCode() {
     }
 }
 
+std::string Array::toLLVMString() {
+    return "";
+}
+
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable*>(left);
@@ -112,17 +117,28 @@ llvm::Value* BinaryOperation::generateCode() {
                 return NULL;
         }
     }
+}
 
+std::string BinaryOperation::toLLVMString() {
+    return "";
 }
 
 llvm::Value* UnaryOperation::generateCode(){
     return NULL; //TODO
 }
 
+std::string UnaryOperation::toLLVMString() {
+    return "";
+}
+
 llvm::Value* Boolean::generateCode() {
     // TODO não sei se isso está ok
-    bool equivalent = value ? 1 : 0;
+    int equivalent = value ? 1 : 0;
     return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, equivalent));
+}
+
+std::string Boolean::toLLVMString() {
+    return this->value ? "true" : "false";
 }
 
 llvm::Value* CodeBlock::generateCode() {
@@ -133,20 +149,40 @@ llvm::Value* CodeBlock::generateCode() {
     return NULL;
 }
 
+std::string CodeBlock::toLLVMString() {
+    return "";
+}
+
 llvm::Value* Comment::generateCode() {
     return NULL; // Doesn't generate any code.
 }
 
+std::string Comment::toLLVMString() {
+    return "";
+}
+
 llvm::Value* Float::generateCode() {
-    return llvm::ConstantFP::get(IR::Context, llvm::APFloat(value));
+    return llvm::ConstantFP::get(IR::Context, llvm::APFloat(this->value));
+}
+
+std::string Float::toLLVMString() {
+    return std::to_string(this->value);
 }
 
 llvm::Value* Function::generateCode() {
     return NULL; //TODO;
 }
 
+std::string Function::toLLVMString() {
+    return "";
+}
+
 llvm::Value* Integer::generateCode() {
     return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, value));
+}
+
+std::string Integer::toLLVMString() {
+    return std::to_string(this->value);
 }
 
 llvm::Value* PrintFunction::generateCode() {
@@ -154,10 +190,14 @@ llvm::Value* PrintFunction::generateCode() {
                                    llvm::FunctionType::get(llvm::IntegerType::getInt32Ty(IR::Context), llvm::PointerType::get(llvm::Type::getInt8Ty(IR::Context), 0), true));
     llvm::Function *printFunction = IR::Module->getFunction("printf");
     std::vector<llvm::Value*> args;
-    args.push_back(this->body->getLine(0)->generateCode());
-    // OURO ABAIXO
-    // IR::Builder->CreateGlobalString(llvm::StringRef(strPrint), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */)
+    llvm::Value* argStr = IR::Builder->CreateGlobalString(
+        llvm::StringRef(this->body->getLine(0)->toLLVMString()), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */);
+    args.push_back(argStr);
     return IR::Builder->CreateCall(printFunction, args, "printfCall");
+}
+
+std::string PrintFunction::toLLVMString() {
+    return "";
 }
 
 llvm::Value* String::generateCode() {
@@ -176,6 +216,10 @@ llvm::Value* String::generateCode() {
     return globalString;
 }
 
+std::string String::toLLVMString() {
+    return std::string(this->valuePrint);
+}
+
 llvm::Value* TocFunction::generateCode() {
     IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder->SetInsertPoint(IR::TocFunction);
@@ -188,27 +232,57 @@ llvm::Value* TocFunction::generateCode() {
     return IR::TocFunction;
 }
 
-llvm::Value* TypeCasting::generateCode(){
-  switch(this->left){
-      case Data::INT:
-          if (next->dataType() == Data::FLT)
-            return new llvm::FPToSIInst(next->generateCode(), llvm::IntegerType::getInt32Ty(IR::Context), "conv");
-        break;
-      case Data::FLT:
-          if (next->dataType() == Data::INT)
-            return new llvm::SIToFPInst(next->generateCode(), llvm::Type::getFloatTy(IR::Context), "conv");
-        break;
-      case Data::STR:
-        break;
-      case Data::BOO:
-        break;
-      default: return NULL;
-  }
-  return NULL;//TODO
+std::string TocFunction::toLLVMString() {
+    return "";
+}
+
+llvm::Value* TypeCasting::generateCode() {
+    llvm::Value* code = next->generateCode();
+
+    if(next->dataType() == Data::STR) {
+        switch(this->type) {
+            case Data::INT:
+                return llvm::ConstantInt::get(IR::Context, llvm::APInt(64, next->toLLVMString(), 16));
+            case Data::FLT:
+                //llvm::APFloat value;
+                //value.convertFromString(next->toLLVMString(), llvm::APFloat::rmNearestTiesToEven);
+                //return llvm::ConstantFP::get(IR::Context, value);
+            case Data::BOO:
+                // TODO
+            default:
+                return code;
+        }
+    }
+
+    switch(this->type) {
+        case Data::INT:
+            if (next->dataType() == Data::FLT)
+                return new llvm::FPToSIInst(code, llvm::IntegerType::getInt32Ty(IR::Context), "conv");
+            break;
+        case Data::FLT:
+            if (next->dataType() == Data::INT)
+                return new llvm::SIToFPInst(code, llvm::Type::getFloatTy(IR::Context), "conv");
+            break;
+        case Data::STR:
+            break;
+        case Data::BOO:
+            break;
+        default:
+            return NULL;
+    }
+}
+
+std::string TypeCasting::toLLVMString() {
+    return "";
 }
 
 llvm::Value* Variable::generateCode() {
     return this->symbolTable.getVariableAllocation(id);
+}
+
+std::string Variable::toLLVMString() {
+    TreeNode* data = this->symbolTable.getSymbol(this->id, true).getData();
+    return data->toLLVMString();
 }
 
 llvm::Value* VariableDeclaration::generateCode() {
@@ -233,4 +307,12 @@ llvm::Value* Array::generateCode(){
 
 llvm::Value* Loop::generateCode(){
   return NULL;
+}
+
+std::string Loop::toLLVMString(){
+  return "";
+}
+
+std::string VariableDeclaration::toLLVMString() {
+    return "";
 }

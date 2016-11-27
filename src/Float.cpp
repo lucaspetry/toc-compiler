@@ -11,6 +11,9 @@ TreeNode::ClassType Float::classType() const {
     return TreeNode::FLOAT;
 }
 
-std::string Float::printInOrder() const{
+std::string Float::printInOrder() const {
     return std::to_string(value);
+}
+
+void Float::setBody(CodeBlock* codeBlock) {
 }

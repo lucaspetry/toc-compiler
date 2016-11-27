@@ -1,9 +1,8 @@
 #include "SymbolTable.h"
+#include "CodeBlock.h"
 #include "Scope.h"
-#include <iostream>
 
 SymbolTable::SymbolTable() {
-    this->newScope();
 }
 
 SymbolTable::~SymbolTable() {
@@ -20,7 +19,36 @@ void SymbolTable::newScope() {
 }
 
 void SymbolTable::returnScope() {
-    this->currentScope = this->currentScope->getParent();
+    Scope* parent = this->currentScope->getParent();
+
+    if(parent != NULL && parent->structure != NULL)
+        parent->structure->setBody(this->currentScope->code);
+
+    this->currentScope = parent;
+}
+
+void SymbolTable::pushLineScope(TreeNode* line) {
+    if(this->currentScope->code == NULL)
+        this->currentScope->code = new CodeBlock(this->currentScope->indentation);
+
+    this->currentScope->code->insertLineBack(line);
+}
+
+CodeBlock* SymbolTable::getCurrentCodeBlock() {
+    return this->currentScope->code;
+}
+
+TreeNode* SymbolTable::getCurrentStructure() {
+    return this->currentScope->structure;
+}
+
+void SymbolTable::setCurrentStructure(TreeNode* node) {
+    if(this->currentScope != NULL)
+        this->currentScope->structure = node;
+}
+
+int SymbolTable::getCurrentIndentation() {
+    return this->currentScope->indentation;
 }
 
 void SymbolTable::clear() {
@@ -83,16 +111,16 @@ void SymbolTable::addSymbol(std::string id, Symbol newSymbol) {
     currentScope->addSymbol(id, newSymbol);
 }
 
-void SymbolTable::setInitializedSymbol(std::string id) {
+void SymbolTable::setInitializedSymbol(std::string id, TreeNode* data) {
     if(this->existsSymbol(id))
-        this->currentScope->setInitializedSymbol(id);
+        this->currentScope->setInitializedSymbol(id, data);
     else {
         Scope* scopeIt = this->currentScope;
         while(scopeIt->getParent() != NULL) {
             scopeIt = scopeIt->getParent();
 
             if(scopeIt->existsSymbol(id)) {
-                scopeIt->setInitializedSymbol(id);
+                scopeIt->setInitializedSymbol(id, data);
                 break;
             }
         }

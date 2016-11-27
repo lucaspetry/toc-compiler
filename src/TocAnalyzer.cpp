@@ -12,14 +12,13 @@ void TocAnalyzer::analyzeProgram() {
 
 void TocAnalyzer::analyzeComment(Comment* comment){
     std::string value = comment->getValue();
-    
     // Encontra a primeira letra do comentário
     for(int i = 0; i < value.size(); i++) {
         if(isalpha(value.at(i))) { // Verifica se é letra do alfabeto
-            
+
             if(!isupper(value.at(i))) // Se não for maiúscula, gera erro
                 ERROR_LOGGER->log(ErrorLogger::WARNING, "TOC recommends that comments initiate with an uppercase character.");
-            
+
             break;
         }
     }
