@@ -39,3 +39,7 @@ void Array::setType(Data::Type type){
 std::vector<TreeNode*>* Array::getValues(){
   return this->values;
 }
+
+TreeNode* Array::getSize(){
+  return this->size;
+}

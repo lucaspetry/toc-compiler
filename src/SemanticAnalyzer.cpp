@@ -10,7 +10,6 @@ SemanticAnalyzer::~SemanticAnalyzer() {
 }
 
 void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binaryop) {
-
 }
 
 void SemanticAnalyzer::newScope() {
@@ -128,8 +127,9 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0) {
-            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, new Integer(size))); // Adds variable to symbol table and save array size
-            return new Array(id, dataType, new Integer(size));
+            Array* array = new Array(id, dataType, new Integer(size));
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
+            return array;
         } else {
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
             // nova declaração de variável
@@ -181,12 +181,14 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
     if(this->checkIdentifier(id)) {
-        this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0){
+            Array* array = new Array(id, dataType, new Integer(size));
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table
             this->symbolTable.setInitializedSymbol(id);
-            return new Array(id, dataType, new Integer(size));
+            return array;
         }
+        this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
         this->symbolTable.setInitializedSymbol(id, value);
         Variable* v = new Variable(id, dataType);
         VariableDeclaration* vD = new VariableDeclaration(dataType, v);
@@ -213,11 +215,14 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   }
   // uso de uma variável do tipo array, verifica se a posição é possivel
   if (index != NULL){
-    Symbol s = this->symbolTable.getSymbol(id, true);
-    Integer *i = ((Integer*) s.getData());
-    Integer *local = ((Integer*) index);
+    Array* array = (Array*)this->symbolTable.getSymbol(id, true).getData();
+
+    Integer *i = (Integer*) array->getSize();
+    Integer *local = (Integer*) index;
+
     if(local->getValue() > i->getValue() || local->getValue() < 0)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
+
     return new Array(id, Data::UNKNOWN, index);
   }
 
