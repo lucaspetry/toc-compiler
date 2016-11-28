@@ -12,7 +12,9 @@
 #include "TypeCasting.h"
 #include "String.h"
 #include "VariableDeclaration.h"
+#include "Loop.h"
 #include "LLVM.h"
+
 #include <ctype.h>
 #include <string>
 #include <vector>
@@ -99,6 +101,12 @@ class SemanticAnalyzer {
         void analyzeRelationalOperationCasting(BinaryOperation* op);
 
         /**
+         * Analisar a declaração de Loop each
+         * @param id
+         */
+        void analyzeLoop(std::string id);
+
+        /**
          * Verificar o uso de um identificador.
          * @param id identificador
          * @return true se o identificador pode ser usado
@@ -147,6 +155,15 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração
          */
         TreeNode* declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size = 0);
+
+        /**
+         * Declarar uma estrutura de repetição
+         * @param init expressão de inicialização de variável
+         * @param test expressão de teste de condição
+         * @param attribuition expressão de atribuição de valor
+         * @return nodo correspondente à declaração
+         */
+        TreeNode* declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition);
 
         /**
          * Usar uma variável

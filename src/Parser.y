@@ -52,10 +52,11 @@
 %token <integer> T_BOO T_FLT T_INT T_STR T_NUM
 %token <decimal> T_DEC
 %token <string> T_COMMENT T_ID T_TEXT
-%token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA
+%token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA T_SCOLON
 %token T_TRUE T_FALSE
 %token T_TAB T_SP T_NL
 %token T_TOC T_VOID T_PRINT
+%token T_FOR T_IN
 
 /*
  * Símbolos não-terminais da gramática e seus respectivos tipos.
@@ -115,6 +116,11 @@ line:
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
+    | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
+                                                                                            TOC.analyzeSpaces(2, $5, $8);}
+    | T_FOR T_OPAR T_ID sp T_IN sp T_ID T_CPAR {$$ = SEMANTIC.declareLoop(SEMANTIC.declareAssignVariable($3, Data::UNKNOWN, NULL),
+                                                                              NULL, SEMANTIC.useVariable($7, new Integer(1)));
+                                                                              SEMANTIC.analyzeLoop($7); }
     ;
 
 // Declaração de variáveis
@@ -137,7 +143,7 @@ declaration:
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
     | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
-                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
+                                                                                                        $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                                                         TOC.analyzeVariable($3); }
     ;
 

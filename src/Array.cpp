@@ -19,6 +19,7 @@ std::string Array::printInOrder() const {
     std::string output = "";
     if (this->type != Data::UNKNOWN and this->values == NULL){
       output += Data::toString(this->type);
+      output += " ";
     }
     output += this->id;
     output += "[";
@@ -33,4 +34,12 @@ void Array::setBody(CodeBlock* codeBlock) {
 
 void Array::setType(Data::Type type){
   this->type = type;
+}
+
+std::vector<TreeNode*>* Array::getValues(){
+  return this->values;
+}
+
+TreeNode* Array::getSize(){
+  return this->size;
 }

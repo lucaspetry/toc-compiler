@@ -15,7 +15,9 @@ class Array : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         void setType(Data::Type type);
+        std::vector<TreeNode*>* getValues();
         void setBody(CodeBlock* codeBlock);
+        TreeNode* getSize();
         llvm::Value* generateCode();
         std::string toLLVMString();
 

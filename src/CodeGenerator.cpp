@@ -17,6 +17,7 @@
 #include "Variable.h"
 #include "VariableDeclaration.h"
 #include "UnaryOperation.h"
+#include "Loop.h"
 
 CodeGenerator::CodeGenerator() {
     this->showDump = false;
@@ -83,21 +84,6 @@ void SyntaxTree::generateCode() {
     for (TreeNode* line: lines) {
         line->generateCode();
     }
-}
-
-llvm::Value* Array::generateCode(){
-  // http://stackoverflow.com/questions/35228471/how-to-create-llvm-array-type-using-allocainst
-  // llvm::Type* I;
-  // switch (this->type) {
-  //     I = llvm::IntegerType::getInt32Ty(IR::Context); // cria um inteiro de qualquer forma
-  //     break;
-  // }
-  // int num = ((Integer*)this->size)->getValue();
-  // llvm::ArrayType* arrayType = llvm::ArrayType::get(I, 0);
-  //
-  // llvm::AllocaInst* arr_alloc = new llvm::AllocaInst(arrayType, "name");
-  //
-  // return arr_alloc;
 }
 
 std::string Array::toLLVMString() {
@@ -346,6 +332,30 @@ std::string Variable::toLLVMString() {
 
 llvm::Value* VariableDeclaration::generateCode() {
     return next->generateCode();
+}
+
+llvm::Value* Array::generateCode(){
+  // http://stackoverflow.com/questions/35228471/how-to-create-llvm-array-type-using-allocainst
+  // llvm::Type* I;
+  // switch (this->type) {
+  //     I = llvm::IntegerType::getInt32Ty(IR::Context); // cria um inteiro de qualquer forma
+  //     break;
+  // }
+  // int num = ((Integer*)this->size)->getValue();
+  // llvm::ArrayType* arrayType = llvm::ArrayType::get(I, 0);
+  //
+  // llvm::AllocaInst* arr_alloc = new llvm::AllocaInst(arrayType, "name");
+  //
+  // return arr_alloc;
+  return NULL;
+}
+
+llvm::Value* Loop::generateCode(){
+  return NULL;
+}
+
+std::string Loop::toLLVMString(){
+  return "";
 }
 
 std::string VariableDeclaration::toLLVMString() {
