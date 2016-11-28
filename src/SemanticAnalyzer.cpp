@@ -4,6 +4,7 @@
 
 SemanticAnalyzer::SemanticAnalyzer() {
     this->currentStructure = NULL;
+    this->lastStructure = NULL;
     this->symbolTable.newScope();
 }
 
@@ -16,6 +17,7 @@ void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binary
 void SemanticAnalyzer::newScope() {
     this->analyzeScopeCreation();
     this->symbolTable.setCurrentStructure(this->currentStructure);
+    this->lastStructure = symbolTable.getCurrentStructure();
     this->currentStructure = NULL;
     this->symbolTable.newScope();
 }
@@ -120,6 +122,13 @@ void SemanticAnalyzer::analyzeLoop(std::string id){
     ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expecting an array type " + id + ".");
 }
 
+void SemanticAnalyzer::analyzeConditional(Conditional* op){
+    if(op->condition->dataType() != Data::BOO){
+      TypeCasting* t = new TypeCasting(Data::BOO, op->condition);
+      op->condition = t;
+    }
+}
+
 bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     if(this->symbolTable.existsSymbol(id, false)) {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
@@ -150,6 +159,20 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     }
 
     return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareCondition(CodeBlock* body, TreeNode* expr, bool elsing){
+  if(elsing){
+    if(lastStructure->classType() != TreeNode::CONDITIONAL_IF)
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Else without a if.");
+    Conditional* els = new Conditional(NULL,body,true);
+    this->currentStructure = els;
+    return els;
+  } else {
+    Conditional* cond = new Conditional(expr,body,false);
+    this->currentStructure = cond;
+    return cond;
+  }
 }
 
 TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) {
@@ -250,8 +273,7 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
     }
     return new Array(id, Data::UNKNOWN, index);
   }
-
-  Variable* v = new Variable(id, this->symbolTable.getSymbol(id, true).getDataType());
+  Variable* v = new Variable(id, this->symbolTable.getSymbol(id,true).getDataType());
   v->setSymbolTable(this->symbolTable);
   return v;
 }

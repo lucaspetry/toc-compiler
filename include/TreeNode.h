@@ -37,6 +37,8 @@ class TreeNode {
             LOOP,
             TOC_FUNCTION,
             VARIABLE,
+            CONDITIONAL_IF,
+            CONDITIONAL_ELSE,
             VARIABLE_DECLARATION,
             TYPE_CASTING,
             UNARY_OPERATION,

@@ -13,9 +13,9 @@ TreeNode::ClassType TypeCasting::classType() const {
 }
 
 std::string TypeCasting::printInOrder() const {
-  std::string output = "(" + Data::toString(this->type) + ") ";
+  std::string output = "[" + Data::toString(this->type) + "] ";
   if(next != NULL){
-    output+= next->printInOrder();
+    output+= "("+next->printInOrder()+")";
   }
   return output;
 }

@@ -9,6 +9,7 @@
 #include "Integer.h"
 #include "Variable.h"
 #include "BinaryOperation.h"
+#include "Conditional.h"
 #include "TypeCasting.h"
 #include "String.h"
 #include "VariableDeclaration.h"
@@ -98,6 +99,12 @@ class SemanticAnalyzer {
          * Analisar...
          * @param op
          */
+        void analyzeConditional(Conditional* op);
+
+        /**
+         * Analisar...
+         * @param op
+         */
         void analyzeRelationalOperationCasting(BinaryOperation* op);
 
         /**
@@ -121,6 +128,14 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração
          */
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
+
+        /**
+         * Declarar um if
+         * @param expr expressão do condicional
+         * @param body corpo do if
+         * @return nodo correspondente à declaração da função
+         */
+        TreeNode* declareCondition(CodeBlock* body, TreeNode* expr, bool elsing);
 
         /**
          * Declarar uma função
@@ -176,6 +191,7 @@ class SemanticAnalyzer {
     public:
         SymbolTable symbolTable;
         TreeNode* currentStructure;
+        TreeNode* lastStructure;
 
 };
 

@@ -54,6 +54,7 @@
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA T_SCOLON
 %token T_TRUE T_FALSE
+%token T_IF T_ELSE
 %token T_TAB T_SP T_NL
 %token T_TOC T_VOID T_PRINT
 %token T_FOR T_IN
@@ -63,7 +64,7 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> line declaration expression attribuition multiple_attribution expression_two
+%type <node> line declaration expression attribuition multiple_attribution expression_two else
 %type <codeBlock> lines multiple_declaration
 %type <integer> indent sp type op_binary
 
@@ -115,6 +116,8 @@ line:
     | attribuition {$$ = $1; }
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
+    | T_IF T_OPAR expression T_CPAR sp {$$ = SEMANTIC.declareCondition(NULL, $3,false); SEMANTIC.analyzeConditional((Conditional*) $$); }
+    | else
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
     | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
@@ -122,6 +125,12 @@ line:
                                                                               NULL, SEMANTIC.useVariable($7, new Integer(1)));
                                                                               SEMANTIC.analyzeLoop($7); }
     ;
+
+//Ramo do else
+else:
+  T_ELSE {$$ = SEMANTIC.declareCondition(NULL,NULL,true);}
+  | T_ELSE T_IF T_OPAR expression T_CPAR sp {$$ = NULL;}
+
 
 // Declaração de variáveis
 declaration:
@@ -186,7 +195,7 @@ multiple_attribution:
 expression:
     expression_two {$$ = $1; }
     | expression sp op_binary sp expression_two {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5);
-                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable); SEMANTIC.analyzeCasting((BinaryOperation*) $$) ;}
     ;
 
 expression_two:

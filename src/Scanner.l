@@ -29,6 +29,9 @@ comment ([#][a-z|A-Z|_|0-9| ]*)
 "void"              {yylval.integer = Data::VOID; return T_VOID;}
 "toc"               {return T_TOC;}
 
+"if"                {return T_IF;}
+"else"              {return T_ELSE;}
+
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
 

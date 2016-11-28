@@ -18,6 +18,7 @@
 #include "VariableDeclaration.h"
 #include "UnaryOperation.h"
 #include "Loop.h"
+#include "Conditional.h"
 
 CodeGenerator::CodeGenerator() {
     this->showDump = false;
@@ -323,6 +324,15 @@ std::string TypeCasting::toLLVMString() {
 
 llvm::Value* Variable::generateCode() {
     return this->symbolTable.getVariableAllocation(id);
+}
+
+llvm::Value* Conditional::generateCode(){
+    return NULL;//TODO
+
+}
+
+std::string Conditional::toLLVMString(){
+  return "";
 }
 
 std::string Variable::toLLVMString() {
