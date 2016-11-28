@@ -101,6 +101,12 @@ class SemanticAnalyzer {
         void analyzeRelationalOperationCasting(BinaryOperation* op);
 
         /**
+         * Analisar a declaração de Loop each
+         * @param id
+         */
+        void analyzeLoop(std::string id);
+
+        /**
          * Verificar o uso de um identificador.
          * @param id identificador
          * @return true se o identificador pode ser usado

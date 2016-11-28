@@ -114,6 +114,11 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
   }
 }
 
+void SemanticAnalyzer::analyzeLoop(std::string id){
+  if(this->symbolTable.getSymbol(id, true).getData()->classType() != TreeNode::ARRAY)
+    ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expecting an array type " + id + ".");
+}
+
 bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     if(this->symbolTable.existsSymbol(id, false)) {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
@@ -183,9 +188,9 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0){
-            this->symbolTable.setInitializedSymbol(id);
             Array* array = new Array(id, dataType, new Integer(size));
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
+            this->symbolTable.setInitializedSymbol(id, array);
             return array;
         }
 
@@ -225,16 +230,14 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   } else if(!this->symbolTable.isSymbolInitialized(id, true)) {
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Variable " + id + " used but not initialized.");
   }
-  // uso de uma variável do tipo array, verifica se a posição é possivel
-  if (index != NULL){
-    Array* array = (Array*)this->symbolTable.getSymbol(id, true).getData();
 
-    Integer *i = (Integer*) array->getSize();
-    Integer *local = (Integer*) index;
-
-    if(local->getValue() > i->getValue() || local->getValue() < 0)
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
-
+  TreeNode* t = this->symbolTable.getSymbol(id, true).getData();
+  if (index != NULL and t->classType() == TreeNode::ARRAY){
+    Array* array = (Array*)t;
+    if (array != NULL and array->getSize()->classType() == TreeNode::INTEGER){
+      if(((Integer*)index)->getValue() > ((Integer*)(array->getSize()))->getValue() || ((Integer*)index)->getValue() < 0)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
+    }
     return new Array(id, Data::UNKNOWN, index);
   }
 

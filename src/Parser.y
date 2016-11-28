@@ -119,7 +119,8 @@ line:
     | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
     | T_FOR T_OPAR T_ID sp T_IN sp T_ID T_CPAR {$$ = SEMANTIC.declareLoop(SEMANTIC.declareAssignVariable($3, Data::UNKNOWN, NULL),
-                                                                                                NULL, SEMANTIC.useVariable($7)); }
+                                                                              NULL, SEMANTIC.useVariable($7, new Integer(1)));
+                                                                              SEMANTIC.analyzeLoop($7); }
     ;
 
 // Declaração de variáveis

@@ -1,4 +1,3 @@
 void toc()
-  int amora = 4
-  for(;;)
-    amora = 3
+  boo a = false
+  for(c in a)
