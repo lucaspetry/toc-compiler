@@ -11,13 +11,13 @@ extern int yylineno;
 void yyerror(const char* s, ...);
 
 /**
- * Logger de erros 
+ * Logger de erros
  */
 class ErrorLogger {
 
     public:
         /**
-         * Tipos de erros 
+         * Tipos de erros
          */
         enum Type {
             LEXICAL = 0,
@@ -27,15 +27,15 @@ class ErrorLogger {
         };
 
         /**
-         * Construir um logger de erros 
+         * Construir um logger de erros
          */
         ErrorLogger();
-    
+
         /**
-         * Destruir o logger de erros 
+         * Destruir o logger de erros
          */
         virtual ~ErrorLogger();
-    
+
         /**
          * Registrar um erro
          * @param type tipo do erro
@@ -50,8 +50,11 @@ class ErrorLogger {
          * @return texto correspondente ao tipo
          */
         std::string typeToString(ErrorLogger::Type type) const;
-    
+
+        void playSound(ErrorLogger::Type type) const;
+
         int errorCount[4];
+        bool error;
 
 };
 
