@@ -17,7 +17,6 @@ class Conditional : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         void setBody(CodeBlock* codeBlock);
-        std::string toLLVMString();
         llvm::Value* generateCode();
 
     private:

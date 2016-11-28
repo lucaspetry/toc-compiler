@@ -51,7 +51,7 @@ class ErrorLogger {
          */
         std::string typeToString(ErrorLogger::Type type) const;
 
-        void playSound(ErrorLogger::Type type) const;
+        void playSound() const;
 
         int errorCount[4];
         bool error;

@@ -24,7 +24,6 @@ class CodeBlock : public TreeNode {
         void insertLineBack(TreeNode* line);
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
         std::vector<TreeNode*> lines;

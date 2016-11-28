@@ -55,7 +55,6 @@ class TreeNode {
         Data::Type dataType() const;
 
         virtual llvm::Value* generateCode() = 0;
-        virtual std::string toLLVMString() = 0;
 
     protected:
         Data::Type type;

@@ -19,7 +19,6 @@ class Array : public TreeNode {
         void setBody(CodeBlock* codeBlock);
         TreeNode* getSize();
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
       std::string id;

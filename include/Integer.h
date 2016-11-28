@@ -17,7 +17,6 @@ class Integer : public TreeNode {
         int getValue();
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
         int value;

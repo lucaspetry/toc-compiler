@@ -87,10 +87,6 @@ void SyntaxTree::generateCode() {
     }
 }
 
-std::string Array::toLLVMString() {
-    return "";
-}
-
 llvm::Value* BinaryOperation::generateCode() {
     if (this->operation == BinaryOperation::ASSIGN) {
         Variable* lvar = dynamic_cast<Variable*>(left);
@@ -102,11 +98,15 @@ llvm::Value* BinaryOperation::generateCode() {
         llvm::Value* newValue;
 
         switch(this->dataType()) {
+            case Data::BOO:
             case Data::INT:
                 newValue = IR::Builder->CreateAdd(right->generateCode(), IR::Zero, lvar->getId().c_str());
                 break;
             case Data::FLT:
                 newValue = IR::Builder->CreateFAdd(right->generateCode(), IR::ZeroFP, lvar->getId().c_str());
+                break;
+            case Data::STR:
+                newValue = right->generateCode();
                 break;
             default:
                 newValue = IR::Builder->CreateFAdd(right->generateCode(), IR::ZeroFP, lvar->getId().c_str());
@@ -123,6 +123,7 @@ llvm::Value* BinaryOperation::generateCode() {
                 return IR::Builder->CreateSub(left->generateCode(), right->generateCode(), "subtmp");
             case BinaryOperation::PLUS:
                 switch(this->dataType()) {
+                    case Data::BOO:
                     case Data::INT:
                         return IR::Builder->CreateAdd(left->generateCode(), right->generateCode(), "addtmp");
                     case Data::FLT:
@@ -138,26 +139,13 @@ llvm::Value* BinaryOperation::generateCode() {
     }
 }
 
-std::string BinaryOperation::toLLVMString() {
-    return "";
-}
-
 llvm::Value* UnaryOperation::generateCode(){
     return NULL; //TODO
 }
 
-std::string UnaryOperation::toLLVMString() {
-    return "";
-}
-
 llvm::Value* Boolean::generateCode() {
-    // TODO não sei se isso está ok
     int equivalent = value ? 1 : 0;
     return llvm::ConstantInt::get(IR::Context, llvm::APInt(32, equivalent));
-}
-
-std::string Boolean::toLLVMString() {
-    return this->value ? "true" : "false";
 }
 
 llvm::Value* CodeBlock::generateCode() {
@@ -168,40 +156,20 @@ llvm::Value* CodeBlock::generateCode() {
     return NULL;
 }
 
-std::string CodeBlock::toLLVMString() {
-    return "";
-}
-
 llvm::Value* Comment::generateCode() {
     return NULL; // Doesn't generate any code.
-}
-
-std::string Comment::toLLVMString() {
-    return "";
 }
 
 llvm::Value* Float::generateCode() {
     return llvm::ConstantFP::get(IR::Context, llvm::APFloat(this->value));
 }
 
-std::string Float::toLLVMString() {
-    return std::to_string(this->value);
-}
-
 llvm::Value* Function::generateCode() {
     return NULL; //TODO;
 }
 
-std::string Function::toLLVMString() {
-    return "";
-}
-
 llvm::Value* Integer::generateCode() {
     return llvm::ConstantInt::get(IR::Context, llvm::APInt(32, value));
-}
-
-std::string Integer::toLLVMString() {
-    return std::to_string(this->value);
 }
 
 llvm::Value* PrintFunction::generateCode() {
@@ -213,10 +181,6 @@ llvm::Value* PrintFunction::generateCode() {
     //    llvm::StringRef(this->body->getLine(0)->toLLVMString()), llvm::Twine("str"), 3 /* ADDRESS_SPACE_SHARED */);
     args.push_back(this->body->getLine(0)->generateCode());
     return IR::Builder->CreateCall(printFunction, args, "printfCall");
-}
-
-std::string PrintFunction::toLLVMString() {
-    return "";
 }
 
 llvm::Value* String::generateCode() {
@@ -235,10 +199,6 @@ llvm::Value* String::generateCode() {
     return globalString;
 }
 
-std::string String::toLLVMString() {
-    return this->valuePrint;
-}
-
 llvm::Value* TocFunction::generateCode() {
     IR::TocFunction = llvm::BasicBlock::Create(IR::Context, "toc", IR::MainFunction);
     IR::Builder->SetInsertPoint(IR::TocFunction);
@@ -249,10 +209,6 @@ llvm::Value* TocFunction::generateCode() {
     IR::Builder->CreateRetVoid();
 
     return IR::TocFunction;
-}
-
-std::string TocFunction::toLLVMString() {
-    return "";
 }
 
 llvm::Value* TypeCasting::generateCode() {
@@ -294,6 +250,12 @@ llvm::Value* TypeCasting::generateCode() {
 
             switch(next->dataType()) {
                 case Data::BOO:
+                    intValue = llvm::dyn_cast<llvm::ConstantInt>(code);
+                    if(intValue->isZero()) {
+                        return IR::Builder->CreateGlobalString(llvm::StringRef("false"), strCast, 3 /* ADDRESS_SPACE_SHARED */);
+                    } else {
+                        return IR::Builder->CreateGlobalString(llvm::StringRef("true"), strCast, 3 /* ADDRESS_SPACE_SHARED */);
+                    }
                 case Data::INT:
                     intValue = llvm::dyn_cast<llvm::ConstantInt>(code);
                     return IR::Builder->CreateGlobalString(
@@ -310,18 +272,6 @@ llvm::Value* TypeCasting::generateCode() {
     }
 }
 
-std::string TypeCasting::toLLVMString() {
-    switch(next->classType()) {
-        case TreeNode::BOOLEAN:
-        case TreeNode::FLOAT:
-        case TreeNode::INTEGER:
-        case TreeNode::STRING:
-            return next->toLLVMString();
-        default:
-            return "";
-    }
-}
-
 llvm::Value* Variable::generateCode() {
     return this->symbolTable.getVariableAllocation(id);
 }
@@ -329,15 +279,6 @@ llvm::Value* Variable::generateCode() {
 llvm::Value* Conditional::generateCode(){
     return NULL;//TODO
 
-}
-
-std::string Conditional::toLLVMString(){
-  return "";
-}
-
-std::string Variable::toLLVMString() {
-    TreeNode* data = this->symbolTable.getSymbol(this->id, true).getData();
-    return data->toLLVMString();
 }
 
 llvm::Value* VariableDeclaration::generateCode() {
@@ -362,12 +303,4 @@ llvm::Value* Array::generateCode(){
 
 llvm::Value* Loop::generateCode(){
   return NULL;
-}
-
-std::string Loop::toLLVMString(){
-  return "";
-}
-
-std::string VariableDeclaration::toLLVMString() {
-    return "";
 }

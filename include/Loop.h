@@ -20,7 +20,6 @@ class Loop : public TreeNode {
         std::string printInOrder() const;
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
       TreeNode* init;

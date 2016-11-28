@@ -40,7 +40,6 @@ class BinaryOperation : public TreeNode {
         void setLeft(TreeNode* left);
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
         Type operation;

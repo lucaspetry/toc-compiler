@@ -17,7 +17,6 @@ class Comment : public TreeNode {
         std::string getValue() const;
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
     private:
       std::string comment;

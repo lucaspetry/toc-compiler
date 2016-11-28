@@ -13,7 +13,6 @@ class TocFunction : public Function {
         virtual ~TocFunction();
         TreeNode::ClassType classType() const;
         llvm::Value* generateCode();
-        std::string toLLVMString();
 
 };
 

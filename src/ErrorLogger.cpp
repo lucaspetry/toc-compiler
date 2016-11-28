@@ -19,7 +19,7 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
     std::string errorType = typeToString(type);
 
     if(!this->error || type != ErrorLogger::WARNING) {
-        this->playSound(type);
+        this->playSound();
         this->error = true;
     }
 
@@ -42,11 +42,11 @@ std::string ErrorLogger::typeToString(ErrorLogger::Type type) const {
     }
 }
 
-void ErrorLogger::playSound(ErrorLogger::Type type) const {
+void ErrorLogger::playSound() const {
     std::string command = "aplay -c 1 -q -t wav ";
     std::ifstream soundFile("data/sound/ErrorSound_FaustaoErrou.wav");
 
-    if(soundFile.good() && type != ErrorLogger::WARNING) {
+    if(soundFile.good()) {
         command += "data/sound/ErrorSound_FaustaoErrou.wav &";
         system(command.c_str());
     }
