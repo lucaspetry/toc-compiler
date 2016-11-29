@@ -15,30 +15,22 @@ TreeNode::ClassType Function::classType() const {
 }
 
 std::string Function::printInOrder() const {
-    std::string output;
-
-    output += Data::toString(type);
-    output += " ";
-    output += this->id;
-    output += "(";
-
-    // print the params
-    if(this->params != NULL)
-        output += this->params->printInOrder();
-
-    output = Data::toString(this->dataType()) + " " + id + "(";
+    std::string output = Data::toString(this->dataType());
+    output += " " + id + "(";
 
     // Imprime os parâmetros
     if(this->params != NULL)
         output += this->params->printInOrder();
 
-    output += ")";
-    output += "\n";
+    output += ")\n";
 
-    // print the Function body
-    if(this->body != NULL){
+    // Imprime o corpo
+    if(this->body != NULL)
         output += this->body->printInOrder();
-    }
+
+    // Imprime o retorno
+    if(this->ret != NULL)
+        output += "ret " + this->ret->printInOrder();
 
     return output;
 }

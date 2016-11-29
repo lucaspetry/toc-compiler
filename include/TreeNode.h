@@ -17,6 +17,7 @@ class SyntaxTree;
 class TreeNode {
 
     friend class BinaryOperation;
+    friend class Conditional;
     friend class SymbolTable;
 
     public:

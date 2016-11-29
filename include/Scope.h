@@ -103,6 +103,12 @@ class Scope {
         void setUnknownTypes(Data::Type type);
 
         /**
+         * Obter o mapa de alocações de memória
+         * @return mapa de alocações
+         */
+        MemoryMap getMemoryMap() const;
+
+        /**
          * Obter a alocação de uma variável
          * @param id identificador da variável
          * @return alocação da variável

@@ -59,7 +59,7 @@ int SemanticAnalyzer::getCurrentIndentation() {
     return this->symbolTable.getCurrentIndentation();
 }
 
-void SemanticAnalyzer::setUnknownTypes(Data::Type type, CodeBlock* codeBlock){
+void SemanticAnalyzer::setUnknownTypes(Data::Type type, CodeBlock* codeBlock) {
     this->symbolTable.setUnknownTypes(type);
 
     for(int i = 0; i < codeBlock->numberOfLines(); i++)
@@ -80,17 +80,17 @@ void SemanticAnalyzer::analyzeScopeCreation() {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "INDENTATION ERROR"); // TODO
 }
 
-void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
+void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp) {
   TreeNode* left = binaryOp->left;
   TreeNode* right = binaryOp->right;
   std::string text = "";
 
-  if (left->dataType() != right->dataType()){
-    if(right->dataType() == Data::STR){
+  if (left->dataType() != right->dataType()) {
+    if(right->dataType() == Data::STR) {
 
       switch (left->dataType()) {
         case Data::BOO:
-          if (((String*)right)->isBoolean()){
+          if (((String*)right)->isBoolean()) {
             binaryOp->right = new TypeCasting(left->dataType(), right);
             right = binaryOp->right;
           } else {
@@ -111,13 +111,13 @@ void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp){
       }
 
     }else{
-        binaryOp->right = new TypeCasting(left->dataType(),right);
+        binaryOp->right = new TypeCasting(left->dataType(), right);
         right = binaryOp->right;
     }
   }
 }
 
-void SemanticAnalyzer::analyzeLoop(std::string id){
+void SemanticAnalyzer::analyzeLoop(std::string id) {
   if(this->symbolTable.getSymbol(id, true).getData()->classType() != TreeNode::ARRAY)
     ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expecting an array type " + id + ".");
 }
@@ -129,6 +129,13 @@ bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     }
 
     return true;
+}
+
+TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
+    if(type != node->dataType())
+        return new TypeCasting(type, node);
+
+    return node;
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
@@ -154,46 +161,65 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) {
+TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType) {
     if(this->checkIdentifier(id)) {
-        // Se é a função toc, cria a mesma
-        if(!id.compare("toc")) {
-            TocFunction* tocFunction = new TocFunction(body);
-            this->symbolTable.addSymbol(id, Symbol(Data::VOID, Symbol::FUNCTION, true, tocFunction));
-            this->currentStructure = tocFunction;
-            return tocFunction;
+        TreeNode* function;
+
+        if(!id.compare("toc")) { // Se é a função toc, cria a mesma
+            function = new TocFunction(body);
+        } else { // Outra função qualquer
+            function = new Function(id, params, body, NULL);
+            function->setType(returnType);
         }
 
-        // Outra função qualquer
-        // TODO
+        this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
+        this->currentStructure = function;
+        return function;
     }
 
     return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareCondition(TreeNode* expression, CodeBlock* body) {
-    // if(op->condition->dataType() != Data::BOO){
-    //   TypeCasting* t = new TypeCasting(Data::BOO, op->condition);
-    //   op->condition = t;
-    // }
+TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
+    return NULL; // TODO
+}
 
+TreeNode* SemanticAnalyzer::declareCondition(TreeNode* expression, CodeBlock* body) {
     Conditional* cond = new Conditional(expression, body, NULL);
     this->currentStructure = cond;
     return cond;
 }
 
 TreeNode* SemanticAnalyzer::declareElseCondition(CodeBlock* body) {
+    std::string elseError = "Else without a if.";
+
     if(this->lastStructure->classType() != TreeNode::CONDITIONAL)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Else without a if.");
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, elseError);
 
     Conditional* cond = (Conditional*) this->lastStructure;
 
     if(cond->hasElse())
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Double else");
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, elseError);
 
     cond->setElse(true);
     this->currentStructure = this->lastStructure;
     return this->currentStructure;
+}
+
+TreeNode* SemanticAnalyzer::declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition) {
+  Loop* loop;
+
+  if(test == NULL) {
+    Variable* v = (Variable*) attribuition;
+    std::string id = v->getId();
+    Array* array = (Array*)this->symbolTable.getSymbol(id, true).getData();
+    loop = new Loop(init, test, array);
+  }else{
+    loop = new Loop(init, test, attribuition);
+  }
+
+  this->currentStructure = loop;
+  return loop;
 }
 
 TreeNode* SemanticAnalyzer::declarePrint(TreeNode* param) {
@@ -209,13 +235,13 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
   if(!this->symbolTable.existsSymbol(id, true)) {
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
       return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
-  } else if (index != NULL){
+  } else if (index != NULL) {
       // quando index != null, index pode ser qualquer TreeNode, trata-se de uma atribuição de array
       this->symbolTable.setInitializedSymbol(id);
       return new Array(id, this->symbolTable.getSymbol(id).getDataType(), index, new std::vector<TreeNode*>);
   }  else {
       this->symbolTable.setInitializedSymbol(id, value);
-      Variable* v = new Variable(id, this->symbolTable.getSymbol(id).getDataType());
+      Variable* v = new Variable(id, this->symbolTable.getSymbol(id, true).getDataType());
       v->setSymbolTable(this->symbolTable);
       return v;
   }
@@ -224,7 +250,7 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
-        if(size > 0){
+        if(size > 0) {
             Array* array = new Array(id, dataType, new Integer(size));
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
             this->symbolTable.setInitializedSymbol(id, array);
@@ -244,22 +270,6 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
   return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition) {
-  Loop* loop;
-
-  if(test == NULL){
-    Variable* v = (Variable*) attribuition;
-    std::string id = v->getId();
-    Array* array = (Array*)this->symbolTable.getSymbol(id, true).getData();
-    loop = new Loop(init, test, array);
-  }else{
-    loop = new Loop(init, test, attribuition);
-  }
-
-  this->currentStructure = loop;
-  return loop;
-}
-
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   if(!this->symbolTable.existsSymbol(id, true)) {
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
@@ -269,9 +279,9 @@ TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   }
 
   TreeNode* t = this->symbolTable.getSymbol(id, true).getData();
-  if (index != NULL and t->classType() == TreeNode::ARRAY){
+  if (index != NULL and t->classType() == TreeNode::ARRAY) {
     Array* array = (Array*)t;
-    if (array != NULL and array->getSize()->classType() == TreeNode::INTEGER){
+    if (array != NULL and array->getSize()->classType() == TreeNode::INTEGER) {
       if(((Integer*)index)->getValue() > ((Integer*)(array->getSize()))->getValue() || ((Integer*)index)->getValue() < 0)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
     }

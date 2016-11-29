@@ -19,10 +19,10 @@ class Function : public TreeNode {
         llvm::Value* generateCode();
 
     protected:
-      std::string id;
-      CodeBlock* params;
-      CodeBlock* body;
-      TreeNode* ret;
+        std::string id;
+        CodeBlock* params;
+        CodeBlock* body;
+        TreeNode* ret;
 
 };
 

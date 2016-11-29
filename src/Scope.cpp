@@ -89,6 +89,10 @@ void Scope::setUnknownTypes(Data::Type type) {
     this->entryList = newEntryList;
 }
 
+MemoryMap Scope::getMemoryMap() const {
+    return this->allocations;
+}
+
 llvm::Value* Scope::getVariableAllocation(std::string id) {
     return allocations[id];
 }

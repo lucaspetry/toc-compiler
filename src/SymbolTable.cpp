@@ -28,8 +28,10 @@ void SymbolTable::returnScope() {
 }
 
 void SymbolTable::pushLineScope(TreeNode* line) {
-    if(this->currentScope->code == NULL)
+    if(this->currentScope->code == NULL) {
         this->currentScope->code = new CodeBlock(this->currentScope->indentation);
+        this->currentScope->code->setSymbolTable(*this);
+    }
 
     this->currentScope->code->insertLineBack(line);
 }
@@ -133,6 +135,30 @@ void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
 
 void SymbolTable::setUnknownTypes(Data::Type type) {
     currentScope->setUnknownTypes(type);
+}
+
+MemoryMap SymbolTable::getAllocations() const {
+    MemoryMap map;
+    Scope* scope = this->currentScope;
+
+    while(scope != NULL) {
+        MemoryMap scopeMap = scope->getMemoryMap();
+        MemoryMap::iterator itMap;
+
+        for(itMap = scopeMap.begin(); itMap != scopeMap.end(); ++itMap) {
+            std::string varId = itMap->first;
+            llvm::Value* value = itMap->second;
+
+            // Se valor ainda não existe, adiciona
+            if (map.find(varId) == map.end()) {
+                map[varId] = value;
+            }
+        }
+
+        scope = scope->getParent();
+    }
+
+    return map;
 }
 
 llvm::Value* SymbolTable::getVariableAllocation(std::string id) {

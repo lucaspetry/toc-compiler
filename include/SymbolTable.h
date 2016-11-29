@@ -11,6 +11,8 @@ class Symbol;
 class Scope;
 class TreeNode;
 
+typedef std::map<std::string, llvm::Value*> MemoryMap;
+
 /**
  * Table de símbolos
  */
@@ -127,6 +129,12 @@ class SymbolTable {
          * @param type tipo a ser atribuído
          */
         void setUnknownTypes(Data::Type type);
+
+        /**
+         * Obter as alocações de memória
+         * @return mapa de alocações
+         */
+        MemoryMap getAllocations() const;
 
         /**
          * Obter a alocação de uma variável

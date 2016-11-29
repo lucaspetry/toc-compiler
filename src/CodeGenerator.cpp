@@ -140,7 +140,7 @@ llvm::Value* BinaryOperation::generateCode() {
     }
 }
 
-llvm::Value* UnaryOperation::generateCode(){
+llvm::Value* UnaryOperation::generateCode() {
     return NULL; //TODO
 }
 
@@ -259,6 +259,9 @@ llvm::Value* TypeCasting::generateCode() {
                     }
                 case Data::INT:
                     intValue = llvm::dyn_cast<llvm::ConstantInt>(code);
+
+                    if(intValue == NULL)
+                        return code;
                     return IR::Builder->CreateGlobalString(
                         llvm::StringRef(std::to_string(intValue->getSExtValue())), strCast, 3 /* ADDRESS_SPACE_SHARED */);
                 case Data::FLT:
@@ -280,31 +283,58 @@ llvm::Value* Variable::generateCode() {
 llvm::Value* Conditional::generateCode() {
     llvm::Value* condition = this->condition->generateCode();
     llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
-    llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(IR::Context, "then", IR::CurrentFunction);
-    llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(IR::Context, "else", IR::CurrentFunction);
-    llvm::BasicBlock *mergeBlock = llvm::BasicBlock::Create(IR::Context, "merge", IR::CurrentFunction);
+    llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("then"), IR::CurrentFunction);
+    llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("else"), IR::CurrentFunction);
+    llvm::BasicBlock *mergeBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("merge"), IR::CurrentFunction);
 
+    // Cria a condição de branch
     IR::Builder->CreateCondBr(conditionTrue, thenBlock, elseBlock);
 
+    // Gera o then
     IR::Builder->SetInsertPoint(thenBlock);
     this->thenCode->generateCode();
     IR::Builder->CreateBr(mergeBlock);
 
+    // Gera o else, se existe else
     if(this->elseCode != NULL) {
         IR::Builder->SetInsertPoint(elseBlock);
         this->elseCode->generateCode();
         IR::Builder->CreateBr(mergeBlock);
     }
-    return condition;
+
+    IR::Builder->SetInsertPoint(mergeBlock);
+
+    // PHI
+    if(this->elseCode != NULL) {
+        MemoryMap mapThen = this->thenCode->symbolTable.getAllocations();
+        MemoryMap mapElse = this->elseCode->symbolTable.getAllocations();
+
+        MemoryMap::iterator itMap;
+
+        for(itMap = mapThen.begin(); itMap != mapThen.end(); ++itMap) {
+            std::string varId = itMap->first;
+            llvm::Value* value = itMap->second;
+
+            // Se valor existe no then e else, cria PHI
+            if (mapElse.find(varId) != mapElse.end()) {
+                llvm::PHINode *phi = IR::Builder->CreatePHI(value->getType(), 2, varId + "Phi");
+                phi->addIncoming(value, thenBlock);
+                phi->addIncoming(mapElse[varId], elseBlock);
+                this->thenCode->symbolTable.updateVariableAllocation(varId, phi);
+            }
+        }
+    }
 
     // Precisa de PHI!!!!!!!!
+
+    return condition;
 }
 
 llvm::Value* VariableDeclaration::generateCode() {
     return next->generateCode();
 }
 
-llvm::Value* Array::generateCode(){
+llvm::Value* Array::generateCode() {
   // http://stackoverflow.com/questions/35228471/how-to-create-llvm-array-type-using-allocainst
   // llvm::Type* I;
   // switch (this->type) {
@@ -320,6 +350,6 @@ llvm::Value* Array::generateCode(){
   return NULL;
 }
 
-llvm::Value* Loop::generateCode(){
+llvm::Value* Loop::generateCode() {
   return NULL;
 }

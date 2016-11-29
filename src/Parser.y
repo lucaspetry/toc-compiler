@@ -64,9 +64,9 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> line declaration expression attribuition multiple_attribution expression_two
-%type <codeBlock> lines multiple_declaration
-%type <integer> indent sp type op_binary
+%type <node> line declaration attribuition multiple_attribution expr expr_right
+%type <codeBlock> lines multiple_declaration function_params
+%type <integer> indent sp type_var type_fun op_binary
 
 /*
  * Precedência de operadores.
@@ -112,40 +112,54 @@ lines:
 // Linha de código
 line:
     { $$ = NULL; }
+    // Declaração e atribuição
     | declaration {$$ = $1; }
     | attribuition {$$ = $1; }
+    // Diversos
     | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
-    | T_PRINT sp expression { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
-    | T_IF T_OPAR expression T_CPAR sp {$$ = SEMANTIC.declareCondition($3, NULL); }
+    | T_PRINT sp expr { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
+    // Condicional
+    | T_IF T_OPAR expr T_CPAR sp {$$ = SEMANTIC.declareCondition($3, NULL); }
     | T_ELSE { $$ = NULL; SEMANTIC.declareElseCondition(NULL); }
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, NULL); }
-    | T_FOR T_OPAR declaration T_SCOLON sp expression T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
+    // Laços
+    | T_FOR T_OPAR declaration T_SCOLON sp expr T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
     | T_FOR T_OPAR T_ID sp T_IN sp T_ID T_CPAR {$$ = SEMANTIC.declareLoop(SEMANTIC.declareAssignVariable($3, Data::UNKNOWN, NULL),
                                                                               NULL, SEMANTIC.useVariable($7, new Integer(1)));
                                                                               SEMANTIC.analyzeLoop($7); }
+    // Funções
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID); }
+    | type_fun sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1); }
+    | type_fun sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
+    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3); }
+    ;
+
+// Parâmetros de função
+function_params:
+    type_var sp T_ID { $$ = NULL; }
+    | type_var sp T_ID T_COMMA sp function_params { $$ = NULL; }
     ;
 
 // Declaração de variáveis
 declaration:
-    type sp T_ID { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1);
+    type_var sp T_ID { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1);
                     TOC.analyzeVariable($3);
                     TOC.analyzeSpaces(1, $2);}
-    | type sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
+    | type_var sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
                                           SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
                                           TOC.analyzeVariable($3); }
-    | type sp T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
+    | type_var sp T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable);
                                                 SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                                 TOC.analyzeSpaces(1, $2);
                                                 TOC.analyzeVariable($3); }
     // array
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
                                                   TOC.analyzeVariable($3); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
-    | type sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
                                                                                                         $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                                                         TOC.analyzeVariable($3); }
     ;
@@ -169,40 +183,41 @@ multiple_declaration:
 
 // Atribuição
 attribuition:
-    T_ID sp T_ASSIGN sp expression { $$ = new BinaryOperation(SEMANTIC.assignVariable($1, $5), BinaryOperation::ASSIGN, $5);
+    T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.assignVariable($1, $5), BinaryOperation::ASSIGN, $5);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable);
                                      SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                      TOC.analyzeSpaces(2, $2, $4);}
     // array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expression {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
+    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
-    expression {$$ = $1; }
-    | expression T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4);
+    expr {$$ = $1; }
+    | expr T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Expressão
-expression:
-    expression_two {$$ = $1; }
-    | expression sp op_binary sp expression_two {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5);
+expr:
+    expr_right {$$ = $1; }
+    | expr sp op_binary sp expr_right {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); SEMANTIC.analyzeCasting((BinaryOperation*) $$) ;}
     ;
 
-expression_two:
+// Direita da expressão
+expr_right:
   T_TRUE {$$ = new Boolean(true); }| T_FALSE {$$ = new Boolean(false); }
   | T_NUM {$$ = new Integer($1); } | T_DEC {$$ = new Float($1); } | T_TEXT {$$ = new String($1); }
-  | T_ID T_OBRACKET expression T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
+  | T_ID T_OBRACKET expr T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
   | T_ID {$$ = SEMANTIC.useVariable($1); }
-  | T_MINUS expression %prec U_MINUS LINE { $$ = new UnaryOperation(UnaryOperation::MINUS, $2); }
-  | T_NOT sp expression %prec U_MINUS T_SP LINE { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
-  | T_OPAR expression T_CPAR { $$ = $2; }
+  | T_MINUS sp expr %prec U_MINUS T_SP LINE { $$ = new UnaryOperation(UnaryOperation::MINUS, $3); }
+  | T_NOT sp expr %prec U_MINUS T_SP LINE { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
+  | T_OPAR expr T_CPAR { $$ = $2; }
   ;
 
-//Operaçoes binárias
+// Operadores binários
 op_binary:
     T_PLUS { $$ = BinaryOperation::PLUS ;}
     | T_MINUS { $$ = BinaryOperation::MINUS; }
@@ -219,15 +234,21 @@ op_binary:
     ;
 
 // Tipos de dados
-type:
+type_var:
     T_BOO {$$ = Data::BOO;}
     | T_FLT {$$ = Data::FLT;}
     | T_INT {$$ = Data::INT;}
     | T_STR {$$ = Data::STR;}
-    | T_VOID {$$ = Data::VOID;}
     ;
 
-indent: // TODO Bug: Ainda será possível pular de 2 para 6 espaços, por exemplo
+// Tipos de funções
+type_fun:
+    type_var
+    | T_VOID { $$ = Data::VOID; }
+    ;
+
+// Indentação
+indent:
     sp { if(yychar != T_NL) SEMANTIC.setScope((float)$1/2); }
     ;
 

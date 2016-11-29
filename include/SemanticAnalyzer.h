@@ -115,6 +115,14 @@ class SemanticAnalyzer {
         bool checkIdentifier(std::string id) const;
 
         /**
+         * Converter um nodo para o tipo especificado, se necessário
+         * @param type tipo de destino
+         * @param node nodo a ser convertido
+         * @return o novo nodo do tipo especificado
+         */
+        TreeNode* cast(Data::Type type, TreeNode* node) const;
+
+        /**
          * Declarar uma variável
          * @param varId
          * @param dataType
@@ -128,10 +136,17 @@ class SemanticAnalyzer {
          * @param id identificador da função
          * @param params parâmetros da função
          * @param body corpo da função
-         * @param ret retorno da função
+         * @param returnType tipo de retorno da função
          * @return nodo correspondente à declaração da função
          */
-        TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret);
+        TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType);
+
+        /**
+         * Declarar o retorno de uma função
+         * @param ret expressão de retorno da função
+         * @return nodo correspondente à declaração de retorno da função
+         */
+        TreeNode* declareFunctionReturn(TreeNode* ret);
 
         /**
          * Declarar um condicional
@@ -147,6 +162,15 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração do condicional
          */
         TreeNode* declareElseCondition(CodeBlock* body);
+
+        /**
+         * Declarar uma estrutura de repetição
+         * @param init expressão de inicialização de variável
+         * @param test expressão de teste de condição
+         * @param attribuition expressão de atribuição de valor
+         * @return nodo correspondente à declaração
+         */
+        TreeNode* declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition);
 
         /**
          * Declarar uma chamada de print
@@ -171,15 +195,6 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração
          */
         TreeNode* declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size = 0);
-
-        /**
-         * Declarar uma estrutura de repetição
-         * @param init expressão de inicialização de variável
-         * @param test expressão de teste de condição
-         * @param attribuition expressão de atribuição de valor
-         * @return nodo correspondente à declaração
-         */
-        TreeNode* declareLoop(TreeNode* init, TreeNode* test, TreeNode* attribuition);
 
         /**
          * Usar uma variável
