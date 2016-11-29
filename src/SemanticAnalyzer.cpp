@@ -17,7 +17,7 @@ void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binary
 void SemanticAnalyzer::newScope() {
     this->analyzeScopeCreation();
     this->symbolTable.setCurrentStructure(this->currentStructure);
-    this->lastStructure = symbolTable.getCurrentStructure();
+    this->lastStructure = this->currentStructure;
     this->currentStructure = NULL;
     this->symbolTable.newScope();
 }
@@ -122,13 +122,6 @@ void SemanticAnalyzer::analyzeLoop(std::string id){
     ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expecting an array type " + id + ".");
 }
 
-void SemanticAnalyzer::analyzeConditional(Conditional* op){
-    if(op->condition->dataType() != Data::BOO){
-      TypeCasting* t = new TypeCasting(Data::BOO, op->condition);
-      op->condition = t;
-    }
-}
-
 bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     if(this->symbolTable.existsSymbol(id, false)) {
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Identifier " + id + " already used for declaration.");
@@ -161,20 +154,6 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareCondition(CodeBlock* body, TreeNode* expr, bool elsing){
-  if(elsing){
-    if(lastStructure->classType() != TreeNode::CONDITIONAL_IF)
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Else without a if.");
-    Conditional* els = new Conditional(NULL,body,true);
-    this->currentStructure = els;
-    return els;
-  } else {
-    Conditional* cond = new Conditional(expr,body,false);
-    this->currentStructure = cond;
-    return cond;
-  }
-}
-
 TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret) {
     if(this->checkIdentifier(id)) {
         // Se é a função toc, cria a mesma
@@ -190,6 +169,31 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
     }
 
     return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareCondition(TreeNode* expression, CodeBlock* body) {
+    // if(op->condition->dataType() != Data::BOO){
+    //   TypeCasting* t = new TypeCasting(Data::BOO, op->condition);
+    //   op->condition = t;
+    // }
+
+    Conditional* cond = new Conditional(expression, body, NULL);
+    this->currentStructure = cond;
+    return cond;
+}
+
+TreeNode* SemanticAnalyzer::declareElseCondition(CodeBlock* body) {
+    if(this->lastStructure->classType() != TreeNode::CONDITIONAL)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Else without a if.");
+
+    Conditional* cond = (Conditional*) this->lastStructure;
+
+    if(cond->hasElse())
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Double else");
+
+    cond->setElse(true);
+    this->currentStructure = this->lastStructure;
+    return this->currentStructure;
 }
 
 TreeNode* SemanticAnalyzer::declarePrint(TreeNode* param) {

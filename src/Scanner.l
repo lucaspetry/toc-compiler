@@ -14,29 +14,32 @@
 id ([a-z|A-Z][a-z|A-Z|_|0-9]*)
 dec ([0-9]+\.[0-9]+)
 num ([0-9]+)
-text ([\"][a-z|A-Z|_|0-9| |'\\'|':'|';'|'.'|',']*[\"])
-comment ([#][a-z|A-Z|_|0-9| ]*)
+text ([\"][^\"]*[\"])
+comment ([#][^\n]*)
 
 %%
 {comment}           {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_COMMENT;}
 [ ]                 {return T_SP;}
 \t                  {return T_TAB;}
+
+"toc"               {return T_TOC;}
 "print"             {return T_PRINT;}
+"ret"               {return T_RETURN;}
+
 "boo"               {yylval.integer = Data::BOO; return T_BOO;}
 "flt"               {yylval.integer = Data::FLT; return T_FLT;}
 "int"               {yylval.integer = Data::INT; return T_INT;}
 "str"               {yylval.integer = Data::STR; return T_STR;}
 "void"              {yylval.integer = Data::VOID; return T_VOID;}
-"toc"               {return T_TOC;}
 
 "if"                {return T_IF;}
 "else"              {return T_ELSE;}
 
-"true"              {return T_TRUE;}
-"false"             {return T_FALSE;}
-
 "for"               {return T_FOR;}
 "in"                {return T_IN;}
+
+"true"              {return T_TRUE;}
+"false"             {return T_FALSE;}
 
 "+"                 {return T_PLUS;}
 "-"                 {return T_MINUS;}

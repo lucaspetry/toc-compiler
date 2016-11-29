@@ -29,19 +29,18 @@ class TreeNode {
             BOOLEAN,
             CODE_BLOCK,
             COMMENT,
+            CONDITIONAL,
             FLOAT,
             FUNCTION,
             INTEGER,
+            LOOP,
             PRINT_FUNCTION,
             STRING,
-            LOOP,
             TOC_FUNCTION,
-            VARIABLE,
-            CONDITIONAL_IF,
-            CONDITIONAL_ELSE,
-            VARIABLE_DECLARATION,
             TYPE_CASTING,
             UNARY_OPERATION,
+            VARIABLE,
+            VARIABLE_DECLARATION,
             UNKNOWN
         };
 

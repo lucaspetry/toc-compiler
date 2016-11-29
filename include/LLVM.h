@@ -19,12 +19,14 @@
  */
 namespace IR {
     static llvm::Function* MainFunction = 0; // Criada no CodeGenerator.
+    static llvm::Function* CurrentFunction; // Criado no CodeGenerator.
     static llvm::BasicBlock* TocFunction; // Criado no CodeGenerator.
     static llvm::LLVMContext& Context = llvm::getGlobalContext();
     static llvm::Module *Module = 0; // Criado no CodeGenerator.
     static llvm::IRBuilder<>* Builder = new llvm::IRBuilder<>(Context);
     static llvm::Constant* Zero = llvm::ConstantInt::get(Context, llvm::APInt(32, 0));
     static llvm::Constant* ZeroFP = llvm::ConstantFP::get(Context, llvm::APFloat(0.0));
+    static llvm::Constant* False = llvm::ConstantInt::get(IR::Context, llvm::APInt(32, 0));
 }
 
 #endif

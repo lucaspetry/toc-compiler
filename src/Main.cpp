@@ -13,26 +13,26 @@ int main(int argc, char **argv) {
 
     // Cria o logger de erros
     ERROR_LOGGER = new ErrorLogger();
-    
+
     // Parsing da entrada
     yyparse();
-    
+
     CodeGenerator codeGen;
-    
+
 #ifdef LLVM_DUMP
     codeGen.setDump(true);
 #endif
-    
+
 #ifdef LLVM // Gera o código intermediário
-    
-    codeGen.setProgramTitle("TOC Program");    
-    codeGen.generateExecuteCode(SYNTAX_TREE);
-    
+    if(!ERROR_LOGGER->hasErrors()) {
+        codeGen.setProgramTitle("TOC Program");    
+        codeGen.generateExecuteCode(SYNTAX_TREE);
+    }
 #else // Ou imprime a árvore sintática
-    
+
     SYNTAX_TREE->print();
-    
+
 #endif
-    
+
     return 0;
 }

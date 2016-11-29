@@ -45,6 +45,7 @@ void CodeGenerator::generateExecuteCode(SyntaxTree* const syntaxTree) const {
     llvm::FunctionType* typeOfMain = llvm::FunctionType::get(voidType, false);
     IR::Module->getOrInsertFunction("main", typeOfMain);
     IR::MainFunction = IR::Module->getFunction("main");
+    IR::CurrentFunction = IR::MainFunction;
 
     // Gera o código do programa
     syntaxTree->generateCode();
@@ -205,7 +206,7 @@ llvm::Value* TocFunction::generateCode() {
 
     this->body->generateCode();
 
-    IR::Builder->SetInsertPoint(IR::TocFunction);
+    //IR::Builder->SetInsertPoint(IR::TocFunction);
     IR::Builder->CreateRetVoid();
 
     return IR::TocFunction;
@@ -276,9 +277,27 @@ llvm::Value* Variable::generateCode() {
     return this->symbolTable.getVariableAllocation(id);
 }
 
-llvm::Value* Conditional::generateCode(){
-    return NULL;//TODO
+llvm::Value* Conditional::generateCode() {
+    llvm::Value* condition = this->condition->generateCode();
+    llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
+    llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(IR::Context, "then", IR::CurrentFunction);
+    llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(IR::Context, "else", IR::CurrentFunction);
+    llvm::BasicBlock *mergeBlock = llvm::BasicBlock::Create(IR::Context, "merge", IR::CurrentFunction);
 
+    IR::Builder->CreateCondBr(conditionTrue, thenBlock, elseBlock);
+
+    IR::Builder->SetInsertPoint(thenBlock);
+    this->thenCode->generateCode();
+    IR::Builder->CreateBr(mergeBlock);
+
+    if(this->elseCode != NULL) {
+        IR::Builder->SetInsertPoint(elseBlock);
+        this->elseCode->generateCode();
+        IR::Builder->CreateBr(mergeBlock);
+    }
+    return condition;
+
+    // Precisa de PHI!!!!!!!!
 }
 
 llvm::Value* VariableDeclaration::generateCode() {

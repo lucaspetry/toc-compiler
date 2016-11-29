@@ -43,6 +43,12 @@ class ErrorLogger {
          */
         void log(ErrorLogger::Type type, std::string message = "Unknown error.");
 
+        /**
+         * Verificar se o programa contém erros
+         * @return true se erros foram capturados
+         */
+        bool hasErrors() const;
+
     private:
         /**
          * Converter o tipo do erro para texto
@@ -51,7 +57,10 @@ class ErrorLogger {
          */
         std::string typeToString(ErrorLogger::Type type) const;
 
-        void playSound() const;
+        /**
+         * Executar som de erro
+         */
+        void playErrorSound() const;
 
         int errorCount[4];
         bool error;

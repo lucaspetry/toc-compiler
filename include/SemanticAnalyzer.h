@@ -99,12 +99,6 @@ class SemanticAnalyzer {
          * Analisar...
          * @param op
          */
-        void analyzeConditional(Conditional* op);
-
-        /**
-         * Analisar...
-         * @param op
-         */
         void analyzeRelationalOperationCasting(BinaryOperation* op);
 
         /**
@@ -130,14 +124,6 @@ class SemanticAnalyzer {
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
 
         /**
-         * Declarar um if
-         * @param expr expressão do condicional
-         * @param body corpo do if
-         * @return nodo correspondente à declaração da função
-         */
-        TreeNode* declareCondition(CodeBlock* body, TreeNode* expr, bool elsing);
-
-        /**
          * Declarar uma função
          * @param id identificador da função
          * @param params parâmetros da função
@@ -146,6 +132,21 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração da função
          */
         TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, TreeNode* ret);
+
+        /**
+         * Declarar um condicional
+         * @param expression expressão booleana do condicional
+         * @param body corpo se expression for true
+         * @return nodo correspondente à declaração do condicional
+         */
+        TreeNode* declareCondition(TreeNode* expression, CodeBlock* body);
+
+        /**
+         * Declarar ação secundário de um condicional
+         * @param body corpo se a condição for false
+         * @return nodo correspondente à declaração do condicional
+         */
+        TreeNode* declareElseCondition(CodeBlock* body);
 
         /**
          * Declarar uma chamada de print

@@ -18,8 +18,9 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
     std::string line = "[Line " + std::to_string(yylineno) + "]";
     std::string errorType = typeToString(type);
 
+    // Se erros são detectados, executa som de erro
     if(!this->error || type != ErrorLogger::WARNING) {
-        this->playSound();
+        this->playErrorSound();
         this->error = true;
     }
 
@@ -27,6 +28,10 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
         std::cout << line << " " << errorType << ": " << message << std::endl;
     else
         std::cerr << line << " " << errorType << ": " << message << std::endl;
+}
+
+bool ErrorLogger::hasErrors() const {
+    return this->error;
 }
 
 std::string ErrorLogger::typeToString(ErrorLogger::Type type) const {
@@ -42,7 +47,7 @@ std::string ErrorLogger::typeToString(ErrorLogger::Type type) const {
     }
 }
 
-void ErrorLogger::playSound() const {
+void ErrorLogger::playErrorSound() const {
     std::string command = "aplay -c 1 -q -t wav ";
     std::ifstream soundFile("data/sound/ErrorSound_FaustaoErrou.wav");
 
