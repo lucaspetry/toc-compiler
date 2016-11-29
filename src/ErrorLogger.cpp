@@ -19,7 +19,7 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
     std::string errorType = typeToString(type);
 
     // Se erros são detectados, executa som de erro
-    if(!this->error || type != ErrorLogger::WARNING) {
+    if(!this->error && type != ErrorLogger::WARNING) {
         this->playErrorSound();
         this->error = true;
     }
