@@ -19,6 +19,7 @@
 #include "UnaryOperation.h"
 #include "Loop.h"
 #include "Conditional.h"
+#include "Object.h"
 
 CodeGenerator::CodeGenerator() {
     this->showDump = false;
@@ -332,6 +333,10 @@ llvm::Value* Conditional::generateCode() {
 
 llvm::Value* VariableDeclaration::generateCode() {
     return next->generateCode();
+}
+
+llvm::Value* Object::generateCode() {
+    return NULL;//TODO
 }
 
 llvm::Value* Array::generateCode() {

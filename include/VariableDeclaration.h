@@ -14,11 +14,13 @@ class VariableDeclaration : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         llvm::Value* generateCode();
+        void setEncapsulation(int n);
         TreeNode* getNext();
         void setBody(CodeBlock* codeBlock);
 
     private:
         TreeNode* next;
+        int encapsulation;
 
 };
 

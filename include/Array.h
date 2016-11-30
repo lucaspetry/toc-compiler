@@ -17,6 +17,7 @@ class Array : public TreeNode {
         void setType(Data::Type type);
         std::vector<TreeNode*>* getValues();
         void setBody(CodeBlock* codeBlock);
+        void setEncapsulation(int value);
         TreeNode* getSize();
         llvm::Value* generateCode();
 
@@ -25,5 +26,6 @@ class Array : public TreeNode {
       Data::Type type;
       TreeNode* size;
       std::vector<TreeNode*> *values;
+      int encapsulation;
 };
 #endif

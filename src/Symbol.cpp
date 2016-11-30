@@ -4,6 +4,7 @@ Symbol::Symbol() {
     this->dataType = Data::UNKNOWN;
     this->idType = Symbol::UNKNOWN;
     this->initialized = false;
+    this->encapsulation = false;
 }
 
 Symbol::Symbol(Data::Type dataType, IdentifierType idType, bool initialized, TreeNode* data) {
@@ -11,6 +12,7 @@ Symbol::Symbol(Data::Type dataType, IdentifierType idType, bool initialized, Tre
     this->idType = idType;
     this->initialized = initialized;
     this->data = data;
+    this->encapsulation = false;
 }
 
 Symbol::~Symbol() {
@@ -22,6 +24,10 @@ TreeNode* Symbol::getData() {
 
 Data::Type Symbol::getDataType() const {
     return this->dataType;
+}
+
+void Symbol::setEncapsulation(bool value){
+    this->encapsulation = value;
 }
 
 Symbol::IdentifierType Symbol::getType() const {

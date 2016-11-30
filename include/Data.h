@@ -7,7 +7,7 @@
  * Dados
  */
 namespace Data {
-    
+
     /**
      * Tipos de dados
      */
@@ -17,7 +17,8 @@ namespace Data {
         FLT = 3,
         INT = 2,
         STR = 4,
-        VOID = 5
+        OBJ = 5,
+        VOID = 6
     };
 
     /**

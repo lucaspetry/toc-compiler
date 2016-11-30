@@ -139,16 +139,17 @@ TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
+    if(this->lastStructure->classType() == TreeNode::OBJECT && this->currentStructure != NULL){
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
+      std::cout << this->lastStructure->classType() << std::endl;
+    }
     if(this->checkIdentifier(id)) {
-        // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0) {
             Array* array = new Array(id, dataType, new Integer(size));
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
             return array;
         } else {
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
-            // nova declaração de variável
-
             Variable* v = new Variable(id, dataType);
             VariableDeclaration* vD = new VariableDeclaration(dataType, v);
             v->setSymbolTable(this->symbolTable);
@@ -159,6 +160,90 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     }
 
     return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareObject(std::string id, CodeBlock* param, CodeBlock* body){
+    if(this->checkIdentifier(id)){
+        Object* obj = new Object(id,param,NULL);
+        this->symbolTable.addSymbol(id, Symbol(Data::OBJ, Symbol::OBJECT, true, obj));
+        this->currentStructure = obj;
+        return obj;
+    }
+    return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, int encapsulation, int size){
+    if(this->lastStructure->classType() != TreeNode::OBJECT)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
+
+    Object* obj = (Object*) this->lastStructure;
+
+    if(size > 0){
+        Array* a = new Array(id, type, new Integer(size));
+        a->setEncapsulation(encapsulation);
+        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true, a));
+        if(encapsulation == 1)
+          this->symbolTable.getSymbol(id).setEncapsulation(true);
+        return a;
+    }else{
+      VariableDeclaration* vd = new VariableDeclaration(type, new Variable(id, type));
+      vd->setEncapsulation(encapsulation);
+      this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true, vd));
+      if(encapsulation == 1)
+        this->symbolTable.getSymbol(id).setEncapsulation(true);
+      return vd;
+    }
+  return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size){
+  if(this->lastStructure->classType() != TreeNode::OBJECT)
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
+
+    if(this->checkIdentifier(id)) {
+        if(size > 0) {
+            Array* array = new Array(id, type, new Integer(size));
+            array->setEncapsulation(encapsulation);
+            this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
+            this->symbolTable.setInitializedSymbol(id, array);
+            if(encapsulation == 1)
+              this->symbolTable.getSymbol(id).setEncapsulation(true);
+            return array;
+        }
+
+        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false)); // Adds variable to symbol table
+        this->symbolTable.setInitializedSymbol(id, value);
+        Variable* v = new Variable(id, type);
+        VariableDeclaration* vD = new VariableDeclaration(type, v);
+        vD->setEncapsulation(encapsulation);
+        if(encapsulation == 1)
+          this->symbolTable.getSymbol(id).setEncapsulation(true);
+        v->setSymbolTable(this->symbolTable);
+        vD->setSymbolTable(this->symbolTable);
+        return vD;
+    }
+
+  return NULL;
+}
+
+TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation){
+    if(this->lastStructure->classType() != TreeNode::OBJECT){
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation method out of object body");
+        std::cout << "method" + this->lastStructure->classType() << std::endl;
+      }
+
+    Function* function;
+    if(this->checkIdentifier(id)) {
+        function = new Function(id, params, body, NULL);
+        function->setType(returnType);
+        function->setEncapsulation(encapsulation);
+
+        this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
+        this->currentStructure = function;
+        return function;
+  }
+
+  return NULL;
 }
 
 TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType) {
@@ -181,6 +266,12 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
 }
 
 TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
+    Function* f = (Function*) this->lastStructure;
+    if(f->classType() != TreeNode::FUNCTION){
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Return value for function " + f->getId() + "is different from expected;" );
+    }
+
+    f->setReturn(ret);
     return NULL; // TODO
 }
 
@@ -248,6 +339,10 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
 }
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
+    if(this->lastStructure->classType() == TreeNode::OBJECT){
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
+
+}
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0) {

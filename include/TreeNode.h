@@ -5,6 +5,7 @@
 #include "SymbolTable.h"
 #include "Data.h"
 #include <string>
+#include <iostream>
 #include <vector>
 
 class CodeBlock;
@@ -25,24 +26,25 @@ class TreeNode {
          * Tipos de nodos
          */
         enum ClassType {
-            ARRAY,
-            BINARY_OPERATION,
-            BOOLEAN,
-            CODE_BLOCK,
-            COMMENT,
-            CONDITIONAL,
-            FLOAT,
-            FUNCTION,
-            INTEGER,
-            LOOP,
-            PRINT_FUNCTION,
-            STRING,
-            TOC_FUNCTION,
-            TYPE_CASTING,
-            UNARY_OPERATION,
-            VARIABLE,
-            VARIABLE_DECLARATION,
-            UNKNOWN
+            ARRAY = 1,
+            BINARY_OPERATION = 2,
+            BOOLEAN = 3,
+            CODE_BLOCK = 4,
+            COMMENT = 5,
+            CONDITIONAL = 6,
+            FLOAT = 7,
+            FUNCTION = 8,
+            INTEGER = 9,
+            LOOP = 10,
+            PRINT_FUNCTION = 11,
+            STRING = 12,
+            TOC_FUNCTION = 13,
+            TYPE_CASTING = 14,
+            UNARY_OPERATION = 16,
+            VARIABLE_DECLARATION = 15,
+            OBJECT = 17,
+            VARIABLE = 18,
+            UNKNOWN = 19
         };
 
         TreeNode(Data::Type type);

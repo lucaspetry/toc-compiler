@@ -49,24 +49,25 @@
  * Símbolos terminais (tokens) para a gramática.
  */
 
-%token <integer> T_BOO T_FLT T_INT T_STR T_NUM
+%token <integer> T_BOO T_FLT T_INT T_STR T_NUM T_VOID
 %token <decimal> T_DEC
 %token <string> T_COMMENT T_ID T_TEXT
 %token T_OPAR T_CPAR T_OBRACKET T_CBRACKET T_OBRACE T_CBRACE T_ASSIGN T_COMMA T_SCOLON
 %token T_TRUE T_FALSE
 %token T_IF T_ELSE
 %token T_TAB T_SP T_NL
-%token T_TOC T_VOID T_PRINT T_RETURN
+%token T_TOC T_PRINT T_RETURN
 %token T_FOR T_IN
+%token T_OBJ T_PRV T_PUB
 
 /*
  * Símbolos não-terminais da gramática e seus respectivos tipos.
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> line declaration attribuition multiple_attribution expr expr_right
+%type <node> line declaration attribuition multiple_attribution expr expr_right function object_attributes object_functions
 %type <codeBlock> lines multiple_declaration function_params
-%type <integer> indent sp type_var type_fun op_binary
+%type <integer> indent sp type_var  op_binary encapsulation function_type
 
 /*
  * Precedência de operadores.
@@ -94,7 +95,7 @@
 
 // Início do parsing
 start:
-    program { SEMANTIC.analyzeProgram();
+    program { /*SEMANTIC.analyzeProgram();*/
               TOC.analyzeProgram(); }
     ;
 
@@ -103,6 +104,7 @@ program:
     lines { SYNTAX_TREE = new SyntaxTree(SEMANTIC.getCurrentBody()); }
     ;
 
+// linhas de codigo
 lines:
     indent line %prec LINE { if($2 != NULL) SEMANTIC.pushLineScope($2); }
     | lines T_NL indent line { if($4 != NULL) SEMANTIC.pushLineScope($4); }
@@ -129,19 +131,55 @@ line:
                                                                               SEMANTIC.analyzeLoop($7); }
     // Funções
     | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID); }
-    | type_fun sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1); }
-    | type_fun sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
-    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3); }
+    | function
+
+    //Orientacao objetos
+    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3,$5,NULL); }
+    | object_attributes {$$ = $1; }
+    | object_functions {$$ = $1; }
+    ;
+
+// Metodos para objetos (encapsulamento)
+object_functions:
+    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1); }
+    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1); }
+
+    ;
+
+// Atributos para obejtos (encapsulamento)
+object_attributes:
+    encapsulation sp type_var sp T_ID { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1);
+                                              TOC.analyzeVariable($5);
+                                              TOC.analyzeSpaces(2, $2, $4);}
+    | encapsulation sp type_var sp T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.declareAssignAttribute($5, (Data::Type)$3, $1, $9), BinaryOperation::ASSIGN, $9);
+                                                      $$->setSymbolTable(SEMANTIC.symbolTable);
+                                                      SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                                                      TOC.analyzeSpaces(2, $2, $4);
+                                                      TOC.analyzeVariable($5); }
+    | encapsulation sp type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1, $7);
+                                                                            TOC.analyzeVariable($5); }
+    | encapsulation sp type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {
+                                      $$ = new BinaryOperation(SEMANTIC.declareAssignAttribute($5,(Data::Type)$3, $1, $13, $7), BinaryOperation::ASSIGN, $13);
+                                                                $$->setSymbolTable(SEMANTIC.symbolTable);
+                                                                TOC.analyzeVariable($5); }
     ;
 
 // Parâmetros de função
 function_params:
-    type_var sp T_ID { $$ = NULL; }
-    | type_var sp T_ID T_COMMA sp function_params { $$ = NULL; }
+    type_var sp T_ID { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation()); $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1)); }
+    | type_var sp T_ID T_COMMA sp function_params { $$ = $6; $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1)); }
+    ;
+
+// Funções
+function:
+     type_var sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type)$1); }
+    | type_var sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
+    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3); }
     ;
 
 // Declaração de variáveis
 declaration:
+    //variaveis
     type_var sp T_ID { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1);
                     TOC.analyzeVariable($3);
                     TOC.analyzeSpaces(1, $2);}
@@ -233,6 +271,12 @@ op_binary:
     | T_OR { $$ = BinaryOperation::OR; }
     ;
 
+// Encapsulamento
+encapsulation:
+    T_PUB {$$ = 0;}
+    | T_PRV {$$ = 1;}
+    ;
+
 // Tipos de dados
 type_var:
     T_BOO {$$ = Data::BOO;}
@@ -242,9 +286,12 @@ type_var:
     ;
 
 // Tipos de funções
-type_fun:
-    type_var
-    | T_VOID { $$ = Data::VOID; }
+function_type:
+    T_BOO {$$ = Data::BOO;}
+    | T_FLT {$$ = Data::FLT;}
+    | T_INT {$$ = Data::INT;}
+    | T_STR {$$ = Data::STR;}
+    | T_VOID {$$ = Data::VOID;}
     ;
 
 // Indentação

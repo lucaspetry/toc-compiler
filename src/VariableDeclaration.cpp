@@ -3,6 +3,7 @@
 VariableDeclaration::VariableDeclaration(Data::Type type, TreeNode* next) : TreeNode(type) {
     this->next = next;
     this->type = type;
+    this->encapsulation = 2;
 }
 
 VariableDeclaration::~VariableDeclaration() {
@@ -13,7 +14,15 @@ TreeNode::ClassType VariableDeclaration::classType() const {
 }
 
 std::string VariableDeclaration::printInOrder() const {
-    std::string output = toString(this->type) + " ";
+    std::string output = "";
+    switch (encapsulation) {
+      case 0: output+= "pub ";
+      break;
+      case 1: output+= "prv ";
+      break;
+      default: break;
+    }
+    output+= toString(this->type) + " ";
     output += next->printInOrder();
     return output;
 }
@@ -23,4 +32,8 @@ TreeNode* VariableDeclaration::getNext() {
 }
 
 void VariableDeclaration::setBody(CodeBlock* codeBlock) {
+}
+
+void VariableDeclaration::setEncapsulation(int n){
+  this->encapsulation = n;
 }

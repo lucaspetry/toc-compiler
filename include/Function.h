@@ -15,14 +15,19 @@ class Function : public TreeNode {
         virtual ~Function();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        std::string getId() const;
+        void setReturn(TreeNode* t);
         void setBody(CodeBlock* codeBlock);
+        void setEncapsulation(int value);
         llvm::Value* generateCode();
+
 
     protected:
         std::string id;
         CodeBlock* params;
         CodeBlock* body;
         TreeNode* ret;
+        int encapsulation;
 
 };
 

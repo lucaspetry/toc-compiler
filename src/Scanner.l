@@ -21,8 +21,8 @@ comment ([#][^\n]*)
 {comment}           {yylval.string = new char[yyleng+1]; strcpy(yylval.string, yytext); return T_COMMENT;}
 [ ]                 {return T_SP;}
 \t                  {return T_TAB;}
-
 "toc"               {return T_TOC;}
+
 "print"             {return T_PRINT;}
 "ret"               {return T_RETURN;}
 
@@ -40,6 +40,10 @@ comment ([#][^\n]*)
 
 "true"              {return T_TRUE;}
 "false"             {return T_FALSE;}
+
+"obj"               {return T_OBJ;}
+"prv"               {return T_PRV;}
+"pub"               {return T_PUB;}
 
 "+"                 {return T_PLUS;}
 "-"                 {return T_MINUS;}

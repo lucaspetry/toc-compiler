@@ -15,6 +15,7 @@
 #include "VariableDeclaration.h"
 #include "Loop.h"
 #include "LLVM.h"
+#include "Object.h"
 
 #include <ctype.h>
 #include <string>
@@ -142,6 +143,17 @@ class SemanticAnalyzer {
         TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType);
 
         /**
+         * Declarar de metodo
+         * @param id identificador da metodo
+         * @param params parâmetros da metodo
+         * @param body corpo da metodo
+         * @param returnType tipo de retorno da metodo
+         * @param encapsulation encapsulamento do metodo
+         * @return nodo correspondente à declaração da metodo
+         */
+        TreeNode* declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation);
+
+        /**
          * Declarar o retorno de uma função
          * @param ret expressão de retorno da função
          * @return nodo correspondente à declaração de retorno da função
@@ -178,6 +190,36 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração da função
          */
         TreeNode* declarePrint(TreeNode* param);
+
+        /**
+         * Declarar um objeto
+         * @param param id nome da classe
+         * @param param parametros da classe
+         * @param body corpo da classe
+         * @return nodo correspondente a declaração do objeto
+         */
+        TreeNode* declareObject(std::string id, CodeBlock* param, CodeBlock* body);
+
+        /**
+         * Declarar atributos de um objeto
+         * @param id nome do atributo
+         * @param encapsulation valor do encapsulamento
+         * @param type tipo do atributo
+         * @param size posições do array
+         * @return nodo correspondente à declaração de atributo
+         */
+        TreeNode* declareAttribute(std::string id, Data::Type type, int encapsulation, int size = 0);
+
+        /**
+         * Declarar atributos de um objeto
+         * @param id nome do atributo
+         * @param type tipo do atributo
+         * @param encapsulation valor do encapsulamento
+         * @param value valor a ser atribuido
+         * @param size posições do array
+         * @return nodo correspondente à declaração de atributo
+         */
+        TreeNode* declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size = 0);
 
         /**
          * Atribuir um valor a uma variável
