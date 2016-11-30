@@ -49,6 +49,12 @@ class ErrorLogger {
          */
         bool hasErrors() const;
 
+        /**
+         * Calcula a pontuação do programa
+         * @return pontuacao
+         */
+        float getScore() const;
+
     private:
         /**
          * Converter o tipo do erro para texto

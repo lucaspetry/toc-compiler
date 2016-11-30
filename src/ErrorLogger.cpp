@@ -3,10 +3,10 @@
 #include <fstream>
 
 ErrorLogger::ErrorLogger() {
-    this->errorCount[ErrorLogger::LEXICAL] = 0;
-    this->errorCount[ErrorLogger::SEMANTIC] = 0;
-    this->errorCount[ErrorLogger::SYNTAX] = 0;
-    this->errorCount[ErrorLogger::WARNING] = 0;
+    this->errorCount[ErrorLogger::LEXICAL] = 0; //peso = 2
+    this->errorCount[ErrorLogger::SEMANTIC] = 0;//peso = 8
+    this->errorCount[ErrorLogger::SYNTAX] = 0;//peso = 5
+    this->errorCount[ErrorLogger::WARNING] = 0; //peso = 1
     this->error = false;
 }
 
@@ -33,7 +33,22 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
 bool ErrorLogger::hasErrors() const {
     return this->error;
 }
-
+float ErrorLogger::getScore() const {
+    float x = 0;
+    float result = 0;
+    if(this->error){
+      x = (float) ((errorCount[ErrorLogger::LEXICAL]*2 + errorCount[ErrorLogger::SEMANTIC]*8 +errorCount[SYNTAX]*5)/15)/yylineno;
+      if (x> 1)
+        x = 1;
+      result = 6-x*6;
+    } else{
+      x = (float) errorCount[ErrorLogger::WARNING]/yylineno;
+      if (x>1)
+       x = 1;
+      result = 10-x*4;
+    }
+    return result;
+}
 std::string ErrorLogger::typeToString(ErrorLogger::Type type) const {
     switch(type) {
         case ErrorLogger::LEXICAL:
