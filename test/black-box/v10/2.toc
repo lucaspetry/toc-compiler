@@ -1,0 +1,6 @@
+# Exemplo
+void toc()
+  int amora = 4
+  int jabuticaba = 2
+  if(amora = jabuticaba)
+    banana = 10

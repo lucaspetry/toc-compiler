@@ -87,3 +87,7 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
 void BinaryOperation::setLeft(TreeNode* left){
   this->left = left;
 }
+
+void BinaryOperation::setOp(BinaryOperation::Type op){
+  this->operation = op;
+}

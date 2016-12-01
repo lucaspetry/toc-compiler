@@ -1,0 +1,7 @@
+# Identificadores de funcoes variaveis e objetos
+void toc()
+  int a_b = 15000
+  flt b100 = 6.700000
+  boo cCc = false
+  boo dD_1000 = true
+  str e__e = "string"

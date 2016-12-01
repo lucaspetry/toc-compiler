@@ -1,11 +1,13 @@
-#Exemplo de relacionais e logicos
+# Exemplo de operadores relacionais e logicos
 void toc()
-  boo a = 6 > 7
-  a = 6 < 7
-  a = 6 >= 7
-  a = 6 <= 7
-  a = 6 and 7
-  a = 6 or 7
-  a = 6 != 7
-  a = 6 == 7
-  a = not (4 > 7)
+  int abacaxi = 5
+  flt banana = 5.7
+  boo carambola = abacaxi > banana
+  boo sabor = carambola < abacaxi
+  boo damasco = not carambola
+  boo figo = carambola and damasco
+  figo = carambola >= damasco
+  figo = carambola <= damasco
+  figo = carambola == damasco
+  figo = carambola != damasco
+  figo = carambola or damasco

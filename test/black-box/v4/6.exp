@@ -1,0 +1,5 @@
+# Funcao principal do programa
+void toc()
+  int abacaxi
+  flt abacaxi = 9.000000
+[Line 5] Semantic error: Identifier abacaxi already used for declaration.

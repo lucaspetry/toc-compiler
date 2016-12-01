@@ -1,6 +1,6 @@
 #include "Array.h"
 
-Array::Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values) : TreeNode(Data::UNKNOWN) {
+Array::Array(std::string id, Data::Type type, TreeNode* size, TreeNode* values) : TreeNode(type) {
     this->id = id;
     this->type = type;
     this->size = size;
@@ -27,10 +27,12 @@ std::string Array::printInOrder() const {
       default: break;
     }
 
-    if (this->type != Data::UNKNOWN and this->values == NULL){
-      output += Data::toString(this->type);
+    if(this->values != NULL && this->values->classType() == TreeNode::BINARY_OPERATION
+      && this->type != Data::UNKNOWN){
+      output += toString(this->type);
       output += " ";
     }
+
     output += this->id;
     output += "[";
     output += this->size->printInOrder();
@@ -42,11 +44,7 @@ std::string Array::printInOrder() const {
 void Array::setBody(CodeBlock* codeBlock) {
 }
 
-void Array::setType(Data::Type type){
-  this->type = type;
-}
-
-std::vector<TreeNode*>* Array::getValues(){
+TreeNode* Array::getValues(){
   return this->values;
 }
 

@@ -1,0 +1,4 @@
+# Identificadores de funcoes variaveis e objetos
+void toc()
+  int abc = 765
+  boo abc = false

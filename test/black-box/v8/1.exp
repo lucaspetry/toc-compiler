@@ -1,0 +1,13 @@
+# Exemplo de operadores relacionais e logicos
+void toc()
+  int abacaxi = 5
+  flt banana = 5.700000
+  boo carambola = [boo] (abacaxi > [int] (banana))
+  boo sabor = [boo] (carambola < [boo] (abacaxi))
+  boo damasco = [boo] (not carambola)
+  boo figo = carambola and damasco
+  figo = carambola >= damasco
+  figo = carambola <= damasco
+  figo = carambola == damasco
+  figo = carambola != damasco
+  figo = carambola or damasco

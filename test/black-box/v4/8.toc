@@ -1,0 +1,4 @@
+#Funcao Principal
+void toc()
+  int b=3
+  int a,b

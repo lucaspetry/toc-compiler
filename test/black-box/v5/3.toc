@@ -1,4 +1,4 @@
-# Main
+# Funcao principal do programa
 void toc()
-  flt j[14]
-  flt a = j[15]
+  # Exemplo de criacao de arrays em TOC
+  str frutas[3] = {"cereja", "jaca", "limão"}

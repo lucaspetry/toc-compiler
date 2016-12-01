@@ -39,6 +39,7 @@ class BinaryOperation : public TreeNode {
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
         void setBody(CodeBlock* codeBlock);
+        void setOp(BinaryOperation::Type op);
         llvm::Value* generateCode();
 
     private:

@@ -1,0 +1,7 @@
+# Exemplo de condicionais
+void toc()
+  int amora = 2
+  if(amora == 3)
+    amora = 3
+  else
+    amora = -5

@@ -1,5 +1,4 @@
 # Funcao principal do programa
 void toc()
   int abacaxi
-  int hortela = 3
-  int abacaxiComHortela = abacaxi + hortela
+  hortela = 9

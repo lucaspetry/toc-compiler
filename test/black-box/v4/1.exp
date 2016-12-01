@@ -3,8 +3,13 @@ void toc()
   int abacate
   int banana
   int caqui
+  flt a
+  flt b
+  flt c
   abacate = 0
   boo figo
   boo goiaba
-  flt kiwi = 2.5
-  print kiwi
+  flt kiwi = 2.500000
+  str j
+  str l
+  str m

@@ -114,6 +114,21 @@ class SemanticAnalyzer {
         void analyzeLoop(std::string id);
 
         /**
+         * Analisar a declaração de Array
+         * @param id identificador da variavel
+         * @param size posições do array
+         * @param attribuition valores atribuidos ao array
+         */
+        void analyzeArray(std::string id, int size, TreeNode* attribuition);
+
+        /**
+         * Analisar a declaração de Array
+         * @param id identificador da variavel
+         * @param size posições do array
+         */
+        void analyzeAssignArray(std::string id, TreeNode* size);
+
+        /**
          * Verificar o uso de um identificador.
          * @param id identificador
          * @return true se o identificador pode ser usado

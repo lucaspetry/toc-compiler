@@ -194,13 +194,16 @@ declaration:
                                                 TOC.analyzeVariable($3); }
     // array
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
-                                                  TOC.analyzeVariable($3); }
+                                                  TOC.analyzeVariable($3);
+                                                  TOC.analyzeSpaces(1, $2);}
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
-                                                                                                        $$->setSymbolTable(SEMANTIC.symbolTable);
-                                                                                                        TOC.analyzeVariable($3); }
+                                                                                                          ((BinaryOperation*)$11)->setOp(BinaryOperation::MULT_ATT);
+                                                                                                          $$->setSymbolTable(SEMANTIC.symbolTable);
+                                                                                                          TOC.analyzeVariable($3);
+                                                                                                          SEMANTIC.analyzeArray($3, $5, $11);}
     ;
 
 // Multiplas declarações
