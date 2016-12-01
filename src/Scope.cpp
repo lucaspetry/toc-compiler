@@ -5,7 +5,7 @@ Scope::Scope(Scope* parent) {
     this->parent = parent;
     this->code = NULL;
     this->structure = NULL;
-    this->lastStructure = NULL;
+    this->lastStatement = NULL;
 
     if(parent == NULL)
         this->indentation = 0;
@@ -20,7 +20,7 @@ Scope& Scope::operator=(const Scope& scope) {
     this->indentation = scope.indentation;
     this->code = scope.code;
     this->structure = scope.structure;
-    this->lastStructure = scope.lastStructure;
+    this->lastStatement = scope.lastStatement;
     return *this;
 }
 

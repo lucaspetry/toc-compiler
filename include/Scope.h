@@ -129,7 +129,7 @@ class Scope {
         int indentation;
         CodeBlock* code;
         TreeNode* structure;
-        TreeNode* lastStructure;
+        TreeNode* lastStatement;
 
 };
 

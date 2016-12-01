@@ -53,12 +53,12 @@ void SymbolTable::setCurrentStructure(TreeNode* node) {
 }
 
 TreeNode* SymbolTable::getLastStatement() {
-    return this->currentScope->lastStructure;
+    return this->currentScope->lastStatement;
 }
 
 void SymbolTable::setLastStatement(TreeNode* node) {
     if(this->currentScope != NULL)
-        this->currentScope->lastStructure = node;
+        this->currentScope->lastStatement = node;
 }
 
 int SymbolTable::getCurrentIndentation() {
