@@ -147,6 +147,8 @@ class SemanticAnalyzer {
          */
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
 
+        TreeNode* declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right);
+
         /**
          * Declarar uma função
          * @param id identificador da função
@@ -264,7 +266,7 @@ class SemanticAnalyzer {
     public:
         SymbolTable symbolTable;
         TreeNode* currentStructure;
-        TreeNode* lastStructure;
+        TreeNode* lastStatement;
 
 };
 

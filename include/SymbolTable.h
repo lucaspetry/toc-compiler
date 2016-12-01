@@ -62,12 +62,16 @@ class SymbolTable {
         CodeBlock* getCurrentCodeBlock();
 
         /**
-         * Obter a estrutura (função, laço, etc) do escopo atual
+         * Obter a estrutura pai do escopo atual
          * @return a estrutura
          */
-        TreeNode* getCurrentStructure();
+        TreeNode* getParentStructure();
 
         void setCurrentStructure(TreeNode* node);
+
+        TreeNode* getLastStatement();
+
+        void setLastStatement(TreeNode* node);
 
         /**
          * Obter a indentação atual

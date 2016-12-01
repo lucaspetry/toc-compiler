@@ -4,7 +4,7 @@
 
 SemanticAnalyzer::SemanticAnalyzer() {
     this->currentStructure = NULL;
-    this->lastStructure = NULL;
+    this->lastStatement = NULL;
     this->symbolTable.newScope();
 }
 
@@ -17,13 +17,14 @@ void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binary
 void SemanticAnalyzer::newScope() {
     this->analyzeScopeCreation();
     this->symbolTable.setCurrentStructure(this->currentStructure);
-    this->lastStructure = this->currentStructure;
+    this->symbolTable.setLastStatement(this->lastStatement);
     this->currentStructure = NULL;
     this->symbolTable.newScope();
 }
 
 void SemanticAnalyzer::returnScope() {
     this->symbolTable.returnScope();
+    this->lastStatement = this->symbolTable.getLastStatement();
 }
 
 void SemanticAnalyzer::setScope(float indentation) {
@@ -169,9 +170,9 @@ TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
-    if(this->lastStructure->classType() == TreeNode::OBJECT && this->currentStructure != NULL){
+    if(this->lastStatement->classType() == TreeNode::OBJECT && this->currentStructure != NULL){
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
-      std::cout << this->lastStructure->classType() << std::endl;
+      std::cout << this->lastStatement->classType() << std::endl;
     }
     if(this->checkIdentifier(id)) {
         if(size > 0) {
@@ -193,8 +194,12 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     return new VariableDeclaration(dataType, new Variable(id, dataType));
 }
 
+TreeNode* SemanticAnalyzer::declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right) {
+    // TODO
+}
+
 TreeNode* SemanticAnalyzer::declareObject(std::string id, CodeBlock* param, CodeBlock* body){
-    if(this->checkIdentifier(id)){
+    if(this->checkIdentifier(id)) {
         Object* obj = new Object(id,param,NULL);
         this->symbolTable.addSymbol(id, Symbol(Data::OBJ, Symbol::OBJECT, true, obj));
         this->currentStructure = obj;
@@ -203,11 +208,11 @@ TreeNode* SemanticAnalyzer::declareObject(std::string id, CodeBlock* param, Code
     return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, int encapsulation, int size){
-    if(this->lastStructure->classType() != TreeNode::OBJECT)
+TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, int encapsulation, int size) {
+    if(this->lastStatement->classType() != TreeNode::OBJECT)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
 
-    Object* obj = (Object*) this->lastStructure;
+    Object* obj = (Object*) this->lastStatement;
 
     if(size > 0){
         Array* a = new Array(id, type, new Integer(size));
@@ -227,8 +232,8 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
   return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size){
-  if(this->lastStructure->classType() != TreeNode::OBJECT)
+TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size) {
+  if(this->lastStatement->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
 
     if(this->checkIdentifier(id)) {
@@ -257,10 +262,10 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
   return NULL;
 }
 
-TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation){
-    if(this->lastStructure->classType() != TreeNode::OBJECT){
+TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation) {
+    if(this->lastStatement->classType() != TreeNode::OBJECT){
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation method out of object body");
-        std::cout << "method" + this->lastStructure->classType() << std::endl;
+        std::cout << "method" + this->lastStatement->classType() << std::endl;
       }
 
     Function* function;
@@ -290,6 +295,7 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
 
         this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
         this->currentStructure = function;
+        this->lastStatement = function;
         return function;
     }
 
@@ -297,7 +303,7 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
 }
 
 TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
-    Function* f = (Function*) this->lastStructure;
+    Function* f = (Function*) this->symbolTable.getParentStructure();
     if(f->classType() != TreeNode::FUNCTION){
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Return value for function " + f->getId() + "is different from expected;" );
     }
@@ -309,22 +315,23 @@ TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
 TreeNode* SemanticAnalyzer::declareCondition(TreeNode* expression, CodeBlock* body) {
     Conditional* cond = new Conditional(expression, body, NULL);
     this->currentStructure = cond;
+    this->lastStatement = cond;
     return cond;
 }
 
 TreeNode* SemanticAnalyzer::declareElseCondition(CodeBlock* body) {
     std::string elseError = "Else without a if.";
 
-    if(this->lastStructure->classType() != TreeNode::CONDITIONAL)
+    if(this->lastStatement->classType() != TreeNode::CONDITIONAL)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, elseError);
 
-    Conditional* cond = (Conditional*) this->lastStructure;
+    Conditional* cond = (Conditional*) this->lastStatement;
 
     if(cond->hasElse())
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, elseError);
 
     cond->setElse(true);
-    this->currentStructure = this->lastStructure;
+    this->currentStructure = this->lastStatement;
     return this->currentStructure;
 }
 
@@ -370,7 +377,11 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
 }
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
+<<<<<<< HEAD
     if(this->lastStructure != NULL && this->lastStructure->classType() == TreeNode::OBJECT){
+=======
+    if(this->lastStatement->classType() == TreeNode::OBJECT){
+>>>>>>> 948d2b3b3fe2119923a70b3982c5e6b70b6369a9
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
     }
 
