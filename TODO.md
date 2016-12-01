@@ -2,8 +2,8 @@ Pendente TOC
 
 - [ X ] Tirar void de tipos de variáveis da gramática
 
-- [   ] Bug if varios escopos
-- [   ] Declaracao de funcoes binárias no semantic
+- [ X ] Bug if varios escopos
+- [ X ] Declaracao de funcoes binárias no semantic
 - [   ] Bug if else instruções no meio
 
 - [ X ] Implementar funções
@@ -12,7 +12,7 @@ Pendente TOC
 
 Quinta(30/11)
 - [   ] Objetos
-- [   ] Testes
+- [ X ] Testes
 - [   ] Gráfico e Score
 - [   ] LLVM Array e erro index atribuição
 - [   ] Tratamento de erros
