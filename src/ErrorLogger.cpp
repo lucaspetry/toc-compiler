@@ -8,6 +8,7 @@ ErrorLogger::ErrorLogger() {
     this->errorCount[ErrorLogger::SYNTAX] = 0;//peso = 5
     this->errorCount[ErrorLogger::WARNING] = 0; //peso = 1
     this->error = false;
+    this->totalErros = 0;
 }
 
 ErrorLogger::~ErrorLogger() {
@@ -15,6 +16,7 @@ ErrorLogger::~ErrorLogger() {
 
 void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
     this->errorCount[type]++;
+    if(type != ErrorLogger::WARNING) this->totalErros ++;
     std::string line = "[Line " + std::to_string(yylineno) + "]";
     std::string errorType = typeToString(type);
 
@@ -33,6 +35,7 @@ void ErrorLogger::log(ErrorLogger::Type type, std::string message) {
 bool ErrorLogger::hasErrors() const {
     return this->error;
 }
+
 float ErrorLogger::getScore() const {
     float x = 0;
     float result = 0;
@@ -49,6 +52,15 @@ float ErrorLogger::getScore() const {
     }
     return result;
 }
+
+void ErrorLogger::printGraph(){
+  Graphics g(3, 10, this->getScore());
+  float pCorreto = (float)((yylineno-1) - this->totalErros)/(yylineno-1);
+  float pErro = (float)this->totalErros/(yylineno-1);
+  float pWarning = (float)errorCount[ErrorLogger::WARNING]/(yylineno-1);
+  g.graph(pCorreto, pWarning, pErro);
+}
+
 std::string ErrorLogger::typeToString(ErrorLogger::Type type) const {
     switch(type) {
         case ErrorLogger::LEXICAL:

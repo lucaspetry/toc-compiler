@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include "Graphics.h"
 
 class ErrorLogger;
 
@@ -55,6 +56,11 @@ class ErrorLogger {
          */
         float getScore() const;
 
+        /**
+         * Print gráfico e porntuação
+         */
+        void printGraph();
+
     private:
         /**
          * Converter o tipo do erro para texto
@@ -69,6 +75,7 @@ class ErrorLogger {
         void playErrorSound() const;
 
         int errorCount[4];
+        int totalErros;
         bool error;
 
 };

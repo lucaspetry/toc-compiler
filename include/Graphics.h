@@ -3,20 +3,23 @@
 
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 /**
  * Graficos
  */
 class Graphics {
 
     public:
-        Graphics(int base, int lenght);
+        Graphics(int base, int lenght, float score);
         void percentage(int i);
         void boundaries(int b);
         void description();
-        void graph(int c, int w, int e);
+        void graph(float c, float w, float e);
+        void scorePrint();
 
     private:
         int base;
         int lenght;
+        float score;
 };
 #endif
