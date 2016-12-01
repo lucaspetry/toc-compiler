@@ -1,4 +1,1 @@
-void toc()
-  boo a = false
-  for(c in false)
 [Line 3] Semantic error: Expecting an array type a.

@@ -1,0 +1,4 @@
+# Exemplo de conversão entre tipos
+void toc()
+  str laranja = "5"
+  flt suco = "oi"

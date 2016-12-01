@@ -1,5 +1,1 @@
-# Identificadores de funcoes variaveis e objetos
-void toc()
-  int abc = 765
-  boo abc = false
 [Line 5] Semantic error: Identifier abc already used for declaration.
