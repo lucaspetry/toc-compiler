@@ -1,4 +1,4 @@
-# Funcao principal TOC
+# Funcao principal TOCrray e erro index atribuição
 int a = 78
 # TOC nao declarada
 flt b = 9.1

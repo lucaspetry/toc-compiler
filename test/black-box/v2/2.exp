@@ -1,5 +1,1 @@
-# Funcao principal TOC
-int a = 78
-# TOC nao declarada
-flt b = 9.100000
 [Line 5] Semantic error: Main function toc() not found.
