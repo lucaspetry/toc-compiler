@@ -170,10 +170,6 @@ TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
 }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
-    if(this->lastStatement->classType() == TreeNode::OBJECT && this->currentStructure != NULL){
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
-      std::cout << this->lastStatement->classType() << std::endl;
-    }
     if(this->checkIdentifier(id)) {
         if(size > 0) {
             Array* array = new Array(id, dataType, new Integer(size));
@@ -209,9 +205,6 @@ TreeNode* SemanticAnalyzer::declareObject(std::string id, CodeBlock* param, Code
 }
 
 TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, int encapsulation, int size) {
-    if(this->lastStatement->classType() != TreeNode::OBJECT)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
-
     Object* obj = (Object*) this->lastStatement;
 
     if(size > 0){
@@ -233,9 +226,6 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
 }
 
 TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size) {
-  if(this->lastStatement->classType() != TreeNode::OBJECT)
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object body");
-
     if(this->checkIdentifier(id)) {
         if(size > 0) {
             Array* array = new Array(id, type, new Integer(size));
@@ -263,11 +253,6 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
 }
 
 TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation) {
-    if(this->lastStatement->classType() != TreeNode::OBJECT){
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation method out of object body");
-        std::cout << "method" + this->lastStatement->classType() << std::endl;
-      }
-
     Function* function;
     if(this->checkIdentifier(id)) {
         function = new Function(id, params, body, NULL);
@@ -377,14 +362,6 @@ TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, Tree
 }
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
-<<<<<<< HEAD
-    if(this->lastStructure != NULL && this->lastStructure->classType() == TreeNode::OBJECT){
-=======
-    if(this->lastStatement->classType() == TreeNode::OBJECT){
->>>>>>> 948d2b3b3fe2119923a70b3982c5e6b70b6369a9
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration expected encapsulation.");
-    }
-
     if(this->checkIdentifier(id)) {
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0) {
