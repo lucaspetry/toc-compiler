@@ -40,13 +40,25 @@ CodeBlock* SymbolTable::getCurrentCodeBlock() {
     return this->currentScope->code;
 }
 
-TreeNode* SymbolTable::getCurrentStructure() {
-    return this->currentScope->structure;
+TreeNode* SymbolTable::getParentStructure() {
+    if(this->currentScope->parent != NULL)
+        return this->currentScope->parent->structure;
+
+    return NULL;
 }
 
 void SymbolTable::setCurrentStructure(TreeNode* node) {
     if(this->currentScope != NULL)
         this->currentScope->structure = node;
+}
+
+TreeNode* SymbolTable::getLastStatement() {
+    return this->currentScope->lastStructure;
+}
+
+void SymbolTable::setLastStatement(TreeNode* node) {
+    if(this->currentScope != NULL)
+        this->currentScope->lastStructure = node;
 }
 
 int SymbolTable::getCurrentIndentation() {
