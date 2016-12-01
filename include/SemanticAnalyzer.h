@@ -86,6 +86,11 @@ class SemanticAnalyzer {
         void analyzeProgram();
 
         /**
+         * Analisar o local onde foi inserida a instrução
+         */
+        bool checkStatement(TreeNode::ClassType tipo);
+
+        /**
          * Analisar a criação de um novo escopo
          */
         void analyzeScopeCreation();

@@ -95,7 +95,7 @@
 
 // Início do parsing
 start:
-    program { /*SEMANTIC.analyzeProgram();*/
+    program { SEMANTIC.analyzeProgram();
               TOC.analyzeProgram(); }
     ;
 
@@ -134,8 +134,9 @@ line:
     | function
 
     //Orientacao objetos
-    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3,$5,NULL); }
-    | object_attributes {$$ = $1; }
+    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareObject($3,$5,NULL); }
+    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL); }
+    | object_attributes {$$ = $1;  }
     | object_functions {$$ = $1; }
     ;
 
@@ -151,7 +152,7 @@ object_attributes:
     encapsulation sp type_var sp T_ID { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1);
                                               TOC.analyzeVariable($5);
                                               TOC.analyzeSpaces(2, $2, $4);}
-    | encapsulation sp type_var sp T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.declareAssignAttribute($5, (Data::Type)$3, $1, $9), BinaryOperation::ASSIGN, $9);
+    | encapsulation sp type_var sp T_ID sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignAttribute($5, (Data::Type)$3, $1, $9), BinaryOperation::ASSIGN, $9);
                                                       $$->setSymbolTable(SEMANTIC.symbolTable);
                                                       SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                                       TOC.analyzeSpaces(2, $2, $4);
@@ -159,7 +160,7 @@ object_attributes:
     | encapsulation sp type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1, $7);
                                                                             TOC.analyzeVariable($5); }
     | encapsulation sp type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {
-                                      $$ = new BinaryOperation(SEMANTIC.declareAssignAttribute($5,(Data::Type)$3, $1, $13, $7), BinaryOperation::ASSIGN, $13);
+                                      $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignAttribute($5,(Data::Type)$3, $1, $13, $7), BinaryOperation::ASSIGN, $13);
                                                                 $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                 TOC.analyzeVariable($5); }
     ;
@@ -186,10 +187,10 @@ declaration:
     | type_var sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
                                           SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
                                           TOC.analyzeVariable($3); }
-    | type_var sp T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
+    | type_var sp T_ID sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable);
                                                 SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                                                TOC.analyzeSpaces(1, $2);
+                                                TOC.analyzeSpaces(3, $2, $4,$6);
                                                 TOC.analyzeVariable($3); }
     // array
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
@@ -197,7 +198,7 @@ declaration:
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
-    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
                                                                                                         $$->setSymbolTable(SEMANTIC.symbolTable);
                                                                                                         TOC.analyzeVariable($3); }
     ;
@@ -221,26 +222,26 @@ multiple_declaration:
 
 // Atribuição
 attribuition:
-    T_ID sp T_ASSIGN sp expr { $$ = new BinaryOperation(SEMANTIC.assignVariable($1, $5), BinaryOperation::ASSIGN, $5);
+    T_ID sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $5), BinaryOperation::ASSIGN, $5);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable);
                                      SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                      TOC.analyzeSpaces(2, $2, $4);}
     // array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
+    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr {$$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
     expr {$$ = $1; }
-    | expr T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4);
+    | expr T_COMMA sp multiple_attribution {$$ = SEMANTIC.declareBinaryOperation($1, BinaryOperation::MULT_ATT, $4);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 
 // Expressão
 expr:
     expr_right {$$ = $1; }
-    | expr sp op_binary sp expr_right {$$ = new BinaryOperation($1, (BinaryOperation::Type)$3, $5);
+    | expr sp op_binary sp expr_right {$$ = SEMANTIC.declareBinaryOperation($1, (BinaryOperation::Type)$3, $5);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); SEMANTIC.analyzeCasting((BinaryOperation*) $$) ;}
     ;
 

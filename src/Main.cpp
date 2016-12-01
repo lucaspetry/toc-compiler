@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
 #ifdef LLVM // Gera o código intermediário
     if(!ERROR_LOGGER->hasErrors()) {
-        codeGen.setProgramTitle("TOC Program");    
+        codeGen.setProgramTitle("TOC Program");
         codeGen.generateExecuteCode(SYNTAX_TREE);
     }
 #else // Ou imprime a árvore sintática
