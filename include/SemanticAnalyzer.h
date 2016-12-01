@@ -268,6 +268,21 @@ class SemanticAnalyzer {
          */
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
 
+        /**
+         * Usar um objeto
+         * @param varId
+         * @param index
+         * @return nodo correspondente à variável
+         */
+        TreeNode* useObject(std::string varId, std::string value);
+        /**
+         * Inicializa um objeto
+         * @param varId
+         * @param index
+         * @return nodo correspondente à variável
+         */
+        TreeNode* initializeObject(std::string varId, std::string object);
+
     public:
         SymbolTable symbolTable;
         TreeNode* currentStructure;

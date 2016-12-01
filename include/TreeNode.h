@@ -20,6 +20,7 @@ class TreeNode {
     friend class BinaryOperation;
     friend class Conditional;
     friend class SymbolTable;
+    friend class SemanticAnalyzer;
 
     public:
         /**
@@ -53,6 +54,7 @@ class TreeNode {
         virtual std::string printInOrder() const = 0;
         virtual void setBody(CodeBlock* codeBlock) = 0;
         void setType(Data::Type type);
+        std::string toString(TreeNode::ClassType tipo);
         void setSymbolTable(SymbolTable& table);
         Data::Type dataType() const;
 

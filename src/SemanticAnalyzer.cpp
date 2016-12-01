@@ -189,13 +189,17 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
                                 return false;
       case TreeNode::VARIABLE:
       case TreeNode::ARRAY:
-      case TreeNode::VARIABLE_DECLARATION: if(this->lastStatement->classType() == TreeNode::OBJECT)
+      case TreeNode::VARIABLE_DECLARATION: if(this->lastStatement!= NULL && this->lastStatement->classType() == TreeNode::OBJECT)
                                               return false;
                                             return true;
       case TreeNode::OBJECT:  if(this->symbolTable.getParentStructure() == NULL)
                                     return true;
                               return false;
-                            }
+      // case TreeNode::BINARY_OPERATION: if(this->symbolTable.getParentStructure() != NULL)
+      //                                     return false;
+      //                                 return true;
+      //                       }
+    }
   }
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
@@ -219,6 +223,8 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
 }
 
 TreeNode* SemanticAnalyzer::declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right) {
+    // if(!checkStatement(TreeNode::BINARY_OPERATION))
+    //   ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal instruction.");
     BinaryOperation* binOP = new BinaryOperation(left,op,right);
     this->currentStructure = binOP;
     this->lastStatement = binOP;
@@ -242,7 +248,8 @@ TreeNode* SemanticAnalyzer::declareObject(std::string id, CodeBlock* param, Code
 TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, int encapsulation, int size) {
   if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object scope.");
-    Object* obj = (Object*) this->lastStatement;
+
+    Object* o = (Object*)this->symbolTable.getParentStructure();
 
     if(size > 0){
         Array* a = new Array(id, type, new Integer(size));
@@ -251,6 +258,7 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
         if(encapsulation == 1)
           this->symbolTable.getSymbol(id).setEncapsulation(true);
         this->lastStatement = a;
+        o->setSymbolTable(this->symbolTable);
         return a;
     }else{
       VariableDeclaration* vd = new VariableDeclaration(type, new Variable(id, type));
@@ -259,6 +267,7 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
       if(encapsulation == 1)
         this->symbolTable.getSymbol(id).setEncapsulation(true);
       this->lastStatement = vd;
+      o->setSymbolTable(this->symbolTable);
       return vd;
     }
   return NULL;
@@ -267,6 +276,8 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
 TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size) {
   if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object scope.");
+
+    Object* o = (Object*)this->symbolTable.getParentStructure();
 
     if(this->checkIdentifier(id)) {
         if(size > 0) {
@@ -277,6 +288,7 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
             if(encapsulation == 1)
               this->symbolTable.getSymbol(id).setEncapsulation(true);
             this->lastStatement = array;
+            o->setSymbolTable(this->symbolTable);
             return array;
         }
 
@@ -290,6 +302,7 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
         v->setSymbolTable(this->symbolTable);
         vD->setSymbolTable(this->symbolTable);
         this->lastStatement = vD;
+        o->setSymbolTable(this->symbolTable);
         return vD;
     }
 
@@ -299,7 +312,9 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
 TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation) {
   if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation method out of object scope.");
+
     Function* function;
+    Object* o = (Object*)this->symbolTable.getParentStructure();
     if(this->checkIdentifier(id)) {
         function = new Function(id, params, body, NULL);
         function->setType(returnType);
@@ -308,6 +323,7 @@ TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, Cod
         this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
         this->currentStructure = function;
         this->lastStatement = function;
+        o->setSymbolTable(this->symbolTable);
         return function;
   }
 
@@ -320,11 +336,11 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
 
         if(!id.compare("toc")) { // Se é a função toc, cria a mesma
             if(!checkStatement(TreeNode::TOC_FUNCTION))
-              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal toc function declaration." );
+              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal toc function declaration in this scope." );
             function = new TocFunction(body);
         } else { // Outra função qualquer
             if(!checkStatement(TreeNode::FUNCTION))
-              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration." );
+              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
 
             function = new Function(id, params, body, NULL);
             function->setType(returnType);
@@ -340,7 +356,9 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
 }
 
 TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
-    Function* f = (Function*) this->symbolTable.getParentStructure();
+    Function* f = NULL;
+    if(this->symbolTable.getParentStructure()->classType() == TreeNode::FUNCTION)
+      f = (Function*) this->symbolTable.getParentStructure();
     if(f->dataType() != ret->dataType()){
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Return value for function " + f->getId() + "is different from expected;" );
     }
@@ -365,7 +383,6 @@ TreeNode* SemanticAnalyzer::declareElseCondition(CodeBlock* body) {
 
     if(this->lastStatement->classType() != TreeNode::CONDITIONAL){
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, elseError);
-        std::cout << this->symbolTable.getParentStructure()->classType() << std::endl;
       }
 
     Conditional* cond = (Conditional*) this->lastStatement;
@@ -452,6 +469,13 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
 
   // return a random variable case id is in use
   return new VariableDeclaration(dataType, new Variable(id, dataType));
+}
+TreeNode* SemanticAnalyzer::useObject(std::string id,std::string value){
+  return NULL;
+
+}
+TreeNode* SemanticAnalyzer::initializeObject(std::string classe, std::string object){
+  return NULL;
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {

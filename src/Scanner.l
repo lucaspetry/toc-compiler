@@ -44,6 +44,7 @@ comment ([#][^\n]*)
 "obj"               {return T_OBJ;}
 "prv"               {return T_PRV;}
 "pub"               {return T_PUB;}
+"."                 {return T_DOT;}
 
 "+"                 {return T_PLUS;}
 "-"                 {return T_MINUS;}
