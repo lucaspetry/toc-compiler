@@ -58,7 +58,7 @@
 %token T_TAB T_SP T_NL
 %token T_TOC T_PRINT T_RETURN
 %token T_FOR T_IN
-%token T_OBJ T_PRV T_PUB
+%token T_OBJ T_PRV T_PUB T_DOT
 
 /*
  * Símbolos não-terminais da gramática e seus respectivos tipos.
@@ -67,7 +67,7 @@
 %type <syntaxTree> program
 %type <node> line declaration attribuition multiple_attribution expr expr_right function object_attributes object_functions
 %type <codeBlock> lines multiple_declaration function_params
-%type <integer> indent sp type_var  op_binary encapsulation function_type
+%type <integer> indent sp type_var  op_binary encapsulation
 
 /*
  * Precedência de operadores.
@@ -138,6 +138,9 @@ line:
     | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL); }
     | object_attributes {$$ = $1;  }
     | object_functions {$$ = $1; }
+    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);} //TODO implementar initializeObject
+    | T_ID T_DOT T_ID {$$ = SEMANTIC.useObject($1,$3);} //TODO implementar useObject
+    //TODO faltando uso de métodos!
     ;
 
 // Metodos para objetos (encapsulamento)
@@ -147,7 +150,7 @@ object_functions:
 
     ;
 
-// Atributos para obejtos (encapsulamento)
+// Atributos para objetos (encapsulamento)
 object_attributes:
     encapsulation sp type_var sp T_ID { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1);
                                               TOC.analyzeVariable($5);
@@ -175,6 +178,8 @@ function_params:
 function:
      type_var sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type)$1); }
     | type_var sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
+    | T_VOID sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type)$1); }
+    | T_VOID sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
     | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3); }
     ;
 
@@ -287,15 +292,6 @@ type_var:
     | T_FLT {$$ = Data::FLT;}
     | T_INT {$$ = Data::INT;}
     | T_STR {$$ = Data::STR;}
-    ;
-
-// Tipos de funções
-function_type:
-    T_BOO {$$ = Data::BOO;}
-    | T_FLT {$$ = Data::FLT;}
-    | T_INT {$$ = Data::INT;}
-    | T_STR {$$ = Data::STR;}
-    | T_VOID {$$ = Data::VOID;}
     ;
 
 // Indentação
