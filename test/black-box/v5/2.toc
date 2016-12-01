@@ -1,11 +1,5 @@
-# Main
+# Funcao principal do programa
 void toc()
-  int a, b, d
-  a = 0
-  int h = 9
-  flt j[14]
-  boo um[2], dois[9], tres[8]
-  int aaa[2] = {1, 4}
-  flt Up[9]
-  boo gg[66], GG[6]
-  str aAa[10],bBb[1]
+  # Exemplo de criacao de arrays em TOC
+  int frutas[5]
+  int ameixa = frutas[4]

@@ -1,9 +1,8 @@
 # Funcao principal do programa
 void toc()
   int abacate, banana, caqui
+  flt a, b, c
   abacate = 0
   boo figo, goiaba
   flt kiwi = 2.5
-  print "Kiwi: "
-  print kiwi
-  print "\n"
+  str j, l, m

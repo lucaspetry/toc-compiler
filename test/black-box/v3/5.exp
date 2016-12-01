@@ -1,6 +1,4 @@
 [Line 1] Warning: TOC recommends that comments initiate with an uppercase character.
-[Line 2] Warning: TOC recommends that comments initiate with an uppercase character.
 # funcao principal do programa
-#         funcao principal do programa
 void toc()
   # Codigo da funcao principal

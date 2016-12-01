@@ -1,0 +1,4 @@
+# Funcao principal do programa
+void toc()
+  int abacaxi
+  flt abacaxi = 9.0

@@ -1,0 +1,5 @@
+# Funcao principal do programa
+void toc()
+  int abacaxi
+  int banana
+  banana = abacaxi

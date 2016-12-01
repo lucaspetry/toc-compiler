@@ -1,0 +1,4 @@
+# Funcao principal TOC
+int a = 78
+# TOC nao declarada
+flt b = 9.1

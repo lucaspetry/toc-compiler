@@ -1,0 +1,5 @@
+# Funcao principal do programa
+void toc()
+  int frutas[3] = {1, 2, 3}
+  int laranja = frutas[4]
+  frutas[3] = 5

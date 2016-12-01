@@ -32,12 +32,12 @@ std::string Loop::printInOrder() const {
 
       VariableDeclaration* vd = (VariableDeclaration*)this->init;
       Variable* v = (Variable*) vd->getNext();
-      Array* a = (Array*) attribuition;
-      a->setType(Data::UNKNOWN);
+      // Array* a = (Array*) attribuition;
+      attribuition->setType(Data::UNKNOWN);
 
       output += v->printInOrder();
       output += " in ";
-      output += a->printInOrder();
+      output += attribuition->printInOrder();
 
     }
 

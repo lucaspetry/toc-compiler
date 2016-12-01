@@ -1,5 +1,5 @@
-# Funcao principal do programa
+# Exemplo de conversão entre tipos
 void toc()
-  # Exemplo de conversao entre tipos
-  int laranja = 5
+  str laranja = "5"
   flt suco = laranja
+  boo bom = suco

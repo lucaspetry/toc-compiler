@@ -10,12 +10,11 @@
 class Array : public TreeNode {
 
     public:
-        Array(std::string id, Data::Type type, TreeNode* size, std::vector<TreeNode*> *values = NULL);
+        Array(std::string id, Data::Type type, TreeNode* size, TreeNode* values = NULL);
         virtual ~Array();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
-        void setType(Data::Type type);
-        std::vector<TreeNode*>* getValues();
+        TreeNode* getValues();
         void setBody(CodeBlock* codeBlock);
         void setEncapsulation(int value);
         TreeNode* getSize();
@@ -23,9 +22,8 @@ class Array : public TreeNode {
 
     private:
       std::string id;
-      Data::Type type;
       TreeNode* size;
-      std::vector<TreeNode*> *values;
+      TreeNode* values;
       int encapsulation;
 };
 #endif

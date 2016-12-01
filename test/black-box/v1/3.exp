@@ -1,0 +1,4 @@
+[Line 4] Warning: Variable Abc initiates with an uppercase character. TOC recommends that variable's name initiates with a lowercase character.
+# Identificadores de funcoes variaveis e objetos
+void toc()
+  int Abc = 765

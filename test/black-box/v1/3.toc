@@ -1,0 +1,3 @@
+# Identificadores de funcoes variaveis e objetos
+void toc()
+  int Abc = 765

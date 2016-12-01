@@ -1,0 +1,14 @@
+# Exemplo de funcoes
+void toc()
+  # Funcoes
+  str tempo = "chuva"
+
+
+# Define se uma banana esta madura
+boo bananaEstaMadura()
+  boo madura = false
+
+  if(madura == true)
+    madura = true
+
+  ret madura

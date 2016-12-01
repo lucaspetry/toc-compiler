@@ -95,7 +95,7 @@
 
 // Início do parsing
 start:
-    program { /*SEMANTIC.analyzeProgram();*/
+    program { SEMANTIC.analyzeProgram();
               TOC.analyzeProgram(); }
     ;
 
@@ -193,13 +193,17 @@ declaration:
                                                 TOC.analyzeVariable($3); }
     // array
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
-                                                  TOC.analyzeVariable($3); }
+                                                  TOC.analyzeVariable($3);
+                                                  TOC.analyzeSpaces(1, $2);}
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
-    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = new BinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5),
+                                                                                                        BinaryOperation::ASSIGN, $11);
+                                                                                                        ((BinaryOperation*)$11)->setOp(BinaryOperation::MULT_ATT);
                                                                                                         $$->setSymbolTable(SEMANTIC.symbolTable);
-                                                                                                        TOC.analyzeVariable($3); }
+                                                                                                        TOC.analyzeVariable($3);
+                                                                                                        SEMANTIC.analyzeArray($3, $5, $11);}
     ;
 
 // Multiplas declarações
@@ -226,14 +230,14 @@ attribuition:
                                      SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                      TOC.analyzeSpaces(2, $2, $4);}
     // array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
-                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
+    | T_ID T_OBRACKET expr T_CBRACKET sp T_ASSIGN sp expr {$$ = new BinaryOperation(SEMANTIC.assignVariable($1, $8, $3), BinaryOperation::ASSIGN, $8);
+                                                 $$->setSymbolTable(SEMANTIC.symbolTable);}
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
     expr {$$ = $1; }
-    | expr T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::MULT_ATT, $4);
+    | expr T_COMMA sp multiple_attribution {$$ = new BinaryOperation($1, BinaryOperation::COMMA, $4);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 

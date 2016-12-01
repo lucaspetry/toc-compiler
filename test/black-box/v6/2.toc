@@ -1,0 +1,4 @@
+# Exemplo de conversão entre tipos
+void toc()
+  str groselha = "groselha"
+  flt suco = groselha

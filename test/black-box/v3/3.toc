@@ -1,3 +1,4 @@
-# Funcao principal do programa$$$
+# Funcao principal do programa $$$&&&%%%
 void toc()
-  # Codigo da funcao principal
+  # Codigo da funcao principal__1000
+  #                Espacos

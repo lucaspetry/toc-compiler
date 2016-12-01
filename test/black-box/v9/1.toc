@@ -1,0 +1,13 @@
+# Escopo global
+
+
+# Função principal
+void toc()
+  # Novo escopo, pertencente ao escopo global
+  print helloWorld()
+
+
+# Função Olá Mundo
+str helloWorld()
+  # Novo escopo, pertencente ao escopo global
+  ret "Hello World"

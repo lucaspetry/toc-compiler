@@ -1,0 +1,7 @@
+# Identificadores de funcoes variaveis e objetos
+void toc()
+  int a = 0
+  flt b = 1.0
+  boo c = false
+  boo d = true
+  str e = "string"

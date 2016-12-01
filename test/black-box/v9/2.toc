@@ -1,0 +1,8 @@
+# Método que mistura por um determinado tempo
+void toc
+  # A
+  void misturar(int tempo)
+    flt mistura = 0
+    mistura = tempo * 3
+
+  flt copo = mistura

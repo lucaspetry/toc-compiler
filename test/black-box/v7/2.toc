@@ -1,0 +1,6 @@
+# Exemplo de uso dos operadores matematicos
+void toc()
+  int a = 5
+  a = a + 5 * 3
+  int b[1] = {9}
+  a = b[1]/5 + (90*3) - 8
