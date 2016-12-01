@@ -6,6 +6,7 @@
 #include "BinaryOperation.h"
 #include "Boolean.h"
 #include "Comment.h"
+#include "Data.h"
 #include "Float.h"
 #include "Function.h"
 #include "Integer.h"
@@ -81,6 +82,20 @@ void CodeGenerator::generateExecuteCode(SyntaxTree* const syntaxTree) const {
     // Executa a função principal e imprime o resultado
     std::vector<llvm::GenericValue> noargs;
     executionEngine->runFunction(IR::MainFunction, noargs);
+}
+
+llvm::Type* Data::toLLVMType(Data::Type type) {
+    switch(type) {
+        case Data::BOO:
+        case Data::INT:
+            return llvm::Type::getInt32Ty(IR::Context);
+        case Data::FLT:
+            return llvm::Type::getPrimitiveType(IR::Context, llvm::Type::FloatTyID);
+        case Data::STR:
+            return llvm::Type::getPrimitiveType(IR::Context, llvm::Type::ArrayTyID);
+        default:
+            return llvm::Type::getVoidTy(IR::Context);
+    }
 }
 
 void SyntaxTree::generateCode() {
@@ -167,7 +182,14 @@ llvm::Value* Float::generateCode() {
 }
 
 llvm::Value* Function::generateCode() {
-    return NULL; //TODO;
+    llvm::FunctionType* funType = llvm::FunctionType::get(Data::toLLVMType(this->dataType()), false);
+    IR::Module->getOrInsertFunction(this->id, funType);
+    IR::CurrentFunction = IR::Module->getFunction(this->id);
+
+    body->generateCode();
+    // TODO;
+
+    return IR::CurrentFunction;
 }
 
 llvm::Value* Integer::generateCode() {

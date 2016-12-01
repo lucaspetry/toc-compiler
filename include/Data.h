@@ -1,6 +1,7 @@
 #ifndef DATA_H_
 #define DATA_H_
 
+#include "LLVM.h"
 #include <string>
 
 /**
@@ -27,6 +28,8 @@ namespace Data {
      * @return texto do tipo
      */
     std::string toString(Data::Type type);
+
+    llvm::Type* toLLVMType(Data::Type type);
 
 }
 
