@@ -22,7 +22,7 @@ std::string VariableDeclaration::printInOrder() const {
       break;
       default: break;
     }
-    output+= toString(this->type) + " ";
+    output+= Data::toString(this->type) + " ";
     output += next->printInOrder();
     return output;
 }

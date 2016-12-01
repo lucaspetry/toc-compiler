@@ -58,6 +58,11 @@ void ErrorLogger::printGraph(){
   float pCorreto = (float)((yylineno-1) - this->totalErros)/(yylineno-1);
   float pErro = (float)this->totalErros/(yylineno-1);
   float pWarning = (float)errorCount[ErrorLogger::WARNING]/(yylineno-1);
+
+  if(pCorreto < 0) pCorreto = 0;
+  if(pErro > 1) pErro = 1;
+  if(pWarning > 1) pWarning = 1;
+
   g.graph(pCorreto, pWarning, pErro);
 }
 
