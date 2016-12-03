@@ -1,6 +1,6 @@
 # Exemplo de objetos em TOC
-obj Arvore(int galhos)
-  prv int galhos = galhos
+obj Arvore(int galhoss)
+  prv int galhos = galhoss
   pub int frutas = 0
   # Essa função calcula o número de frutas colhidas
   pub int colher()

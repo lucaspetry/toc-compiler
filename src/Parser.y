@@ -64,8 +64,8 @@
  * Os tipos correspondem às variáveis usadas na união.
  */
 %type <syntaxTree> program
-%type <node> line declaration attribuition multiple_attribution expr expr_right object_attributes object_functions
-%type <codeBlock> lines multiple_declaration function_params call_params
+%type <node> line declaration attribuition expr expr_right object_attributes object_functions
+%type <codeBlock> lines multiple_declaration multiple_attribution function_params call_params
 %type <integer> indent sp type_var  op_binary encapsulation
 
 /*
@@ -209,8 +209,7 @@ declaration:
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
                                                                       TOC.analyzeVariable($3); }
-    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::ASSIGN, $11);
-                                                                                                          ((BinaryOperation*)$11)->setOp(BinaryOperation::MULT_ATT);
+    | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::MULT_ASSIGN, $11);
                                                                                                           TOC.analyzeVariable($3);
                                                                                                           SEMANTIC.analyzeArray($3, $5, $11);}
     ;
@@ -238,14 +237,14 @@ attribuition:
                                     SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                     TOC.analyzeSpaces(2, $2, $4);}
     // Array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr {$$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8); }
+    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8); }
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
-    expr {$$ = $1; }
-    | expr T_COMMA sp multiple_attribution {$$ = SEMANTIC.declareBinaryOperation($1, BinaryOperation::COMMA, $4);
-                                                 $$->setSymbolTable(SEMANTIC.symbolTable); }
+    expr { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
+           $$->insertLineFront($1); }
+    | expr T_COMMA sp multiple_attribution { $$ = $4; $$->insertLineFront($1); }
     ;
 
 // Expressão

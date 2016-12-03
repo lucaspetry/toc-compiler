@@ -1,0 +1,5 @@
+# Teste array
+void toc()
+  int a[3]
+  a[1] = 4
+  int b = a[1]

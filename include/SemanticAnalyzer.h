@@ -88,16 +88,6 @@ class SemanticAnalyzer {
         void analyzeProgram();
 
         /**
-         * Analisar o local onde foi inserida a instrução
-         */
-        bool checkStatement(TreeNode::ClassType tipo);
-
-        /**
-         * Analisar a criação de um novo escopo
-         */
-        void analyzeScopeCreation();
-
-        /**
          * Analisar...
          * @param op
          */
@@ -121,14 +111,7 @@ class SemanticAnalyzer {
          * @param size posições do array
          * @param attribuition valores atribuidos ao array
          */
-        void analyzeArray(std::string id, int size, TreeNode* attribuition);
-
-        /**
-         * Analisar a declaração de Array
-         * @param id identificador da variavel
-         * @param size posições do array
-         */
-        void analyzeAssignArray(std::string id, TreeNode* size);
+        void analyzeArray(std::string id, int size, CodeBlock* attribuition);
 
         /**
          * Verificar o uso de um identificador.
@@ -136,6 +119,13 @@ class SemanticAnalyzer {
          * @return true se o identificador pode ser usado
          */
         bool checkIdentifier(std::string id) const;
+
+        /**
+         * Analisar o escopo de inserção da instrução
+         * @param type tipo do objeto
+         * @return true se a instrução pode ser declarada no escopo
+         */
+        bool checkStatement(TreeNode::ClassType type);
 
         /**
          * Converter um nodo para o tipo especificado, se necessário

@@ -23,6 +23,16 @@ std::string CodeBlock::printInOrder() const {
     return output.substr(0, output.size()-1);
 }
 
+std::string CodeBlock::printInLine() const {
+    std::string output = "";
+
+    for(TreeNode* node : this->lines){
+        output += node->printInOrder();
+        output += ", ";
+    }
+    return output.substr(0, output.size()-2);
+}
+
 void CodeBlock::setBody(CodeBlock* codeBlock) {
 }
 

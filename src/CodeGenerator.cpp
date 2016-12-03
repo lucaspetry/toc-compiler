@@ -322,6 +322,8 @@ llvm::Value* TypeCasting::generateCode() {
 }
 
 llvm::Value* Variable::generateCode() {
+    if(IR::PHILoop != NULL)
+        return IR::PHILoop;
     return this->symbolTable.getVariableAllocation(id);
 }
 
@@ -370,8 +372,6 @@ llvm::Value* Conditional::generateCode() {
         }
     }
 
-    // Precisa de PHI!!!!!!!!
-
     return condition;
 }
 
@@ -407,16 +407,18 @@ llvm::Value* Loop::generateCode() {
   IR::Builder->CreateBr(LoopBB);
   IR::Builder->SetInsertPoint(LoopBB);
 
+  std::cout << "Start: " << start->getName().str() << std::endl;
   llvm::PHINode *phi = IR::Builder->CreatePHI(start->getType(), 2, "Phi");
-  phi->addIncoming(start,PreheaderBB);
+  phi->addIncoming(IR::Builder->CreateAdd(start, IR::One), PreheaderBB);
 
   this->body->generateCode();
 
-  llvm::Value* att= this->attribuition->generateCode();
-  llvm::Value *NextVar = IR::Builder->CreateAdd(phi, att, "nextvar");
+  IR::PHILoop = phi;
+  llvm::Value* att = this->attribuition->generateCode();
 
   llvm::Value* condition = this->test->generateCode();
   llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
+  IR::PHILoop = NULL;
 
   // Create the "after loop" block and insert it.
  llvm::BasicBlock *LoopEndBB = IR::Builder->GetInsertBlock();
@@ -428,7 +430,7 @@ llvm::Value* Loop::generateCode() {
  // Any new code will be inserted in AfterBB.
  IR::Builder->SetInsertPoint(AfterBB);
  // Add a new entry to the PHI node for the backedge.
- phi->addIncoming(NextVar, LoopEndBB);
+ phi->addIncoming(att, LoopEndBB);
 
  // for expr always returns 0.0.
  return condition;
