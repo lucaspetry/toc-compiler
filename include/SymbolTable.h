@@ -120,7 +120,12 @@ class SymbolTable {
          * @param id identificador do símbolo
          */
         void setInitializedSymbol(const std::string id, TreeNode* data = NULL);
-
+        /**
+         * Setar o encapsulamento de um atributo
+         * @param id identificador do símbolo
+         * @param encapsulation publico ou privado
+         */
+        void setEncapsulation(std::string id, int encapsulation);
         /**
          * Definir o dado correspondente ao símbolo
          * @param id identificador do símbolo

@@ -141,6 +141,21 @@ void SymbolTable::setInitializedSymbol(std::string id, TreeNode* data) {
     }
 }
 
+void SymbolTable::setEncapsulation(std::string id, int encapsulation){
+  if(this->existsSymbol(id))
+      this->currentScope->setEncapsulation(id, encapsulation);
+  else {
+      Scope* scopeIt = this->currentScope;
+      while(scopeIt->getParent() != NULL) {
+          scopeIt = scopeIt->getParent();
+
+          if(scopeIt->existsSymbol(id)) {
+              scopeIt->setEncapsulation(id, encapsulation);
+              break;
+          }
+      }
+  }
+}
 void SymbolTable::setSymbolData(const std::string id, TreeNode* data) {
     currentScope->setSymbolData(id, data);
 }

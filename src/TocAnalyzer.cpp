@@ -30,6 +30,11 @@ void TocAnalyzer::analyzeVariable(std::string id){
             "TOC recommends that variable's name initiates with a lowercase character.");
 }
 
+void TocAnalyzer::analyzeObject(std::string id){
+  if(islower(id.at(0)))
+        ERROR_LOGGER->log(ErrorLogger::WARNING, "Object " + id + " initiates with an lowercase character. "
+            "TOC recommends that classes name initiates with a uppercase character.");
+}
 void TocAnalyzer::analyzeSpaces(int n_args, ...) {
     va_list ap;
     va_start(ap, n_args);

@@ -1,0 +1,6 @@
+obj Arvore()
+  pub int galhos
+
+void toc()
+  Arvore a()
+  int b = a.galhos

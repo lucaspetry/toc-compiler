@@ -117,7 +117,7 @@ line:
     | declaration
     | attribuition
     // Diversos
-    | T_COMMENT { $$ = new Comment($1); TOC.analyzeComment((Comment*) $$); }
+    | T_COMMENT { $$ = SEMANTIC.declareComment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expr { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
     // Condicional
     | T_IF T_OPAR expr T_CPAR sp {$$ = SEMANTIC.declareCondition($3, NULL); }
@@ -138,25 +138,28 @@ line:
     | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL); }
     | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4); }
     // Objeto
-    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3, $5, NULL); }
-    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL); }
+    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3, $5, NULL);   TOC.analyzeObject($3);}
+    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL);   TOC.analyzeObject($3);}
     | object_attributes
     | object_functions
-    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);} //TODO implementar initializeObject
-    | T_ID T_DOT T_ID {$$ = SEMANTIC.useObject($1,$3);} //TODO implementar useObject
+    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);}
+    | T_ID sp T_ID T_OPAR call_params T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3,$5);}
+    /*| T_ID T_DOT T_ID {$$ = SEMANTIC.useAttribute($1,$3);}*/
+    | T_ID T_DOT T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.useMethod($1,$3);}
+    | T_ID T_DOT T_ID T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.useMethod($1,$3,$5);}
     //TODO faltando uso de métodos!
     ;
 
 // Metodos para objetos (encapsulamento)
 object_functions:
-    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1); }
-    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1); }
+    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1);   TOC.analyzeVariable($5);}
+    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1);  TOC.analyzeVariable($5); }
 
     ;
 
 // Atributos para objetos (encapsulamento)
 object_attributes:
-    encapsulation sp type_var sp T_ID { $$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1);
+    encapsulation sp type_var sp T_ID {$$ = SEMANTIC.declareAttribute($5, (Data::Type)$3, $1);
                                               TOC.analyzeVariable($5);
                                               TOC.analyzeSpaces(2, $2, $4);}
     | encapsulation sp type_var sp T_ID sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignAttribute($5, (Data::Type)$3, $1, $9), BinaryOperation::ASSIGN, $9);
@@ -263,6 +266,7 @@ expr_right:
   // Dados/expressões compostas
   | T_ID { $$ = SEMANTIC.useVariable($1); }
   | T_ID T_OBRACKET expr T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
+  | T_ID T_DOT T_ID {$$ = SEMANTIC.useAttribute($1,$3);}
 //  | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL); }
 //  | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4); }
   | T_MINUS sp expr %prec U_MINUS T_SP LINE { $$ = new UnaryOperation(UnaryOperation::MINUS, $3); }

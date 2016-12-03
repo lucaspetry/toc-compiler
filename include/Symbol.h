@@ -17,10 +17,10 @@ class Symbol {
          * Tipo do identificador representado pelo símbolo
          */
         enum IdentifierType {
-            UNKNOWN,
-            FUNCTION,
-            OBJECT,
-            VARIABLE
+            UNKNOWN = 0,
+            FUNCTION = 1,
+            OBJECT = 2,
+            VARIABLE = 3
         };
 
         /**
@@ -76,13 +76,18 @@ class Symbol {
          * Definir o tipo de encapsulamento do atributo
          * @param value valor do encapsulamento
          */
-        void setEncapsulation(bool value);
+        void setEncapsulation(int value);
+        /**
+         * Retona o tipo de encapsulamento
+         *@return true se é privado
+         */
+        int getEncapsulation();
 
     private:
         Data::Type dataType;
         IdentifierType idType;
         bool initialized;
-        bool encapsulation;
+        int encapsulation;
         TreeNode* data;
 
 };

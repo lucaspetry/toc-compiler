@@ -10,6 +10,7 @@
 #include "Integer.h"
 #include "Variable.h"
 #include "BinaryOperation.h"
+#include "Comment.h"
 #include "Conditional.h"
 #include "TypeCasting.h"
 #include "String.h"
@@ -278,12 +279,22 @@ class SemanticAnalyzer {
         TreeNode* useVariable(std::string varId, TreeNode* index = NULL);
 
         /**
-         * Usar um objeto
+         * Usar um atributo
          * @param varId
          * @param index
          * @return nodo correspondente à variável
          */
-        TreeNode* useObject(std::string varId, std::string value);
+        TreeNode* useAttribute(std::string varId, std::string value);
+        /**
+         * Usar um método
+         * @param varId
+         * @param index
+        * @param params
+         * @return nodo correspondente ao metodo
+         */
+        TreeNode* useMethod(std::string varId, std::string value, CodeBlock* params = NULL);
+
+        TreeNode* declareComment(std::string comment);
 
         /**
          * Inicializa um objeto
@@ -291,7 +302,7 @@ class SemanticAnalyzer {
          * @param index
          * @return nodo correspondente à variável
          */
-        TreeNode* initializeObject(std::string varId, std::string object);
+        TreeNode* initializeObject(std::string varId, std::string object, CodeBlock* params = NULL);
 
     public:
         SymbolTable symbolTable;

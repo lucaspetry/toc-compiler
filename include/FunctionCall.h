@@ -16,11 +16,15 @@ class FunctionCall : public TreeNode {
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
         std::string getId() const;
+        void setClass(std::string classe) ;
+        void setObj(std::string obj) ;
         void setBody(CodeBlock* codeBlock);
         llvm::Value* generateCode();
 
     protected:
         std::string id;
+        std::string classe;
+        std::string obj;
         CodeBlock* params;
 
 };

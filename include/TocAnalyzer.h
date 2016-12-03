@@ -10,38 +10,43 @@
 extern ErrorLogger* ERROR_LOGGER;
 
 /**
- * Analisador TOC 
+ * Analisador TOC
  */
 class TocAnalyzer {
 
     public:
         /**
-         * Construir o analisador TOC 
+         * Construir o analisador TOC
          */
         TocAnalyzer();
-    
+
         /**
-         * Destruir o analisador TOC 
+         * Destruir o analisador TOC
          */
         virtual ~TocAnalyzer();
-    
+
         /**
          * Analisar o programa (última função executada na análise sintática)
          */
         void analyzeProgram();
-    
+
         /**
          * Analisar um comentário
          * @param comment comentário
          */
         void analyzeComment(Comment* comment);
-    
+
         /**
          * Analisar uma variável
-         * @param id identificador da variável 
+         * @param id identificador da variável
          */
         void analyzeVariable(std::string id);
-    
+        /**
+         * Analisar um objeto
+         * @param id identificador da variável
+         */
+        void analyzeObject(std::string id);
+
         /**
          * Analisar espaços em branco
          * @param n_args número de espaços em branco

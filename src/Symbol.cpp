@@ -12,7 +12,7 @@ Symbol::Symbol(Data::Type dataType, IdentifierType idType, bool initialized, Tre
     this->idType = idType;
     this->initialized = initialized;
     this->data = data;
-    this->encapsulation = false;
+    this->encapsulation = 0;
 }
 
 Symbol::~Symbol() {
@@ -26,7 +26,7 @@ Data::Type Symbol::getDataType() const {
     return this->dataType;
 }
 
-void Symbol::setEncapsulation(bool value){
+void Symbol::setEncapsulation(int value){
     this->encapsulation = value;
 }
 
@@ -40,4 +40,7 @@ bool Symbol::isInitialized() const {
 
 void Symbol::setDataType(Data::Type type) {
     this->dataType = type;
+}
+int Symbol::getEncapsulation(){
+  return this->encapsulation;
 }

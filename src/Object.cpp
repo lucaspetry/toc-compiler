@@ -28,3 +28,7 @@ std::string Object::printInOrder() const {
 void Object::setBody(CodeBlock* codeBlock) {
     this->body = codeBlock;
 }
+
+std::string Object::getId(){
+  return this->id;
+}

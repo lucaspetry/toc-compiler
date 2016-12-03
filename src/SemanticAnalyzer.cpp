@@ -201,7 +201,11 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
       //                       }
     }
 }
-
+TreeNode* SemanticAnalyzer::declareComment(std::string comment){
+      Comment* c = new Comment(comment);
+      this->lastStatement = c;
+      return c;
+}
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
     if(this->checkIdentifier(id)) {
         if(size > 0) {
@@ -254,18 +258,21 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
     if(size > 0){
         Array* a = new Array(id, type, new Integer(size));
         a->setEncapsulation(encapsulation);
-        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true, a));
+        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false, a));
         if(encapsulation == 1)
-          this->symbolTable.getSymbol(id).setEncapsulation(true);
+          this->symbolTable.setEncapsulation(id,encapsulation);
+
         this->lastStatement = a;
         o->setSymbolTable(this->symbolTable);
         return a;
     }else{
       VariableDeclaration* vd = new VariableDeclaration(type, new Variable(id, type));
       vd->setEncapsulation(encapsulation);
-      this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true, vd));
+      this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false, vd));
       if(encapsulation == 1)
-        this->symbolTable.getSymbol(id).setEncapsulation(true);
+        this->symbolTable.setEncapsulation(id,encapsulation);
+
+
       this->lastStatement = vd;
       o->setSymbolTable(this->symbolTable);
       return vd;
@@ -274,6 +281,7 @@ TreeNode* SemanticAnalyzer::declareAttribute(std::string id, Data::Type type, in
 }
 
 TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type type, int encapsulation, TreeNode* value, int size) {
+
   if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation out of object scope.");
 
@@ -283,22 +291,22 @@ TreeNode* SemanticAnalyzer::declareAssignAttribute(std::string id, Data::Type ty
         if(size > 0) {
             Array* array = new Array(id, type, new Integer(size));
             array->setEncapsulation(encapsulation);
-            this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
+            this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true, array)); // Adds variable to symbol table and save array size
             this->symbolTable.setInitializedSymbol(id, array);
             if(encapsulation == 1)
-              this->symbolTable.getSymbol(id).setEncapsulation(true);
+              this->symbolTable.setEncapsulation(id,encapsulation);
             this->lastStatement = array;
             o->setSymbolTable(this->symbolTable);
             return array;
         }
 
-        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, false)); // Adds variable to symbol table
+        this->symbolTable.addSymbol(id, Symbol(type, Symbol::VARIABLE, true)); // Adds variable to symbol table
         this->symbolTable.setInitializedSymbol(id, value);
         Variable* v = new Variable(id, type);
         VariableDeclaration* vD = new VariableDeclaration(type, v);
         vD->setEncapsulation(encapsulation);
         if(encapsulation == 1)
-          this->symbolTable.getSymbol(id).setEncapsulation(true);
+          this->symbolTable.setEncapsulation(id,encapsulation);
         v->setSymbolTable(this->symbolTable);
         vD->setSymbolTable(this->symbolTable);
         this->lastStatement = vD;
@@ -313,6 +321,9 @@ TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, Cod
   if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() != TreeNode::OBJECT)
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Encapsulation method out of object scope.");
 
+  if(this->lastStatement != NULL && this->lastStatement->classType() != TreeNode::COMMENT)
+      ERROR_LOGGER->log(ErrorLogger::WARNING, "Method " + id+ " is not explained. Please do it right above the method declaration with a comment.");
+
     Function* function;
     Object* o = (Object*)this->symbolTable.getParentStructure();
     if(this->checkIdentifier(id)) {
@@ -320,7 +331,10 @@ TreeNode* SemanticAnalyzer::declareMethod(std::string id, CodeBlock* params, Cod
         function->setType(returnType);
         function->setEncapsulation(encapsulation);
 
+
         this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
+        if(encapsulation == 1)
+          this->symbolTable.setEncapsulation(id,encapsulation);
         this->currentStructure = function;
         this->lastStatement = function;
         o->setSymbolTable(this->symbolTable);
@@ -341,9 +355,10 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
         } else { // Outra função qualquer
             //if(!checkStatement(TreeNode::FUNCTION))
               //ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
-
-            function = new Function(id, params, body, NULL);
-            function->setType(returnType);
+          if(this->lastStatement != NULL && this->lastStatement->classType() != TreeNode::COMMENT)
+              ERROR_LOGGER->log(ErrorLogger::WARNING, "Method " + id+ " is not explained. Please do it right above the method declaration with a comment.");
+          function = new Function(id, params, body, NULL);
+          function->setType(returnType);
         }
 
         this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
@@ -487,14 +502,68 @@ TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dat
   // return a random variable case id is in use
   return new VariableDeclaration(dataType, new Variable(id, dataType));
 }
-TreeNode* SemanticAnalyzer::useObject(std::string id,std::string value){
-  return NULL;
+
+TreeNode* SemanticAnalyzer::useAttribute(std::string id, std::string value){
+  Object* o = (Object*)this->symbolTable.getSymbol(id, true).getData();
+  if(!o->symbolTable.existsSymbol(value, true)) {
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared attribute " + value + ".");
+      return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
+  }else if(!o->symbolTable.isSymbolInitialized(value, true)) {
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Attribute " + value + " used but not initialized.");
+  }
+
+  bool encap = o->symbolTable.getSymbol(value).getEncapsulation();
+
+  if(encap)
+    ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Attribute " + value + " is private.");
+
+  Variable* v = new Variable(value, o->symbolTable.getSymbol(value,true).getDataType());
+  v->setObj(id);
+  v->setSymbolTable(this->symbolTable);
+  return v;
 
 }
-TreeNode* SemanticAnalyzer::initializeObject(std::string classe, std::string object){
-  return NULL;
-}
 
+TreeNode* SemanticAnalyzer::initializeObject(std::string classe, std::string object, CodeBlock* params){
+  FunctionCall* call = new FunctionCall(classe, params);
+  Object* o = (Object*)this->symbolTable.getSymbol(classe, true).getData();
+  if(this->symbolTable.existsSymbol(classe, true)) {
+      call->setType(this->symbolTable.getSymbol(classe, true).getDataType());
+      this->symbolTable.addSymbol(object, Symbol(Data::UNKNOWN, Symbol::OBJECT, false, o)); // Adds variable to symbol table
+      call->setClass(object);
+      // TODO Verificar parâmetros
+
+      this->currentStructure = NULL;
+      this->lastStatement = call;
+  } else {
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared object " + classe+".");
+  }
+
+  return call;
+}
+TreeNode* SemanticAnalyzer::useMethod(std::string id, std::string method, CodeBlock* params){
+  FunctionCall* call = new FunctionCall(method, params);
+  Object* o = (Object*)this->symbolTable.getSymbol(id, true).getData();
+  if(o->symbolTable.existsSymbol(method, true)) {
+      call->setType(this->symbolTable.getSymbol(method, true).getDataType());
+      this->symbolTable.addSymbol(method, Symbol(Data::UNKNOWN, Symbol::OBJECT, false, o)); // Adds variable to symbol table
+      call->setObj(id);
+      bool encap = o->symbolTable.getSymbol(method).getEncapsulation();
+
+      if(encap)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Method " + method + " is private.");
+
+      // TODO Verificar parâmetros
+
+      this->currentStructure = NULL;
+      this->lastStatement = call;
+  } else {
+      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Object "+id+" has no method called " + method+".");
+  }
+  return call;
+
+
+}
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
   if(!this->symbolTable.existsSymbol(id, true)) {
       ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");

@@ -66,6 +66,12 @@ void Scope::setInitializedSymbol(std::string id, TreeNode* data) {
     entryList[id] = s;
 }
 
+void Scope::setEncapsulation(std::string id, int encapsulation){
+  Symbol s = entryList[id];
+  s.encapsulation = encapsulation;
+  entryList[id] = s;
+}
+
 void Scope::setSymbolData(const std::string id, TreeNode* data) {
     if(entryList[id].data) {
         delete entryList[id].data; // Dangerous!
