@@ -144,7 +144,7 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType type){
         && type != TreeNode::OBJECT
         && type != TreeNode::VARIABLE_DECLARATION)
         return false;
-
+        
     switch (type) {
         case TreeNode::LOOP:
         case TreeNode::CONDITIONAL:

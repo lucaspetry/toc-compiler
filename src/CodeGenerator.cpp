@@ -151,6 +151,22 @@ llvm::Value* BinaryOperation::generateCode() {
                 }
             case BinaryOperation::TIMES:
                 return IR::Builder->CreateMul(left->generateCode(), right->generateCode(), "multmp");
+            case BinaryOperation::GREATER:
+                return IR::Builder->CreateICmpSGT(left->generateCode(), right->generateCode(), "greater");
+            case BinaryOperation::GREATER_E:
+                return IR::Builder->CreateICmpSGE(left->generateCode(), right->generateCode(), "greaterequal");
+            case BinaryOperation::LOWER:
+                return IR::Builder->CreateICmpSLT(left->generateCode(), right->generateCode(), "lower");
+            case BinaryOperation::LOWER_E:
+                return IR::Builder->CreateICmpSLE(left->generateCode(), right->generateCode(), "lowerequal");
+            case BinaryOperation::EQUAL:
+                return IR::Builder->CreateICmpEQ(left->generateCode(), right->generateCode(), "equal");
+            case BinaryOperation::DIFF:
+                return IR::Builder->CreateICmpNE(left->generateCode(), right->generateCode(), "notequal");
+            case BinaryOperation::AND:
+                return IR::Builder->CreateAnd(left->generateCode(), right->generateCode(), "and");
+            case BinaryOperation::OR:
+                return IR::Builder->CreateOr(left->generateCode(), right->generateCode(), "or");
             default:
                 return NULL;
         }
@@ -384,5 +400,37 @@ llvm::Value* Array::generateCode() {
 }
 
 llvm::Value* Loop::generateCode() {
-  return NULL;
+  llvm::Value* start = this->init->generateCode();
+  llvm::BasicBlock *PreheaderBB = IR::Builder->GetInsertBlock();
+  llvm::BasicBlock *LoopBB =llvm::BasicBlock::Create(IR::Context, llvm::Twine("loop"), IR::CurrentFunction);
+
+  IR::Builder->CreateBr(LoopBB);
+  IR::Builder->SetInsertPoint(LoopBB);
+
+  llvm::PHINode *phi = IR::Builder->CreatePHI(start->getType(), 2, "Phi");
+  phi->addIncoming(start,PreheaderBB);
+
+  this->body->generateCode();
+
+  llvm::Value* att= this->attribuition->generateCode();
+  llvm::Value *NextVar = IR::Builder->CreateAdd(phi, att, "nextvar");
+
+  llvm::Value* condition = this->test->generateCode();
+  llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
+
+  // Create the "after loop" block and insert it.
+ llvm::BasicBlock *LoopEndBB = IR::Builder->GetInsertBlock();
+ llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(IR::Context, "afterloop", IR::CurrentFunction);
+
+ // Insert the conditional branch into the end of LoopEndBB.
+ IR::Builder->CreateCondBr(conditionTrue, LoopBB, AfterBB);
+
+ // Any new code will be inserted in AfterBB.
+ IR::Builder->SetInsertPoint(AfterBB);
+ // Add a new entry to the PHI node for the backedge.
+ phi->addIncoming(NextVar, LoopEndBB);
+
+ // for expr always returns 0.0.
+ return condition;
+
 }

@@ -30,12 +30,6 @@ std::string Array::printInOrder() const {
             break;
     }
 
-//    if(this->values != NULL && this->values->classType() == TreeNode::BINARY_OPERATION
-//      && this->type != Data::UNKNOWN) {
-//      output += Data::toString(this->type);
-//      output += " ";
-//    }
-
     output += this->id;
     output += "[";
     output += this->size->printInOrder();
