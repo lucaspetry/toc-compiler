@@ -242,7 +242,7 @@ attribuition:
 // Multiplas atribuições para o array
 multiple_attribution:
     expr {$$ = $1; }
-    | expr T_COMMA sp multiple_attribution {$$ = SEMANTIC.declareBinaryOperation($1, BinaryOperation::MULT_ATT, $4);
+    | expr T_COMMA sp multiple_attribution {$$ = SEMANTIC.declareBinaryOperation($1, BinaryOperation::COMMA, $4);
                                                  $$->setSymbolTable(SEMANTIC.symbolTable); }
     ;
 

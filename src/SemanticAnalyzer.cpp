@@ -184,7 +184,7 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
       case TreeNode::TOC_FUNCTION: if(this->symbolTable.getParentStructure() == NULL)
                                         return true;
                                   return false;
-      case TreeNode::FUNCTION: if(this->symbolTable.getParentStructure()->classType() == TreeNode::OBJECT)
+      case TreeNode::FUNCTION: if(this->symbolTable.getParentStructure() == NULL || this->symbolTable.getParentStructure()->classType() == TreeNode::OBJECT)
                                       return true;
                                 return false;
       case TreeNode::VARIABLE:

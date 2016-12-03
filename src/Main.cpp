@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     // Parsing da entrada
     yyparse();
     // avalia codigo
-    ERROR_LOGGER->printGraph();
+    // ERROR_LOGGER->printGraph();
 
     CodeGenerator codeGen;
 
