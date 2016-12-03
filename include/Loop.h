@@ -1,15 +1,15 @@
-#ifndef Loop_H_
-#define Loop_H_
+#ifndef LOOP_H_
+#define LOOP_H_
 
-#include <string>
 #include "TreeNode.h"
 #include "CodeBlock.h"
 #include "Variable.h"
 #include "VariableDeclaration.h"
 #include "Array.h"
+#include <string>
 
 /**
- * Loop
+ * Laço
  */
 class Loop : public TreeNode {
 

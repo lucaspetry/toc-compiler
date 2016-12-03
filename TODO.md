@@ -4,7 +4,7 @@ Pendente TOC
 
 - [ X ] Bug if varios escopos
 - [ X ] Declaracao de funcoes binárias no semantic
-- [   ] Bug if else instruções no meio
+- [ X ] Bug if else instruções no meio
 
 - [ X ] Implementar funções
 - [   ] Analisar se retorno está faltando
@@ -13,7 +13,7 @@ Pendente TOC
 Quinta(30/11)
 - [   ] Objetos
 - [ X ] Testes
-- [   ] Gráfico e Score
+- [ X ] Gráfico e Score
 - [   ] LLVM Array e erro index atribuição
 - [   ] Tratamento de erros
 

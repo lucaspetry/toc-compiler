@@ -9,6 +9,7 @@
 #include "Data.h"
 #include "Float.h"
 #include "Function.h"
+#include "FunctionCall.h"
 #include "Integer.h"
 #include "PrintFunction.h"
 #include "String.h"
@@ -206,6 +207,11 @@ llvm::Value* Function::generateCode() {
     // TODO;
 
     return IR::CurrentFunction;
+}
+
+llvm::Value* FunctionCall::generateCode() {
+    // TODO;
+    return NULL;
 }
 
 llvm::Value* Integer::generateCode() {

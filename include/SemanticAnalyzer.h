@@ -4,6 +4,7 @@
 #include "ErrorLogger.h"
 #include "CodeBlock.h"
 #include "TocFunction.h"
+#include "FunctionCall.h"
 #include "SymbolTable.h"
 #include "Array.h"
 #include "Integer.h"
@@ -165,6 +166,21 @@ class SemanticAnalyzer {
         TreeNode* declareFunction(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType);
 
         /**
+         * Declarar o retorno de uma função
+         * @param ret expressão de retorno da função
+         * @return nodo correspondente à declaração de retorno da função
+         */
+        TreeNode* declareFunctionReturn(TreeNode* ret);
+
+        /**
+         * Declarar uma chamada de função
+         * @param id identificador da função
+         * @param params parâmetros da função
+         * @return nodo correspondente à chamada da função
+         */
+        TreeNode* callFunction(std::string id, CodeBlock* params);
+
+        /**
          * Declarar de metodo
          * @param id identificador da metodo
          * @param params parâmetros da metodo
@@ -174,13 +190,6 @@ class SemanticAnalyzer {
          * @return nodo correspondente à declaração da metodo
          */
         TreeNode* declareMethod(std::string id, CodeBlock* params, CodeBlock* body, Data::Type returnType, int encapsulation);
-
-        /**
-         * Declarar o retorno de uma função
-         * @param ret expressão de retorno da função
-         * @return nodo correspondente à declaração de retorno da função
-         */
-        TreeNode* declareFunctionReturn(TreeNode* ret);
 
         /**
          * Declarar um condicional
@@ -275,6 +284,7 @@ class SemanticAnalyzer {
          * @return nodo correspondente à variável
          */
         TreeNode* useObject(std::string varId, std::string value);
+
         /**
          * Inicializa um objeto
          * @param varId

@@ -9,21 +9,11 @@ Graphics::Graphics(int base, int lenght, float score){
 }
 
 void Graphics::description(){
-  cout << " ";
+  cout << "   ";
   cout << "PROGRAM";
-  cout << "  ";
+  cout << "    ";
   cout << "WARNING";
   cout << "\n";
-}
-
-void Graphics::percentage(int i){
-  cout << i*10;
-  cout << "%";
-
-  if(i < 10)
-    cout << "   ";
-  else
-    cout << "  ";
 }
 
 void subtitles(float c, float w, float e){
@@ -39,14 +29,15 @@ void subtitles(float c, float w, float e){
 }
 
 void Graphics::boundaries(int b){
-  for(int i = 0; i < b; i ++)
-    cout << "-";
+    for(int i = 0; i < b; i ++)
+        cout << "-";
+    cout << "\n";
 }
 
 void Graphics::graph(float c, float w, float e){
   cout << "\n";
   for(int i = this->lenght; i > 0; i --){
-    cout << "   ";
+    cout << "     ";
     if(i <= round(this->lenght*c))
       for(int j = this->base; j > 0; j --)
         cout << "\033[32m█\033[0m";
@@ -55,7 +46,7 @@ void Graphics::graph(float c, float w, float e){
       for(int j = this->base; j > 0; j --)
         cout << "\033[31m█\033[0m";
       }
-      cout << "      ";
+      cout << "        ";
 
     if(i <= round(this->lenght*w))
     for(int j = this->base; j > 0; j --)
@@ -64,10 +55,10 @@ void Graphics::graph(float c, float w, float e){
   }
 
   description();
-  boundaries(40);
-  cout << "\n";
+  boundaries(30);
   subtitles(c, w, e);
   scorePrint();
+  boundaries(30);
 }
 
 void Graphics::scorePrint(){
