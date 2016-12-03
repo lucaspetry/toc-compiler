@@ -31,12 +31,12 @@ void SemanticAnalyzer::setScope(float indentation) {
     int indINT = (int) indentation;
 
     if(indINT != indentation) {
-        ERROR_LOGGER->log(ErrorLogger::SYNTAX, "INDENTATION 2 SPACES ERROR"); // TODO
+        ERROR_LOGGER->log(ErrorLogger::SYNTAX, "Indentation must be 2 spaces only.");
         return;
     }
 
     if(indINT - this->getCurrentIndentation() > 1)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "INDENTATION ERROR"); // TODO
+        ERROR_LOGGER->log(ErrorLogger::SYNTAX, "Indentation must be 2 spaces only.");
     else if(indINT > this->getCurrentIndentation()) {
         this->newScope();
     } else {
@@ -80,7 +80,7 @@ void SemanticAnalyzer::analyzeProgram() {
 
 void SemanticAnalyzer::analyzeScopeCreation() {
     if(this->currentStructure == NULL)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "INDENTATION ERROR"); // TODO
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Unexpected scope.");
 }
 
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp) {
@@ -200,7 +200,7 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
       //                                 return true;
       //                       }
     }
-  }
+}
 
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
     if(this->checkIdentifier(id)) {
@@ -215,18 +215,18 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
             v->setSymbolTable(this->symbolTable);
             vD->setSymbolTable(this->symbolTable);
             return vD;
-
+        }
+        // return a random variable if id is in use
+        return new VariableDeclaration(dataType, new Variable(id, dataType));
     }
-    // return a random variable if id is in use
-    return new VariableDeclaration(dataType, new Variable(id, dataType));
-}
 }
 
 TreeNode* SemanticAnalyzer::declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right) {
     // if(!checkStatement(TreeNode::BINARY_OPERATION))
     //   ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal instruction.");
     BinaryOperation* binOP = new BinaryOperation(left,op,right);
-    this->currentStructure = binOP;
+    binOP->setSymbolTable(this->symbolTable);
+    this->currentStructure = NULL;
     this->lastStatement = binOP;
     return binOP;
 }
@@ -339,8 +339,8 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
               ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal toc function declaration in this scope." );
             function = new TocFunction(body);
         } else { // Outra função qualquer
-            if(!checkStatement(TreeNode::FUNCTION))
-              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
+            //if(!checkStatement(TreeNode::FUNCTION))
+              //ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
 
             function = new Function(id, params, body, NULL);
             function->setType(returnType);
@@ -365,6 +365,23 @@ TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
 
     f->setReturn(ret);
     return NULL; // TODO
+}
+
+TreeNode* SemanticAnalyzer::callFunction(std::string id, CodeBlock* params) {
+    TreeNode* call = new FunctionCall(id, params);
+
+    if(this->symbolTable.existsSymbol(id, true)) {
+        call->setType(this->symbolTable.getSymbol(id, true).getDataType());
+
+        // TODO Verificar parâmetros
+
+        this->currentStructure = NULL;
+        this->lastStatement = call;
+    } else {
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "FUNCAO NAO DECLARADA" );
+    }
+
+    return call;
 }
 
 TreeNode* SemanticAnalyzer::declareCondition(TreeNode* expression, CodeBlock* body) {

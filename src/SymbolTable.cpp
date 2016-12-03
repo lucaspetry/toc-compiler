@@ -182,7 +182,7 @@ llvm::Value* SymbolTable::getVariableAllocation(std::string id) {
             scopeIt = scopeIt->getParent();
 
             if(scopeIt->existsSymbol(id))
-                return this->currentScope->getVariableAllocation(id);
+                return scopeIt->getVariableAllocation(id);
         }
     }
 

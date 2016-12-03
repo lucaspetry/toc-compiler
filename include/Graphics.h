@@ -11,7 +11,6 @@ class Graphics {
 
     public:
         Graphics(int base, int lenght, float score);
-        void percentage(int i);
         void boundaries(int b);
         void description();
         void graph(float c, float w, float e);

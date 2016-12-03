@@ -29,6 +29,11 @@ namespace Data {
      */
     std::string toString(Data::Type type);
 
+    /**
+     * Obter o tipo LLVM correspondente
+     * @param type tipo de dado
+     * @return tipo LLVM
+     */
     llvm::Type* toLLVMType(Data::Type type);
 
 }
