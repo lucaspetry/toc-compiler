@@ -1,5 +1,1 @@
-# Funcao principal do programa
-void toc()
-  # Exemplo de criacao de arrays em TOC
-  int frutas[5]
-  int ameixa = int frutas[4]
+[Line 5] Semantic error: Variable frutas used but not initialized.

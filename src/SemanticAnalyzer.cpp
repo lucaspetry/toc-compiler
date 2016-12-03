@@ -15,7 +15,9 @@ void SemanticAnalyzer::analyzeRelationalOperationCasting(BinaryOperation* binary
 }
 
 void SemanticAnalyzer::newScope() {
-    this->analyzeScopeCreation();
+    if(this->currentStructure == NULL)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Unexpected scope.");
+
     this->symbolTable.setCurrentStructure(this->currentStructure);
     this->symbolTable.setLastStatement(this->lastStatement);
     this->currentStructure = NULL;
@@ -72,15 +74,9 @@ void SemanticAnalyzer::analyzeProgram() {
     // Verifica a existência da função toc()
     Symbol tocFunction = this->symbolTable.getSymbol("toc");
 
-
     if(tocFunction.getType() != Symbol::FUNCTION
        || tocFunction.getDataType() != Data::VOID)
         ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Main function toc() not found.");
-}
-
-void SemanticAnalyzer::analyzeScopeCreation() {
-    if(this->currentStructure == NULL)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Unexpected scope.");
 }
 
 void SemanticAnalyzer::analyzeCasting(BinaryOperation* binaryOp) {
@@ -125,32 +121,11 @@ void SemanticAnalyzer::analyzeLoop(std::string id) {
     ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expecting an array type " + id + ".");
 }
 
-void SemanticAnalyzer::analyzeArray(std::string id, int size, TreeNode* attribuition){
-  BinaryOperation* node = (BinaryOperation*)attribuition;
-  int c = 0;
-  if(attribuition->classType() != TreeNode::BINARY_OPERATION && size > 1)
-    ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal array assignment.");
-  else if(attribuition->classType() == TreeNode::BINARY_OPERATION){
-    while(node->right->classType() == TreeNode::BINARY_OPERATION){
-      c ++;
-      if(node->right->classType() != TreeNode::BINARY_OPERATION)
-        break;
-      node = (BinaryOperation*)(node->right);
-    }
-    c = c + 2;
-    if(c > size)
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Number of elements in assignment differs from array length.");
-  }
-}
+void SemanticAnalyzer::analyzeArray(std::string id, int size, CodeBlock* attribuition){
+    int numAttribution = attribuition->numberOfLines();
 
-void SemanticAnalyzer::analyzeAssignArray(std::string id, TreeNode* size){
-  // Integer* i = (Integer*) size;
-  // TreeNode* t = this->symbolTable.getSymbol(id, true).getData();
-  // if (t->classType() == TreeNode::ARRAY)
-  //   std::cout << "a" << std::endl;
-  // // TreeNode* s = array->getSize();
-  // // if(i->getValue() > s->getValue())
-
+    if(numAttribution != size)
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Number of elements in assignment differs from array length.");
 }
 
 bool SemanticAnalyzer::checkIdentifier(std::string id) const {
@@ -162,39 +137,40 @@ bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     return true;
 }
 
-TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
-    if(type != node->dataType())
-        return new TypeCasting(type, node);
-
-    return node;
-}
-
-bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
-    if(this->symbolTable.getParentStructure() == NULL && tipo != TreeNode::TOC_FUNCTION && tipo != TreeNode::FUNCTION && tipo != TreeNode::OBJECT && tipo != TreeNode::VARIABLE_DECLARATION)
+bool SemanticAnalyzer::checkStatement(TreeNode::ClassType type){
+    if(this->symbolTable.getParentStructure() == NULL
+        && type != TreeNode::TOC_FUNCTION
+        && type != TreeNode::FUNCTION
+        && type != TreeNode::OBJECT
+        && type != TreeNode::VARIABLE_DECLARATION)
         return false;
-    switch (tipo) {
 
-      case TreeNode::LOOP:
-      case TreeNode::CONDITIONAL: if(this->symbolTable.getParentStructure()->classType() == TreeNode::FUNCTION ||
-                        this->symbolTable.getParentStructure()->classType() == TreeNode::TOC_FUNCTION ||
-                        this->symbolTable.getParentStructure()->classType() == TreeNode::CONDITIONAL ||
-                        this->symbolTable.getParentStructure()->classType() == TreeNode::LOOP)
-                          return true;
-                        return false;
-      case TreeNode::TOC_FUNCTION: if(this->symbolTable.getParentStructure() == NULL)
-                                        return true;
-                                  return false;
-      case TreeNode::FUNCTION: if(this->symbolTable.getParentStructure()->classType() == TreeNode::OBJECT)
-                                      return true;
-                                return false;
-      case TreeNode::VARIABLE:
-      case TreeNode::ARRAY:
-      case TreeNode::VARIABLE_DECLARATION: if(this->lastStatement!= NULL && this->lastStatement->classType() == TreeNode::OBJECT)
-                                              return false;
-                                            return true;
-      case TreeNode::OBJECT:  if(this->symbolTable.getParentStructure() == NULL)
-                                    return true;
-                              return false;
+    switch (type) {
+        case TreeNode::LOOP:
+        case TreeNode::CONDITIONAL:
+            if(this->symbolTable.getParentStructure()->classType() == TreeNode::FUNCTION
+                || this->symbolTable.getParentStructure()->classType() == TreeNode::TOC_FUNCTION
+                || this->symbolTable.getParentStructure()->classType() == TreeNode::CONDITIONAL
+                || this->symbolTable.getParentStructure()->classType() == TreeNode::LOOP)
+                return true;
+            return false;
+        case TreeNode::VARIABLE:
+        case TreeNode::ARRAY:
+        case TreeNode::VARIABLE_DECLARATION:
+            if(this->lastStatement != NULL
+                && this->lastStatement->classType() == TreeNode::OBJECT)
+                return false;
+            return true;
+        case TreeNode::FUNCTION:
+            if(this->symbolTable.getParentStructure() == NULL
+                || this->symbolTable.getParentStructure()->classType() == TreeNode::OBJECT)
+                return true;
+            return false;
+        case TreeNode::TOC_FUNCTION:
+        case TreeNode::OBJECT:
+            if(this->symbolTable.getParentStructure() == NULL)
+                return true;
+            return false;
       // case TreeNode::BINARY_OPERATION: if(this->symbolTable.getParentStructure() != NULL)
       //                                     return false;
       //                                 return true;
@@ -202,22 +178,30 @@ bool SemanticAnalyzer::checkStatement(TreeNode::ClassType tipo){
     }
 }
 
+TreeNode* SemanticAnalyzer::cast(Data::Type type, TreeNode* node) const {
+    if(type != node->dataType())
+        return new TypeCasting(type, node);
+
+    return node;
+}
+
 TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType, int size) {
     if(this->checkIdentifier(id)) {
+        TreeNode* node;
+
         if(size > 0) {
-            Array* array = new Array(id, dataType, new Integer(size));
-            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
-            return array;
+            node = new Array(id, dataType, new Integer(size));
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, node)); // Adds variable to symbol table and save array size
         } else {
             this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false)); // Adds variable to symbol table
-            Variable* v = new Variable(id, dataType);
-            VariableDeclaration* vD = new VariableDeclaration(dataType, v);
-            v->setSymbolTable(this->symbolTable);
-            vD->setSymbolTable(this->symbolTable);
-            return vD;
+            node = new Variable(id, dataType);
         }
-        // return a random variable if id is in use
-        return new VariableDeclaration(dataType, new Variable(id, dataType));
+
+        VariableDeclaration* vD = new VariableDeclaration(dataType, node);
+        vD->setSymbolTable(this->symbolTable);
+        node->setSymbolTable(this->symbolTable);
+
+        return vD;
     }
 }
 
@@ -339,8 +323,8 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
               ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal toc function declaration in this scope." );
             function = new TocFunction(body);
         } else { // Outra função qualquer
-            //if(!checkStatement(TreeNode::FUNCTION))
-              //ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
+            if(!checkStatement(TreeNode::FUNCTION))
+                ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
 
             function = new Function(id, params, body, NULL);
             function->setType(returnType);
@@ -443,43 +427,44 @@ TreeNode* SemanticAnalyzer::declarePrint(TreeNode* param) {
 
 
 TreeNode* SemanticAnalyzer::assignVariable(std::string id, TreeNode* value, TreeNode* index) {
-  if(!this->symbolTable.existsSymbol(id, true)) {
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
-      return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
-  } else if (index != NULL) {
+    if(!this->symbolTable.existsSymbol(id, true)) {
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
+        return new Variable(id, Data::UNKNOWN); // Cria variável de qualquer maneira
+    } else if (index != NULL) {
         this->symbolTable.setInitializedSymbol(id);
-        Array* a = (Array*)this->symbolTable.getSymbol(id).getData();
         return new Array(id, this->symbolTable.getSymbol(id).getDataType(), index, value);
-  }  else {
-      this->symbolTable.setInitializedSymbol(id, value);
-      Variable* v = new Variable(id, this->symbolTable.getSymbol(id, true).getDataType());
-      v->setSymbolTable(this->symbolTable);
-      return v;
-  }
+    }  else {
+        this->symbolTable.setInitializedSymbol(id, value);
+        Variable* v = new Variable(id, this->symbolTable.getSymbol(id, true).getDataType());
+        v->setSymbolTable(this->symbolTable);
+        return v;
+    }
 }
 
 TreeNode* SemanticAnalyzer::declareAssignVariable(std::string id, Data::Type dataType, TreeNode* value, int size) {
     if(this->checkIdentifier(id)) {
+        TreeNode* node;
+
         // sempre que size é maior do que zero, trata-se de uma declaração de array
         if(size > 0) {
           if(!checkStatement(TreeNode::ARRAY))
-              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration of array "+id+" expected encapsulation.");
+              ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration of array " + id + " expected encapsulation.");
 
-            Array* array = new Array(id, dataType, new Integer(size), value);
-            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, array)); // Adds variable to symbol table and save array size
-            this->symbolTable.setInitializedSymbol(id, array);
-            return array;
+            node = new Array(id, dataType, new Integer(size), value);
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, node)); // Adds variable to symbol table and save array size
+            this->symbolTable.setInitializedSymbol(id, node);
+        } else {
+            if(!checkStatement(TreeNode::VARIABLE_DECLARATION))
+                ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration of variable " + id + " expected encapsulation.");
+
+            node = new Variable(id, dataType);
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, value)); // Adds variable to symbol table
+            this->symbolTable.setInitializedSymbol(id, value);
         }
-        if(!checkStatement(TreeNode::VARIABLE_DECLARATION))
-            ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Declaration of variable "+id+" expected encapsulation.");
-
-        this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, false, value)); // Adds variable to symbol table
-        this->symbolTable.setInitializedSymbol(id, value);
-
-        Variable* v = new Variable(id, dataType);
-        VariableDeclaration* vD = new VariableDeclaration(dataType, v);
-        v->setSymbolTable(this->symbolTable);
+        VariableDeclaration* vD = new VariableDeclaration(dataType, node);
+        node->setSymbolTable(this->symbolTable);
         vD->setSymbolTable(this->symbolTable);
+        this->currentStructure = NULL;
         this->lastStatement = vD;
         return vD;
     }
@@ -496,23 +481,28 @@ TreeNode* SemanticAnalyzer::initializeObject(std::string classe, std::string obj
 }
 
 TreeNode* SemanticAnalyzer::useVariable(std::string id, TreeNode* index) {
-  if(!this->symbolTable.existsSymbol(id, true)) {
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
-      return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
-  } else if(!this->symbolTable.isSymbolInitialized(id, true)) {
-      ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Variable " + id + " used but not initialized.");
-  }
-
-  TreeNode* t = this->symbolTable.getSymbol(id, true).getData();
-  if (index != NULL and t->classType() == TreeNode::ARRAY) {
-    Array* array = (Array*)t;
-    if (array != NULL and array->getSize()->classType() == TreeNode::INTEGER) {
-      if(((Integer*)index)->getValue() > ((Integer*)(array->getSize()))->getValue() || ((Integer*)index)->getValue() < 0)
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
+    if(!this->symbolTable.existsSymbol(id, true)) {
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared variable " + id + ".");
+        return new Variable(id, Data::UNKNOWN); //Creates variable node anyway
+    } else if(!this->symbolTable.isSymbolInitialized(id, true)) {
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Variable " + id + " used but not initialized.");
     }
-    return new Array(id, this->symbolTable.getSymbol(id,true).getDataType(), index);
-  }
-  Variable* v = new Variable(id, this->symbolTable.getSymbol(id,true).getDataType());
-  v->setSymbolTable(this->symbolTable);
-  return v;
+
+    TreeNode* t = this->symbolTable.getSymbol(id, true).getData();
+
+    if(index != NULL && t != NULL && t->classType() == TreeNode::ARRAY) {
+        Array* array = (Array*) t;
+
+        if(array != NULL && array->getSize()->classType() == TreeNode::INTEGER) {
+            if(((Integer*)index)->getValue() > ((Integer*)(array->getSize()))->getValue() || ((Integer*)index)->getValue() < 0)
+                ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Index out of bounds " + id + ".");
+        }
+
+        return new Array(id, this->symbolTable.getSymbol(id, true).getDataType(), index);
+    } else if(index != NULL) {
+        return new Array(id, this->symbolTable.getSymbol(id, true).getDataType(), index);
+    }
+    Variable* v = new Variable(id, this->symbolTable.getSymbol(id,true).getDataType());
+    v->setSymbolTable(this->symbolTable);
+    return v;
 }

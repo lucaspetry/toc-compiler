@@ -1,4 +1,5 @@
 #include "BinaryOperation.h"
+#include "CodeBlock.h"
 
 BinaryOperation::BinaryOperation(TreeNode* left, BinaryOperation::Type operation, TreeNode* right) : TreeNode(Data::UNKNOWN) {
     this->left = left;
@@ -23,21 +24,21 @@ TreeNode::ClassType BinaryOperation::classType() const {
 }
 
 std::string BinaryOperation::printInOrder() const {
-  std::string output = "";
-  if(operation == MULT_ATT)
-    output += "{";
+    std::string output = "";
 
-  output += left->printInOrder();
+    output += left->printInOrder();
+    if(operation != COMMA)
+        output += " ";
 
-  if(operation != COMMA)
-      output += " ";
+    output += operationToString(operation) + " ";
 
-  output += operationToString(operation) + " ";
-
-  output += right->printInOrder();
-
-  if(operation == MULT_ATT)
-    output += "}";
+    if(operation == MULT_ASSIGN) {
+        output += "{";
+        CodeBlock* block = (CodeBlock*) right;
+        output += block->printInLine() + "}";
+    } else {
+        output += right->printInOrder();
+    }
 
   return output;
 }
@@ -51,8 +52,8 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
             return ",";
         case ASSIGN:
             return "=";
-        case MULT_ATT:
-            return ",";
+        case MULT_ASSIGN:
+            return "=";
         case PLUS:
             return "+";
         case TIMES:
@@ -86,8 +87,4 @@ std::string BinaryOperation::operationToString(BinaryOperation::Type operation) 
 
 void BinaryOperation::setLeft(TreeNode* left){
   this->left = left;
-}
-
-void BinaryOperation::setOp(BinaryOperation::Type op){
-  this->operation = op;
 }

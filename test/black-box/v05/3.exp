@@ -1,4 +1,4 @@
 # Funcao principal do programa
 void toc()
   # Exemplo de criacao de arrays em TOC
-  str frutas[3] = {"cereja" , "jaca", "limão"}
+  str frutas[3] = {"cereja", "jaca", "limão"}

@@ -20,18 +20,21 @@ std::string Array::printInOrder() const {
     std::string output = "";
 
     switch (encapsulation) {
-      case 0: output+= "pub ";
-      break;
-      case 1: output+= "prv ";
-      break;
-      default: break;
+        case 0:
+            output += "pub ";
+            break;
+        case 1:
+            output += "prv ";
+            break;
+        default:
+            break;
     }
 
-    if(this->values != NULL && this->values->classType() == TreeNode::BINARY_OPERATION
-      && this->type != Data::UNKNOWN){
-      output += Data::toString(this->type);
-      output += " ";
-    }
+//    if(this->values != NULL && this->values->classType() == TreeNode::BINARY_OPERATION
+//      && this->type != Data::UNKNOWN) {
+//      output += Data::toString(this->type);
+//      output += " ";
+//    }
 
     output += this->id;
     output += "[";

@@ -17,6 +17,7 @@ class CodeBlock : public TreeNode {
         virtual ~CodeBlock();
         TreeNode::ClassType classType() const;
         std::string printInOrder() const;
+        std::string printInLine() const;
         std::string printIndentation() const;
         int numberOfLines() const;
         TreeNode* getLine(int lineNumber);

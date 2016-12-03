@@ -19,7 +19,7 @@ class BinaryOperation : public TreeNode {
             PLUS,
             TIMES,
             COMMA,
-            MULT_ATT,
+            MULT_ASSIGN,
             GREATER,
             GREATER_E,
             LOWER,
@@ -39,7 +39,6 @@ class BinaryOperation : public TreeNode {
         std::string operationToString(Type operation) const;
         void setLeft(TreeNode* left);
         void setBody(CodeBlock* codeBlock);
-        void setOp(BinaryOperation::Type op);
         llvm::Value* generateCode();
 
     private:
