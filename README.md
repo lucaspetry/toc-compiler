@@ -23,4 +23,4 @@ Inspired by the many awful languages out there, TOC aims to gather together thre
 - **O**rganization: indentation patterns, unified variable and function identifiers;
 - Qui**C**kness: more work, less time.
 
-[Language Specification](https://github.com/lucaspetry/toc-compiler/blob/master/docs/Especifica%C3%A7%C3%A3o%20do%20Compilador.pdf)
+[Language Specification](https://github.com/lucaspetry/toc-compiler/blob/master/docs/Especificacao_Compilador.pdf)
