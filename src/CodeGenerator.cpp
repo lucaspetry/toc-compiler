@@ -331,23 +331,27 @@ llvm::Value* Conditional::generateCode() {
     llvm::Value* condition = this->condition->generateCode();
     llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
     llvm::BasicBlock *thenBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("then"), IR::CurrentFunction);
-    llvm::BasicBlock *elseBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("else"), IR::CurrentFunction);
     llvm::BasicBlock *mergeBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("merge"), IR::CurrentFunction);
+    llvm::BasicBlock *elseBlock = mergeBlock;
+
+    llvm::BasicBlock *currentBlock = IR::Builder->GetInsertBlock();
+
+    // Gera o else, se existe else
+    if(this->elseCode != NULL) {
+        elseBlock = llvm::BasicBlock::Create(IR::Context, llvm::Twine("else"), IR::CurrentFunction);
+        IR::Builder->SetInsertPoint(elseBlock);
+        this->elseCode->generateCode();
+        IR::Builder->CreateBr(mergeBlock);
+    }
 
     // Cria a condição de branch
+    IR::Builder->SetInsertPoint(currentBlock);
     IR::Builder->CreateCondBr(conditionTrue, thenBlock, elseBlock);
 
     // Gera o then
     IR::Builder->SetInsertPoint(thenBlock);
     this->thenCode->generateCode();
     IR::Builder->CreateBr(mergeBlock);
-
-    // Gera o else, se existe else
-    if(this->elseCode != NULL) {
-        IR::Builder->SetInsertPoint(elseBlock);
-        this->elseCode->generateCode();
-        IR::Builder->CreateBr(mergeBlock);
-    }
 
     IR::Builder->SetInsertPoint(mergeBlock);
 

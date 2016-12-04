@@ -15,6 +15,8 @@ SymbolTable& SymbolTable::operator=(const SymbolTable& table) {
 
 void SymbolTable::newScope() {
     this->currentScope = new Scope(this->currentScope);
+    this->currentScope->code = new CodeBlock(this->currentScope->indentation);
+    this->currentScope->code->setSymbolTable(*this);
     this->currentScope->clear();
 }
 
@@ -28,11 +30,6 @@ void SymbolTable::returnScope() {
 }
 
 void SymbolTable::pushLineScope(TreeNode* line) {
-    if(this->currentScope->code == NULL) {
-        this->currentScope->code = new CodeBlock(this->currentScope->indentation);
-        this->currentScope->code->setSymbolTable(*this);
-    }
-
     this->currentScope->code->insertLineBack(line);
 }
 

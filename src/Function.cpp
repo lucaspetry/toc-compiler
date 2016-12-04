@@ -39,8 +39,12 @@ std::string Function::printInOrder() const {
         output += this->body->printInOrder();
 
     // Imprime o retorno
-    if(this->ret != NULL)
-        output += "ret " + this->ret->printInOrder();
+    if(this->ret != NULL) {
+        if(this->body->numberOfLines() > 0)
+            output += "\n" + this->body->printIndentation() + "ret " + this->ret->printInOrder();
+        else
+            output += this->body->printIndentation() + "ret " + this->ret->printInOrder();
+    }
 
     return output;
 }
