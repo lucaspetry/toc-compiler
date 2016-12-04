@@ -137,7 +137,21 @@ bool SemanticAnalyzer::checkIdentifier(std::string id) const {
     return true;
 }
 
-bool SemanticAnalyzer::checkStatement(TreeNode::ClassType type){
+bool SemanticAnalyzer::checkStatement(TreeNode::ClassType type) {
+    if(this->lastStatement != NULL)
+        switch(this->lastStatement->classType()) {
+            case TreeNode::LOOP:
+            case TreeNode::CONDITIONAL:
+            case TreeNode::TOC_FUNCTION:
+            case TreeNode::OBJECT:
+            case TreeNode::FUNCTION:
+                if(this->currentStructure != NULL)
+                    ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Expected new scope.");
+                break;
+            default:
+                break;
+        }
+
     if(this->symbolTable.getParentStructure() == NULL
         && type != TreeNode::TOC_FUNCTION
         && type != TreeNode::FUNCTION
