@@ -400,39 +400,37 @@ llvm::Value* Array::generateCode() {
 }
 
 llvm::Value* Loop::generateCode() {
-  llvm::Value* start = this->init->generateCode();
-  llvm::BasicBlock *PreheaderBB = IR::Builder->GetInsertBlock();
-  llvm::BasicBlock *LoopBB =llvm::BasicBlock::Create(IR::Context, llvm::Twine("loop"), IR::CurrentFunction);
+    llvm::Value* start = this->init->generateCode();
+    llvm::BasicBlock *PreheaderBB = IR::Builder->GetInsertBlock();
+    llvm::BasicBlock *LoopBB =llvm::BasicBlock::Create(IR::Context, llvm::Twine("loop"), IR::CurrentFunction);
+    llvm::BasicBlock *condLoop =llvm::BasicBlock::Create(IR::Context, llvm::Twine("condLoop"), IR::CurrentFunction);
+    IR::Builder->CreateBr(condLoop);
 
-  IR::Builder->CreateBr(LoopBB);
-  IR::Builder->SetInsertPoint(LoopBB);
+    // Código do laço
+    IR::Builder->SetInsertPoint(LoopBB);
+    this->body->generateCode();
+    IR::Builder->CreateBr(condLoop);
+    llvm::BasicBlock *LoopEndBB = IR::Builder->GetInsertBlock();
 
-  std::cout << "Start: " << start->getName().str() << std::endl;
-  llvm::PHINode *phi = IR::Builder->CreatePHI(start->getType(), 2, "Phi");
-  phi->addIncoming(IR::Builder->CreateAdd(start, IR::One), PreheaderBB);
+    // Condição do laço
+    IR::Builder->SetInsertPoint(condLoop);
 
-  this->body->generateCode();
+    llvm::PHINode *phi = IR::Builder->CreatePHI(start->getType(), 2, "Phi");
+    phi->addIncoming(start, PreheaderBB);
 
-  IR::PHILoop = phi;
-  llvm::Value* att = this->attribuition->generateCode();
+    IR::PHILoop = phi;
+    llvm::Value* att = this->attribuition->generateCode();
 
-  llvm::Value* condition = this->test->generateCode();
-  llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
-  IR::PHILoop = NULL;
+    llvm::Value* condition = this->test->generateCode();
+    llvm::Value* conditionTrue = IR::Builder->CreateICmpNE(condition, IR::False, "comp");
+    IR::PHILoop = NULL;
 
-  // Create the "after loop" block and insert it.
- llvm::BasicBlock *LoopEndBB = IR::Builder->GetInsertBlock();
- llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(IR::Context, "afterloop", IR::CurrentFunction);
+    llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(IR::Context, "afterloop", IR::CurrentFunction);
 
- // Insert the conditional branch into the end of LoopEndBB.
- IR::Builder->CreateCondBr(conditionTrue, LoopBB, AfterBB);
+    IR::Builder->CreateCondBr(conditionTrue, LoopBB, AfterBB);
 
- // Any new code will be inserted in AfterBB.
- IR::Builder->SetInsertPoint(AfterBB);
- // Add a new entry to the PHI node for the backedge.
- phi->addIncoming(att, LoopEndBB);
+    IR::Builder->SetInsertPoint(AfterBB);
+    phi->addIncoming(att, LoopEndBB);
 
- // for expr always returns 0.0.
- return condition;
-
+    return condition;
 }
