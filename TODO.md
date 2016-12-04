@@ -14,13 +14,14 @@ Quinta(30/11)
 - [   ] Objetos
 - [ X ] Testes
 - [ X ] Gráfico e Score
-- [   ] LLVM Array e erro index atribuição
+- [ X ] Erro index atribuição array
 - [   ] Tratamento de erros
 
 Outros
 - [   ] LLVM erro de execução conversão e index out of bounds
-- [   ] LLVM operadores matematicos e relacionais terminar, separar por tipo
-- [   ] LLVM laços
+- [ X ] LLVM operadores matematicos e relacionais terminar, separar por tipo
+- [ X ] LLVM laços
+- [   ] LLVM Array
 - [   ] Tratamento de erros e LLVM de funções
 - [   ] LLVM orientação a objetos
 
