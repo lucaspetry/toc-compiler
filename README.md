@@ -15,8 +15,10 @@
 | Run unit tests                          | `make test-unit`             |
 | Run all the tests                       | `make test`                  |
 | Clean/compile/test everything           | `make all`                   |
+| *Show Code Evaluation Option*           | *`OPT=-DSCORE`*              |
 
-## Black-Box Test Files
-- .toc : program input.
-- .exp : program output (tree intermediate representation).
-- .llvm : program output (actual program output).
+## The TOC Language
+Inspired by the many awful languages out there, TOC aims to gather together three things:
+- Simplici**T**y: clear, clean and short keywords;
+- **O**rganization: indentation patterns, unified variable and function identifiers;
+- Qui**C**kness: more work, less time.

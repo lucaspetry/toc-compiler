@@ -7,6 +7,7 @@ EXECUTABLE = toc
 EXECUTABLE_TREE = tocTree
 TYPE = TREE
 DUMP = 0
+OPT =
 
 # Directories
 SRC_DIR = src
@@ -33,12 +34,12 @@ WHITE=\033[0;37m
 $(EXECUTABLE): tmp parser scanner $(OBJS)
 	@echo "${GREEN}Creating executable...${WHITE}"
 ifeq ($(TYPE)$(DUMP), LLVM1)
-	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP $(OPT)
 else
 ifeq ($(TYPE), LLVM)
-	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM $(OPT)
 else
-	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
+	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) $(OPT)
 endif
 endif
 	@echo "${GREEN}Creating executable... ${LIGHT_GREEN}Done!${WHITE}"
@@ -47,11 +48,11 @@ endif
 superb: tmp parser scanner $(OBJS)
 	@echo "${GREEN}Creating executable...${WHITE}"
 ifeq ($(DUMP), 1)
-	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM -DLLVM_DUMP $(OPT)
 else
-	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM
+	${CC} -o ${EXECUTABLE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) -DLLVM $(OPT)
 endif
-	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM)
+	${CC} -o ${EXECUTABLE_TREE} src/Main.cpp $(OBJS) ${CFLAGS} -I$(HEADERS_DIR) $(LLVM) $(OPT)
 	@echo "${GREEN}Creating executable... ${LIGHT_GREEN}Done!${WHITE}"
 	@echo ''
 
