@@ -16,16 +16,20 @@ TreeNode::ClassType FunctionCall::classType() const {
 
 std::string FunctionCall::printInOrder() const {
     std::string output = "";
-    if(this->obj!= "")
+    if(this->obj != "")
       output+=this->obj+".";
-      
+
     output += this->id;
     if(this->classe != "")
-      output+= " "+this->classe;
+      output+= " " + this->classe;
+
     output+="(";
     // Imprime os parâmetros
-    if(this->params != NULL)
-        output += this->params->printInOrder();
+    if(this->params != NULL) {
+        for(int i = 0; i < params->numberOfLines(); i++)
+            output += this->params->getLine(i)->printInOrder() + ", ";
+        output = output.substr(0, output.size() - 2);
+      }
 
     output += ")";
     return output;

@@ -6,5 +6,7 @@ obj Arvore(int galhoss)
   pub int colher()
     for(int a = galhos; a <= 0; a = a - 1)
       frutas = frutas + a * 6
-  ret frutas
+    ret frutas
+
 void toc()
+  Arvore arv(10)

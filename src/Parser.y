@@ -79,7 +79,7 @@
 %left T_GREATER T_GREATER_E T_LOWER T_LOWER_E
 
 %left T_PLUS T_MINUS
-%left T_TIMES T_DIVIDE T_MOD
+%left T_TIMES T_DIVIDE
 
 %right T_NOT U_MINUS error
 %nonassoc LINE
@@ -120,7 +120,7 @@ line:
     | T_COMMENT { $$ = SEMANTIC.declareComment($1); TOC.analyzeComment((Comment*) $$); }
     | T_PRINT sp expr { TOC.analyzeSpaces(1, $2); $$ = SEMANTIC.declarePrint($3); }
     // Condicional
-    | T_IF T_OPAR expr T_CPAR sp {$$ = SEMANTIC.declareCondition($3, NULL); }
+    | T_IF T_OPAR expr T_CPAR {$$ = SEMANTIC.declareCondition($3, NULL); }
     | T_ELSE { $$ = NULL; SEMANTIC.declareElseCondition(NULL); }
     // Laço
     | T_FOR T_OPAR declaration T_SCOLON sp expr T_SCOLON sp attribuition T_CPAR {$$ = SEMANTIC.declareLoop($3, $6, $9);
@@ -130,42 +130,40 @@ line:
                                                                               SEMANTIC.analyzeLoop($7);
                                                                               TOC.analyzeSpaces(2, $4, $6);}
     // Função
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID);
+    | T_VOID sp T_TOC T_OPAR T_CPAR { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID);
                                               TOC.analyzeSpaces(1, $2);}
-    | type_var sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
+    | type_var sp T_ID T_OPAR function_params T_CPAR { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
                                                                 TOC.analyzeSpaces(1, $2);}
-    | type_var sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
+    | type_var sp T_ID T_OPAR T_CPAR { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
                                                 TOC.analyzeSpaces(1, $2);}
-    | T_VOID sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
+    | T_VOID sp T_ID T_OPAR function_params T_CPAR { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
                                                               TOC.analyzeSpaces(1, $2);}
-    | T_VOID sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
+    | T_VOID sp T_ID T_OPAR T_CPAR { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
                                               TOC.analyzeSpaces(1, $2);}
-    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3);
+    | T_RETURN sp expr { $$ = SEMANTIC.declareFunctionReturn($3);
                                   TOC.analyzeSpaces(1, $2);}
-    | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL);
-                                    TOC.analyzeSpaces(1, $2);}
-    | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4);
-                                                  TOC.analyzeSpaces(1, $2);}
+    | T_ID sp T_OPAR T_CPAR { $$ = SEMANTIC.callFunction($1, NULL);}
+    | T_ID sp T_OPAR call_params T_CPAR { $$ = SEMANTIC.callFunction($1, $4); }
     // Objeto
-    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3, $5, NULL); TOC.analyzeObject($3);
+    | T_OBJ sp T_ID T_OPAR function_params T_CPAR { $$ = SEMANTIC.declareObject($3, $5, NULL); TOC.analyzeObject($3);
                                                         TOC.analyzeSpaces(1, $2); }
-    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL); TOC.analyzeObject($3);
+    | T_OBJ sp T_ID T_OPAR T_CPAR { $$ = SEMANTIC.declareObject($3,NULL,NULL); TOC.analyzeObject($3);
                                             TOC.analyzeSpaces(1, $2);}
     | object_attributes
     | object_functions
-    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);
+    | T_ID sp T_ID T_OPAR T_CPAR {$$ = SEMANTIC.initializeObject($1,$3);
                                           TOC.analyzeSpaces(1, $2); }
-    | T_ID sp T_ID T_OPAR call_params T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3,$5);
+    | T_ID sp T_ID T_OPAR call_params T_CPAR {$$ = SEMANTIC.initializeObject($1,$3,$5);
                                                   TOC.analyzeSpaces(1, $2);}
-    | T_ID T_DOT T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.useMethod($1,$3); }
-    | T_ID T_DOT T_ID T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.useMethod($1,$3,$5);}
+    | T_ID T_DOT T_ID T_OPAR T_CPAR {$$ = SEMANTIC.useMethod($1,$3); }
+    | T_ID T_DOT T_ID T_OPAR call_params T_CPAR { $$ = SEMANTIC.useMethod($1,$3,$5);}
     ;
 
 // Metodos para objetos (encapsulamento)
 object_functions:
-    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
+    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
                                                                               TOC.analyzeSpaces(2, $2, $4);}
-    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
+    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
                                                                 TOC.analyzeSpaces(2, $2, $4); }
     ;
 
@@ -189,9 +187,9 @@ object_attributes:
 // Parâmetros de função
 function_params:
     type_var sp T_ID { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
-                       $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
+                       $$->insertLineFront(SEMANTIC.declareParam($3, (Data::Type)$1));
                         TOC.analyzeSpaces(1, $2); }
-    | type_var sp T_ID T_COMMA sp function_params { $$ = $6; $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
+    | type_var sp T_ID T_COMMA sp function_params { $$ = $6; $$->insertLineFront(SEMANTIC.declareParam($3, (Data::Type)$1));
                                                           TOC.analyzeSpaces(2, $2, $5);}
     ;
 
@@ -287,8 +285,8 @@ expr_right:
   | T_ID { $$ = SEMANTIC.useVariable($1); }
   | T_ID T_OBRACKET expr T_CBRACKET { $$ = SEMANTIC.useVariable($1, $3); }
   | T_ID T_DOT T_ID {$$ = SEMANTIC.useAttribute($1,$3);}
-//  | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL); }
-//  | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4); }
+  | T_ID T_OPAR T_CPAR { $$ = SEMANTIC.callFunction($1, NULL); }
+  | T_ID T_OPAR call_params T_CPAR { $$ = SEMANTIC.callFunction($1, $3); }
   | T_MINUS sp expr %prec U_MINUS T_SP LINE { $$ = new UnaryOperation(UnaryOperation::MINUS, $3); }
   | T_NOT sp expr %prec T_NOT T_SP LINE { $$ = new UnaryOperation(UnaryOperation::NOT, $3); }
   | T_OPAR expr T_CPAR { $$ = $2; }

@@ -50,7 +50,6 @@ comment ([#][^\n]*)
 "-"                 {return T_MINUS;}
 \*                  {return T_TIMES;}
 "/"                 {return T_DIVIDE;}
-"mod"               {return T_MOD;}
 
 ">"                 {return T_GREATER;}
 ">="                {return T_GREATER_E;}

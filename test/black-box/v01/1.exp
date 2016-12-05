@@ -5,3 +5,4 @@ void toc()
   boo c = false
   boo d = true
   str e = "string"
+  print e

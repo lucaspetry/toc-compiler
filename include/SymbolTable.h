@@ -20,6 +20,7 @@ class SymbolTable {
 
         friend class TreeNode;
     friend class SemanticAnalyzer;
+    friend class Function;
 
     public:
         /**

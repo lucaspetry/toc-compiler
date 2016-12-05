@@ -15,8 +15,14 @@ TreeNode::ClassType Object::classType() const {
 std::string Object::printInOrder() const {
     std::string output = "";
     output+= "obj "+ id + "(";
-    if(params != NULL)
-      output+= params->printInOrder();
+
+    // Imprime os parâmetros
+    if(this->params != NULL) {
+        for(int i = 0; i < params->numberOfLines(); i++)
+            output += this->params->getLine(i)->printInOrder() + ", ";
+        output = output.substr(0, output.size() - 2);
+    }
+
     output+=")";
     output+="\n";
     if(this->body != NULL){

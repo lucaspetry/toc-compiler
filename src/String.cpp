@@ -31,7 +31,7 @@ void String::setBody(CodeBlock* codeBlock) {
 }
 
 std::string String::getValue() {
-    return this->value;
+    return this->valuePrint;
 }
 
 bool String::isBoolean(){

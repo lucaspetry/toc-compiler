@@ -19,6 +19,7 @@ class TreeNode {
 
     friend class BinaryOperation;
     friend class Conditional;
+    friend class Function;
     friend class SymbolTable;
     friend class SemanticAnalyzer;
 

@@ -1,3 +1,3 @@
 # Funcao principal TOC
 void toc()
-  # TOC declarada
+  print "TOC declarada\n"

@@ -144,6 +144,18 @@ class SemanticAnalyzer {
          */
         TreeNode* declareVariable(std::string varId, Data::Type dataType, int size = 0);
 
+        /**
+         * Declarar um parâmetro
+         * @param varId
+         * @param dataType
+         * @param size
+         * @return nodo correspondente à declaração
+         */
+        TreeNode* declareParam(std::string varId, Data::Type dataType, int size = 0);
+
+        /**
+         *
+         */
         TreeNode* declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right);
 
         /**

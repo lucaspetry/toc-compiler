@@ -21,7 +21,6 @@ class Function : public TreeNode {
         void setEncapsulation(int value);
         llvm::Value* generateCode();
 
-
     protected:
         std::string id;
         CodeBlock* params;

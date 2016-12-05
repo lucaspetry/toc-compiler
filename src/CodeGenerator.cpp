@@ -93,8 +93,6 @@ llvm::Type* Data::toLLVMType(Data::Type type) {
         case Data::FLT:
             return llvm::Type::getPrimitiveType(IR::Context, llvm::Type::FloatTyID);
         case Data::STR:
-            return llvm::Type::getPrimitiveType(IR::Context, llvm::Type::ArrayTyID);
-        default:
             return llvm::Type::getVoidTy(IR::Context);
     }
 }
@@ -145,6 +143,28 @@ llvm::Value* BinaryOperation::generateCode() {
                     case Data::INT:
                         return IR::Builder->CreateAdd(left->generateCode(), right->generateCode(), "addtmp");
                     case Data::FLT:
+                        return IR::Builder->CreateFAdd(left->generateCode(), right->generateCode(), "addtmp");
+                    case Data::STR:
+                        if(left->classType() == TreeNode::STRING && right->classType() == TreeNode::STRING) {
+                            String* str1 = (String*) left;
+                            String* str2 = (String*) right;
+                            std::string newString = str1->getValue() + str2->getValue();
+
+                            llvm::GlobalVariable* globalString = new llvm::GlobalVariable(
+                                /*Module=*/     *IR::Module,
+                                /*Type=*/       llvm::ArrayType::get(llvm::IntegerType::get(IR::Context, 32), newString.size()),
+                                /*isConstant=*/ false,
+                                /*Linkage=*/    llvm::GlobalValue::PrivateLinkage,
+                                /*Initializer=*/0,
+                                /*Name=*/       "str");
+                            globalString->setAlignment(1);
+
+                            llvm::Constant *arrayString = llvm::ConstantDataArray::getString(IR::Context, newString.c_str(), true);
+                            globalString->setInitializer(arrayString);
+
+                            return globalString;
+                        }
+                        break;
                         return IR::Builder->CreateFAdd(left->generateCode(), right->generateCode(), "addtmp");
                     default:
                         return IR::Builder->CreateFAdd(left->generateCode(), right->generateCode(), "addtmp");
@@ -199,19 +219,53 @@ llvm::Value* Float::generateCode() {
 }
 
 llvm::Value* Function::generateCode() {
-    llvm::FunctionType* funType = llvm::FunctionType::get(Data::toLLVMType(this->dataType()), false);
+    std::vector<llvm::Type*> params;
+
+    if(this->params != NULL)
+        for(int i = 0; i < this->params->numberOfLines(); i++) {
+            params.push_back(Data::toLLVMType(this->params->getLine(i)->dataType()));
+        }
+
+    llvm::FunctionType* funType = llvm::FunctionType::get(Data::toLLVMType(this->dataType()), params, false);
     IR::Module->getOrInsertFunction(this->id, funType);
     IR::CurrentFunction = IR::Module->getFunction(this->id);
 
+
+    llvm::Function::arg_iterator paramsIt = IR::CurrentFunction->arg_begin();
+    int i = 0;
+
+    for(; paramsIt != IR::CurrentFunction->arg_end(); ++paramsIt) {
+        Variable* var = (Variable*) ((VariableDeclaration*)this->params->getLine(i))->getNext();
+        paramsIt->setName(var->getId());
+        this->params->symbolTable.updateVariableAllocation(var->getId(), &*paramsIt);
+        i++;
+    }
+
+    llvm::BasicBlock* startFunction = llvm::BasicBlock::Create(IR::Context, "start", IR::CurrentFunction);
+    IR::Builder->SetInsertPoint(startFunction);
+
     body->generateCode();
-    // TODO;
+
+    if(this->ret != NULL) {
+        IR::Builder->CreateRet(this->ret->generateCode());
+    } else {
+        IR::Builder->CreateRetVoid();
+    }
+
+    llvm::verifyFunction(*IR::CurrentFunction);
 
     return IR::CurrentFunction;
 }
 
 llvm::Value* FunctionCall::generateCode() {
-    // TODO;
-    return NULL;
+    std::vector<llvm::Value*> args;
+
+    if(this->params != NULL)
+        for(int i = 0; i < this->params->numberOfLines(); i++)
+            args.push_back(this->params->getLine(i)->generateCode());
+
+    return IR::Builder->CreateCall(IR::Module->getOrInsertFunction(this->id,
+                Data::toLLVMType(this->dataType())), args, this->id + "Call");
 }
 
 llvm::Value* Integer::generateCode() {

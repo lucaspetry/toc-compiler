@@ -224,6 +224,26 @@ TreeNode* SemanticAnalyzer::declareVariable(std::string id, Data::Type dataType,
     }
 }
 
+TreeNode* SemanticAnalyzer::declareParam(std::string id, Data::Type dataType, int size) {
+    if(this->checkIdentifier(id)) {
+        TreeNode* node;
+
+        if(size > 0) {
+            node = new Array(id, dataType, new Integer(size));
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, true, node)); // Adds variable to symbol table and save array size
+        } else {
+            this->symbolTable.addSymbol(id, Symbol(dataType, Symbol::VARIABLE, true)); // Adds variable to symbol table
+            node = new Variable(id, dataType);
+        }
+
+        VariableDeclaration* vD = new VariableDeclaration(dataType, node);
+        vD->setSymbolTable(this->symbolTable);
+        node->setSymbolTable(this->symbolTable);
+
+        return vD;
+    }
+}
+
 TreeNode* SemanticAnalyzer::declareBinaryOperation(TreeNode* left, BinaryOperation::Type op, TreeNode* right) {
     // if(!checkStatement(TreeNode::BINARY_OPERATION))
     //   ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal instruction.");
@@ -365,6 +385,9 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
         this->symbolTable.addSymbol(id, Symbol(returnType, Symbol::FUNCTION, true, function));
         this->currentStructure = function;
         this->lastStatement = function;
+
+        if(params != NULL)
+            params->setSymbolTable(this->symbolTable);
         return function;
     }
 
@@ -384,7 +407,7 @@ TreeNode* SemanticAnalyzer::declareFunctionReturn(TreeNode* ret) {
 }
 
 TreeNode* SemanticAnalyzer::callFunction(std::string id, CodeBlock* params) {
-    TreeNode* call = new FunctionCall(id, params);
+    FunctionCall* call = new FunctionCall(id, params);
 
     if(this->symbolTable.existsSymbol(id, true)) {
         call->setType(this->symbolTable.getSymbol(id, true).getDataType());
@@ -394,7 +417,7 @@ TreeNode* SemanticAnalyzer::callFunction(std::string id, CodeBlock* params) {
         this->currentStructure = NULL;
         this->lastStatement = call;
     } else {
-        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "FUNCAO NAO DECLARADA" );
+        ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Undeclared function " + id + "." );
     }
 
     return call;

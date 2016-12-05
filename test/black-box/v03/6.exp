@@ -4,3 +4,11 @@ void toc()
   boo b = [boo] (10)
   flt c = 78.900002
   str d = "..."
+  print [str] (a)
+  print "\n"
+  print [str] (b)
+  print "\n"
+  print [str] (c)
+  print "\n"
+  print d
+  print "\n"
