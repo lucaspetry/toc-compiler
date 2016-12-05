@@ -355,7 +355,7 @@ TreeNode* SemanticAnalyzer::declareFunction(std::string id, CodeBlock* params, C
             if(!checkStatement(TreeNode::FUNCTION))
               ERROR_LOGGER->log(ErrorLogger::SEMANTIC, "Illegal function declaration in this scope." );
           if(this->lastStatement != NULL && this->lastStatement->classType() != TreeNode::COMMENT)
-              ERROR_LOGGER->log(ErrorLogger::WARNING, "Method " + id+ " is not explained. Please do it right above the method declaration with a comment.");
+              ERROR_LOGGER->log(ErrorLogger::WARNING, "Function " + id + " is not explained. Please do it right above the function declaration with a comment.");
 
           function = new Function(id, params, body, NULL);
           function->setType(returnType);

@@ -127,34 +127,46 @@ line:
                                                                                             TOC.analyzeSpaces(2, $5, $8);}
     | T_FOR T_OPAR T_ID sp T_IN sp T_ID T_CPAR {$$ = SEMANTIC.declareLoop(SEMANTIC.declareAssignVariable($3, Data::UNKNOWN, NULL),
                                                                               NULL, SEMANTIC.useVariable($7, new Integer(1)));
-                                                                              SEMANTIC.analyzeLoop($7); }
+                                                                              SEMANTIC.analyzeLoop($7);
+                                                                              TOC.analyzeSpaces(2, $4, $6);}
     // Função
-    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID); }
-    | type_var sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1); }
-    | type_var sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
-    | T_VOID sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1); }
-    | T_VOID sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1); }
-    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3); }
-    | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL); }
-    | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4); }
+    | T_VOID sp T_TOC T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction("toc", NULL, NULL, Data::VOID);
+                                              TOC.analyzeSpaces(1, $2);}
+    | type_var sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
+                                                                TOC.analyzeSpaces(1, $2);}
+    | type_var sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
+                                                TOC.analyzeSpaces(1, $2);}
+    | T_VOID sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareFunction($3, $5, NULL, (Data::Type) $1);
+                                                              TOC.analyzeSpaces(1, $2);}
+    | T_VOID sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareFunction($3, NULL, NULL, (Data::Type) $1);
+                                              TOC.analyzeSpaces(1, $2);}
+    | T_RETURN sp expr sp { $$ = SEMANTIC.declareFunctionReturn($3);
+                                  TOC.analyzeSpaces(1, $2);}
+    | T_ID sp T_OPAR T_CPAR sp { $$ = SEMANTIC.callFunction($1, NULL);
+                                    TOC.analyzeSpaces(1, $2);}
+    | T_ID sp T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.callFunction($1, $4);
+                                                  TOC.analyzeSpaces(1, $2);}
     // Objeto
-    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3, $5, NULL);   TOC.analyzeObject($3);}
-    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL);   TOC.analyzeObject($3);}
+    | T_OBJ sp T_ID T_OPAR function_params T_CPAR sp { $$ = SEMANTIC.declareObject($3, $5, NULL); TOC.analyzeObject($3);
+                                                        TOC.analyzeSpaces(1, $2); }
+    | T_OBJ sp T_ID T_OPAR T_CPAR sp { $$ = SEMANTIC.declareObject($3,NULL,NULL); TOC.analyzeObject($3);
+                                            TOC.analyzeSpaces(1, $2);}
     | object_attributes
     | object_functions
-    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);}
-    | T_ID sp T_ID T_OPAR call_params T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3,$5);}
-    /*| T_ID T_DOT T_ID {$$ = SEMANTIC.useAttribute($1,$3);}*/
-    | T_ID T_DOT T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.useMethod($1,$3);}
+    | T_ID sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3);
+                                          TOC.analyzeSpaces(1, $2); }
+    | T_ID sp T_ID T_OPAR call_params T_CPAR sp {$$ = SEMANTIC.initializeObject($1,$3,$5);
+                                                  TOC.analyzeSpaces(1, $2);}
+    | T_ID T_DOT T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.useMethod($1,$3); }
     | T_ID T_DOT T_ID T_OPAR call_params T_CPAR sp { $$ = SEMANTIC.useMethod($1,$3,$5);}
-    //TODO faltando uso de métodos!
     ;
 
 // Metodos para objetos (encapsulamento)
 object_functions:
-    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1);   TOC.analyzeVariable($5);}
-    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1);  TOC.analyzeVariable($5); }
-
+    encapsulation sp type_var sp T_ID T_OPAR function_params T_CPAR sp {$$ = SEMANTIC.declareMethod($5, $7, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
+                                                                              TOC.analyzeSpaces(2, $2, $4);}
+    | encapsulation sp type_var sp T_ID T_OPAR T_CPAR sp {$$ = SEMANTIC.declareMethod($5, NULL, NULL, (Data::Type)$3, $1); TOC.analyzeVariable($5);
+                                                                TOC.analyzeSpaces(2, $2, $4); }
     ;
 
 // Atributos para objetos (encapsulamento)
@@ -170,15 +182,17 @@ object_attributes:
                                                                             TOC.analyzeVariable($5); }
     | encapsulation sp type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE {
                                       $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignAttribute($5,(Data::Type)$3, $1, $13, $7), BinaryOperation::ASSIGN, $13);
-                                                                TOC.analyzeVariable($5); }
+                                                                TOC.analyzeVariable($5);
+                                                                TOC.analyzeSpaces(4, $2, $4, $9, $11); }
     ;
 
 // Parâmetros de função
 function_params:
     type_var sp T_ID { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
-                       $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1)); }
-    | type_var sp T_ID T_COMMA sp function_params { $$ = $6;
-                                                    $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1)); }
+                       $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
+                        TOC.analyzeSpaces(1, $2); }
+    | type_var sp T_ID T_COMMA sp function_params { $$ = $6; $$->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
+                                                          TOC.analyzeSpaces(2, $2, $5);}
     ;
 
 // Parâmetros de chamada de função
@@ -186,7 +200,8 @@ call_params:
     expr { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
            $$->insertLineFront($1); }
     | expr sp T_COMMA sp call_params { $$ = $5;
-                                       $$->insertLineFront($1); }
+                                       $$->insertLineFront($1);
+                                       TOC.analyzeSpaces(2, $2, $4);}
     ;
 
 // Declaração de variáveis
@@ -197,21 +212,24 @@ declaration:
                     TOC.analyzeSpaces(1, $2);}
     | type_var sp T_ID multiple_declaration { $$ = $4; $4->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1));
                                           SEMANTIC.setUnknownTypes((Data::Type) $1, $4);
-                                          TOC.analyzeVariable($3); }
+                                          TOC.analyzeVariable($3);
+                                          TOC.analyzeSpaces(1, $2);}
     | type_var sp T_ID sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3, (Data::Type)$1, $7), BinaryOperation::ASSIGN, $7);
                                                 SEMANTIC.analyzeCasting((BinaryOperation*) $$);
-                                                TOC.analyzeSpaces(3, $2, $4,$6);
-                                                TOC.analyzeVariable($3); }
+                                                TOC.analyzeVariable($3);
+                                                TOC.analyzeSpaces(3, $2, $4,$6); }
     // Array
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET { $$ = SEMANTIC.declareVariable($3, (Data::Type)$1, $5);
                                                   TOC.analyzeVariable($3);
-                                                  TOC.analyzeSpaces(1, $2);}
+                                                  TOC.analyzeSpaces(1, $2); }
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET multiple_declaration { $$ = $7; $7->insertLineFront(SEMANTIC.declareVariable($3, (Data::Type)$1, $5));
                                                                       SEMANTIC.setUnknownTypes((Data::Type) $1, $7);
-                                                                      TOC.analyzeVariable($3); }
+                                                                      TOC.analyzeVariable($3);
+                                                                      TOC.analyzeSpaces(1, $2); }
     | type_var sp T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp T_OBRACE multiple_attribution T_CBRACE { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.declareAssignVariable($3,(Data::Type)$1, $11, $5), BinaryOperation::MULT_ASSIGN, $11);
                                                                                                           TOC.analyzeVariable($3);
-                                                                                                          SEMANTIC.analyzeArray($3, $5, $11);}
+                                                                                                          SEMANTIC.analyzeArray($3, $5, $11);
+                                                                                                          TOC.analyzeSpaces(3, $2, $7, $9); }
     ;
 
 // Multiplas declarações
@@ -237,21 +255,24 @@ attribuition:
                                     SEMANTIC.analyzeCasting((BinaryOperation*) $$);
                                     TOC.analyzeSpaces(2, $2, $4);}
     // Array
-    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8); }
+    | T_ID T_OBRACKET T_NUM T_CBRACKET sp T_ASSIGN sp expr { $$ = SEMANTIC.declareBinaryOperation(SEMANTIC.assignVariable($1, $8, new Integer($3)), BinaryOperation::ASSIGN, $8);
+                                                                  TOC.analyzeSpaces(2, $5, $7);}
     ;
 
 // Multiplas atribuições para o array
 multiple_attribution:
     expr { $$ = new CodeBlock(SEMANTIC.getCurrentIndentation());
            $$->insertLineFront($1); }
-    | expr T_COMMA sp multiple_attribution { $$ = $4; $$->insertLineFront($1); }
+    | expr T_COMMA sp multiple_attribution { $$ = $4; $$->insertLineFront($1);
+                                                TOC.analyzeSpaces(1, $3); }
     ;
 
 // Expressão
 expr:
     expr_right {$$ = $1; }
     | expr sp op_binary sp expr_right { $$ = SEMANTIC.declareBinaryOperation($1, (BinaryOperation::Type)$3, $5);
-                                        SEMANTIC.analyzeCasting((BinaryOperation*) $$); }
+                                        SEMANTIC.analyzeCasting((BinaryOperation*) $$);
+                                        TOC.analyzeSpaces(2, $2, $4);}
     ;
 
 // Direita da expressão
